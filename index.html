@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belinus Solar Calculator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Belinus brand — matches offerte template QT2025-000183 */
+  :root {
+    --cyan: #05ade5;
+    --black: #0b0d0f;
+    --ink: #212629;
+    --grey: #8c9499;
+    --light: #f2f4f5;
+    --rule: #e0e4e6;
+    --paper: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, Helvetica, Arial, sans-serif; background: var(--light); color: var(--ink); }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .bel-widget { max-width: 1020px; margin: 0 auto; }
+
+  /* ---- brand header band ---- */
+  .band {
+    background: var(--black); color: #fff; padding: 34px 48px 30px;
+    border-bottom: 2px solid var(--cyan);
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  .band img.logo { height: 44px; display: block; }
+  .band .wordmark { color: var(--cyan); font-weight: 700; font-size: 2rem; letter-spacing: -.02em; }
+  .band .co { font-family: 'JetBrains Mono', monospace; font-size: .62rem; color: #9ea6ab; margin-top: 12px; line-height: 1.7; }
+  .band .co b { color: #fff; }
+  .band .right { text-align: right; }
+  .band .right .title { font-size: 2.1rem; font-weight: 300; color: #fff; }
+  .band .right .sub { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: #b8bfc4; margin-top: 6px; }
+
+  .inner { padding: 34px 48px 48px; background: var(--paper); }
+  .tableWrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  @media (max-width: 640px) {
+    .band, .inner { padding-left: 20px; padding-right: 20px; }
+    .band { flex-direction: column; align-items: flex-start; gap: 18px; padding-top: 24px; padding-bottom: 22px; }
+    .band .right { text-align: left; }
+    .band .right .title { font-size: 1.45rem; }
+    .band img.logo { height: 36px; }
+    .calc { padding: 30px 20px; }
+    h1 { font-size: 1.35rem; }
+    iframe.cad { height: 320px; }
+    table.offerte { min-width: 560px; } /* scrolls horizontally inside .tableWrap */
+    .totaal-band { padding: 12px 14px; }
+    .totaal-band .v { font-size: 1.05rem; }
+    .kpi b { font-size: 1.05rem; }
+    button.primary { width: 100%; }
+  }
+
+  h1 { font-size: 1.7rem; font-weight: 700; margin: 0 0 6px; letter-spacing: -.01em; }
+  .sub { color: var(--grey); margin: 0 0 26px; font-size: .95rem; }
+  h2.lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: .68rem; font-weight: 700;
+    letter-spacing: .22em; text-transform: uppercase; color: var(--cyan); margin: 34px 0 14px;
+  }
+
+  .steps { display: flex; gap: 6px; margin: 0 0 26px; }
+  .steps div { flex: 1; height: 3px; background: var(--rule); }
+  .steps div.done { background: var(--cyan); }
+
+  .hidden { display: none !important; }
+
+  label {
+    display: block; font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--grey); margin: 18px 0 6px;
+  }
+  input, select {
+    width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 0;
+    font-size: .95rem; font-family: 'JetBrains Mono', monospace; background: var(--paper); color: var(--ink);
+  }
+  input:focus, select:focus { outline: none; border-color: var(--cyan); }
+  .row { display: flex; gap: 16px; } .row > div { flex: 1; }
+  @media (max-width: 640px) { .row { flex-direction: column; gap: 0; } }
+
+  button.primary {
+    background: var(--cyan); color: #fff; border: none; padding: 14px 34px;
+    font-family: 'JetBrains Mono', monospace; font-size: .74rem; font-weight: 700;
+    letter-spacing: .18em; text-transform: uppercase; cursor: pointer; margin-top: 26px;
+  }
+  button.primary:hover { background: #0895c6; }
+  button.primary:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* ---- calculation phase (dark, branded) ---- */
+  .calc { background: var(--black); color: #fff; padding: 46px 48px; border-bottom: 2px solid var(--cyan); }
+  .calc h2 { font-weight: 300; font-size: 1.6rem; margin: 0 0 6px; }
+  .calc .csub { color: #9ea6ab; font-size: .9rem; margin-bottom: 34px; }
+  .stage { display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 1px solid #1e2225;
+           font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: #6e767b; }
+  .stage.active { color: #fff; }
+  .stage.done { color: var(--cyan); }
+  .dot { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid currentColor; flex-shrink: 0; }
+  .stage.done .dot { background: var(--cyan); border-color: var(--cyan); }
+  .spinner { width: 11px; height: 11px; border: 1.5px solid #2a2f33; border-top-color: var(--cyan); border-radius: 50%;
+             animation: spin 1s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fact { margin-top: 34px; padding: 20px 24px; background: #14171a; border-left: 3px solid var(--cyan); }
+  .fact .fl { font-family: 'JetBrains Mono', monospace; font-size: .6rem; letter-spacing: .22em; color: var(--cyan); margin-bottom: 8px; }
+  .fact .ft { color: #d6dbde; font-size: .92rem; line-height: 1.55; min-height: 3em; transition: opacity .4s; }
+
+  iframe.cad { width: 100%; height: 500px; border: 1px solid var(--rule); background: var(--black); }
+
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: 18px 0; }
+  .kpi { background: var(--paper); padding: 18px 12px; text-align: center; }
+  .kpi b { display: block; font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; color: var(--ink); font-weight: 700; }
+  .kpi span { font-family: 'JetBrains Mono', monospace; font-size: .56rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--grey); }
+
+  /* offerte table */
+  table.offerte { width: 100%; border-collapse: collapse; }
+  table.offerte th { font-family: 'JetBrains Mono', monospace; font-size: .6rem; letter-spacing: .18em; color: var(--grey);
+                     text-align: right; padding: 8px 6px; border-bottom: 1px solid var(--rule); }
+  table.offerte th:nth-child(1), table.offerte th:nth-child(2) { text-align: left; }
+  table.offerte td { padding: 14px 6px; border-bottom: 1px solid var(--rule); font-size: .9rem; }
+  table.offerte td.num { font-family: 'JetBrains Mono', monospace; color: var(--cyan); }
+  table.offerte td.desc { font-weight: 600; }
+  table.offerte td.r { text-align: right; font-family: 'JetBrains Mono', monospace; }
+  table.offerte td.tot-l { text-align: right; color: var(--grey); font-size: .85rem; }
+  .totaal-band { display: flex; justify-content: space-between; align-items: center; background: var(--black);
+                 border-left: 3px solid var(--cyan); color: #fff; padding: 14px 20px; margin-top: 14px; }
+  .totaal-band .t { font-family: 'JetBrains Mono', monospace; font-size: .7rem; letter-spacing: .22em; }
+  .totaal-band .v { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; }
+  .deposit { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: .74rem; color: var(--grey); margin-top: 10px; }
+
+  .pdfLink { display: inline-block; margin-top: 14px; color: var(--cyan); font-family: 'JetBrains Mono', monospace;
+             font-size: .7rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+
+  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .plan { border: 1px solid var(--rule); padding: 24px; cursor: pointer; transition: all .15s; background: var(--paper); }
+  .plan:hover { border-color: var(--cyan); }
+  .plan.selected { border-color: var(--cyan); box-shadow: inset 0 0 0 1px var(--cyan); background: #f4fbfe; }
+  .plan h3 { margin: 0 0 10px; font-family: 'JetBrains Mono', monospace; font-size: .68rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--grey); }
+  .plan .big { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; color: var(--ink); }
+  .plan .psub { font-size: .78rem; color: var(--grey); margin-top: 4px; }
+  .plan ul { padding-left: 18px; margin: 14px 0 0; font-size: .84rem; color: #4a5459; line-height: 1.6; }
+  .badge { display: inline-block; background: var(--cyan); color: #fff; font-size: .56rem; font-weight: 700; letter-spacing: .1em; padding: 3px 8px; margin-left: 8px; vertical-align: middle; }
+
+  .error { border-left: 3px solid #c0392b; background: #fdf1ef; color: #9b1c1c; padding: 14px 18px; margin-top: 16px; font-size: .9rem; }
+  .note { font-size: .76rem; color: var(--grey); margin-top: 14px; line-height: 1.6; }
+  .success { text-align: center; padding: 46px 20px; }
+  .success .check { width: 54px; height: 54px; margin: 0 auto 18px; border-radius: 50%; background: var(--cyan); color: #fff; font-size: 1.7rem; line-height: 54px; }
+</style>
+</head>
+<body>
+<div class="bel-widget">
+
+  <!-- brand header band -->
+  <div class="band">
+    <div>
+      <img class="logo" src="belinus-logo.png" alt="belinus" onerror="this.outerHTML='<div class=wordmark>belinus<sup style=font-size:.5em>®</sup></div>'">
+      <div class="co"><b>belinus energy B.V.</b><br>Silversquare · Frankrijklei 5<br>2000 Antwerpen · België</div>
+    </div>
+    <div class="right">
+      <div class="title">Solar Calculator</div>
+      <div class="sub">AI design · offerte · besparing</div>
+    </div>
+  </div>
+
+  <div class="inner">
+    <div class="steps"><div id="s1" class="done"></div><div id="s2"></div><div id="s3"></div><div id="s4"></div></div>
+
+    <!-- STEP 1: address + energy -->
+    <div id="step-input">
+      <h1>Design your solar system</h1>
+      <p class="sub">Get an instant AI-generated design, price and 20-year savings estimate for your home.</p>
+      <label>Street and number</label>
+      <input id="street" placeholder="Frankrijklei 5">
+      <div class="row">
+        <div><label>City</label><input id="city" placeholder="Antwerpen"></div>
+        <div><label>Postal code</label><input id="postal" placeholder="2000"></div>
+      </div>
+      <div class="row">
+        <div><label>Annual electricity use (kWh)</label><input id="annualKwh" type="number" value="3500" min="500" max="50000"></div>
+        <div><label>Home battery</label><select id="battery"></select></div>
+      </div>
+      <div class="note">Not sure? An average Belgian household uses ± 3,500 kWh/year. Check your latest energy bill for your exact figure.</div>
+      <button class="primary" id="btnStart">Design my system →</button>
+      <div id="inputError" class="error hidden"></div>
+    </div>
+  </div>
+
+  <!-- STEP 2: calculation phase (dark) -->
+  <div class="calc hidden" id="step-progress">
+    <h2>Designing your installation…</h2>
+    <div class="csub">Our AI is analysing satellite and LIDAR imagery of your roof and designing your installation. This can take a few minutes — please keep this page open.</div>
+    <div class="stage" data-stage="0"><span class="dot"></span> Locating your home &amp; fetching imagery</div>
+    <div class="stage" data-stage="1"><span class="dot"></span> Analysing your roof in 3D (AI Roof)</div>
+    <div class="stage" data-stage="2"><span class="dot"></span> Placing solar panels (AutoDesigner)</div>
+    <div class="stage" data-stage="3"><span class="dot"></span> Simulating energy production</div>
+    <div class="fact">
+      <div class="fl mono">D I D &nbsp;Y O U &nbsp;K N O W ?</div>
+      <div class="ft" id="factText"></div>
+    </div>
+    <div id="progressError" class="error hidden"></div>
+  </div>
+
+  <!-- STEP 3: result -->
+  <div class="inner hidden" id="step-result">
+    <h2 class="lbl">Your solar design</h2>
+    <iframe class="cad" id="cadFrame" title="3D solar design"></iframe>
+    <div class="kpis">
+      <div class="kpi"><b id="kSize">–</b><span>System size (kWp)</span></div>
+      <div class="kpi"><b id="kPanels">–</b><span>Solar panels</span></div>
+      <div class="kpi"><b id="kProd">–</b><span>kWh / year</span></div>
+      <div class="kpi"><b id="kBattery">–</b><span>Battery</span></div>
+      <div class="kpi"><b id="kPrice">–</b><span>Total price incl. VAT</span></div>
+      <div class="kpi"><b id="kSave">–</b><span>Savings over 20 years</span></div>
+    </div>
+
+    <h2 class="lbl">Offerte <span class="mono" id="quoteNumber" style="color:var(--grey);letter-spacing:.1em"></span></h2>
+    <div class="tableWrap"><table class="offerte" id="offerteTable"></table></div>
+    <div class="totaal-band"><span class="t">T O T A A L</span><span class="v" id="totV"></span></div>
+    <div class="deposit" id="depositLine"></div>
+    <div style="text-align:right"><a id="pdfLink" class="pdfLink" href="#" target="_blank">⬇ Download offerte (PDF)</a></div>
+
+    <h2 class="lbl">Choose how you want to go solar</h2>
+    <div class="plans" id="plans"></div>
+
+    <h2 class="lbl">Your savings over 20 years</h2>
+    <canvas id="chart" height="120"></canvas>
+    <div class="note" id="assumptions"></div>
+    <button class="primary" id="btnContinue" disabled>Continue with selected plan →</button>
+  </div>
+
+  <!-- STEP 4: checkout -->
+  <div class="inner hidden" id="step-checkout">
+    <h2 class="lbl">Your details</h2>
+    <div class="row">
+      <div><label>First name</label><input id="fname"></div>
+      <div><label>Last name</label><input id="lname"></div>
+    </div>
+    <div class="row">
+      <div><label>Email</label><input id="email" type="email"></div>
+      <div><label>Phone</label><input id="phone" type="tel"></div>
+    </div>
+    <button class="primary" id="btnOrder">Sign &amp; pay securely →</button>
+    <div class="note">Next you will verify your identity and sign digitally (Sumsub), then pay the 30% deposit via Bancontact, iDEAL or card (Mollie).</div>
+    <div id="checkoutError" class="error hidden"></div>
+  </div>
+
+  <!-- STEP 5: done -->
+  <div class="inner hidden" id="step-done">
+    <div class="success">
+      <div class="check">✓</div>
+      <h1>Order received!</h1>
+      <p class="sub" id="doneMsg">We've registered your order. In the live version you would now be redirected to identity verification &amp; digital signing, followed by online payment of the deposit.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================= CONFIG =================
+const API_BASE = "https://ywuuhcixtzutspcbxelr.supabase.co/functions/v1/solar";
+// ==========================================
+
+const S = { projectId: null, designId: null, leadId: null, quote: null, quoteId: null, plan: null };
+const fmt = new Intl.NumberFormat("nl-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+const fmt2 = new Intl.NumberFormat("nl-BE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const $ = (id) => document.getElementById(id);
+
+const FACTS = [
+  "Belinus panels carry a 35-year product, performance and labour warranty — among the longest in the industry.",
+  "A home battery can lift your self-consumption of solar power from roughly 35% to 70%.",
+  "The Energywall N1 uses sodium-ion cells — no lithium, made in Belgium, and works from -30°C to +55°C.",
+  "Solar panels still generate 90%+ of their rated output after 20 years of use.",
+  "Our AI analyses LIDAR height data of your roof to place every panel for maximum yield.",
+  "More than 30,000 customers already switched to clean energy with Belinus.",
+  "Electricity prices in Belgium have risen on average ~3% per year — solar locks in your energy cost.",
+];
+
+async function api(method, route, body) {
+  const opts = { method, headers: { "Content-Type": "application/json" } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(`${API_BASE}/${route}`, opts);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof data.error === "string" ? data.error : JSON.stringify(data.error || data));
+  return data;
+}
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function poll(route, isDone, { interval = 3000, timeout = 300000 } = {}) {
+  const t0 = Date.now();
+  while (Date.now() - t0 < timeout) {
+    const r = await api("GET", route);
+    if (r.error && r.status === "failed") throw new Error(r.error);
+    if (isDone(r)) return r;
+    await sleep(interval);
+  }
+  throw new Error("Timed out waiting for the design service. Please try again.");
+}
+
+const STEPS = ["step-input", "step-progress", "step-result", "step-checkout", "step-done"];
+function show(stepId) {
+  STEPS.forEach((s, i) => {
+    $(s).classList.toggle("hidden", s !== stepId);
+    $("s" + Math.min(i + 1, 4))?.classList.toggle("done", STEPS.indexOf(stepId) >= i);
+  });
+  // step-input lives inside the first .inner; hide its siblings correctly
+  $("step-input").parentElement.classList.toggle("hidden", stepId !== "step-input");
+}
+
+function setStage(n, state) {
+  document.querySelectorAll(".stage").forEach((el) => {
+    const i = +el.dataset.stage;
+    el.classList.toggle("done", i < n || (i === n && state === "done"));
+    el.classList.toggle("active", i === n && state === "active");
+    el.querySelector(".dot, .spinner").className = (i === n && state === "active") ? "spinner" : "dot";
+  });
+}
+
+let factTimer = null;
+function startFacts() {
+  let i = Math.floor(Math.random() * FACTS.length);
+  const el = $("factText");
+  const next = () => {
+    el.style.opacity = 0;
+    setTimeout(() => { el.textContent = FACTS[i % FACTS.length]; el.style.opacity = 1; i++; }, 400);
+  };
+  next();
+  factTimer = setInterval(next, 9000);
+}
+function stopFacts() { clearInterval(factTimer); }
+
+// -------- battery options --------
+(async () => {
+  try {
+    const r = await api("GET", "pricing-options");
+    $("battery").innerHTML = r.battery_options
+      .map((b) => {
+        const incl = b.price_excl_vat * (1 + r.vat_rate) + b.bebat;
+        return `<option value="${b.modules}">${b.label}${incl ? " (+" + fmt.format(incl) + ")" : ""}</option>`;
+      }).join("");
+  } catch { $("battery").innerHTML = `<option value="0">No battery</option><option value="3">Energywall HV 10.7 kWh</option><option value="5">Energywall HV 17.8 kWh</option>`; }
+})();
+
+// -------- main flow --------
+$("btnStart").onclick = async () => {
+  const street = $("street").value.trim(), city = $("city").value.trim(), postal = $("postal").value.trim();
+  const annualKwh = +$("annualKwh").value;
+  if (!street || !city || !postal) return showError("inputError", "Please fill in your full address.");
+  if (!annualKwh || annualKwh < 500) return showError("inputError", "Please enter a valid annual consumption.");
+  $("inputError").classList.add("hidden");
+  $("btnStart").disabled = true;
+  show("step-progress");
+  startFacts();
+
+  try {
+    setStage(0, "active");
+    const start = await api("POST", "start", { street, city, postal_code: postal });
+    Object.assign(S, { projectId: start.project_id, designId: start.design_id, leadId: start.lead_id });
+
+    const consumptionP = api("PUT", "consumption", { project_id: S.projectId, annual_kwh: annualKwh });
+
+    await poll(`design-status?design_id=${S.designId}`, (r) => r.ready);
+    setStage(0, "done");
+
+    setStage(1, "active");
+    const roof = await api("POST", "ai-roof/run", { design_id: S.designId });
+    await poll(`ai-roof/status?design_id=${S.designId}&job_id=${roof.job_id}`, (r) => {
+      if (r.status === "failed") throw new Error(r.error || "Roof analysis failed for this address.");
+      return r.status === "succeeded";
+    });
+    await consumptionP;
+    setStage(1, "done");
+
+    // AutoDesigner — attempt 1: energy mode with full components (production).
+    // Attempt 2: max_fit with panels only (works everywhere, incl. sandbox).
+    setStage(2, "active");
+    const attempts = [
+      { mode: "energy", panels_only: false },
+      { mode: "max_fit", panels_only: true },
+    ];
+    for (let i = 0; i < attempts.length; i++) {
+      const a = attempts[i];
+      const ad = await api("POST", "autodesigner/run", {
+        design_id: S.designId, target_kwh: annualKwh, mode: a.mode, panels_only: a.panels_only,
+      });
+      try {
+        await poll(`autodesigner/status?design_id=${S.designId}&job_id=${ad.job_id}`, (r) => {
+          if (r.status === "failed") throw new Error(r.error || "Automatic panel placement failed.");
+          return r.status === "succeeded";
+        }, { timeout: 600000 }); // max_fit can take 5+ minutes
+        break;
+      } catch (e) {
+        if (i === attempts.length - 1) throw new Error((e.message || "Automatic panel placement failed.") +
+          " — This roof may be too small or complex for an automatic design. Leave your details and we'll design it manually.");
+      }
+    }
+    setStage(2, "done");
+
+    setStage(3, "active");
+    const [cad, sim] = await Promise.all([
+      api("POST", "cad-url", { design_id: S.designId }),
+      api("POST", "simulation/run", { design_id: S.designId }),
+    ]);
+    $("cadFrame").src = cad.url;
+    await poll(`simulation/status?design_id=${S.designId}&job_id=${sim.job_id}`, (r) => {
+      if (r.status === "failed") throw new Error(r.error || "Energy simulation failed.");
+      return r.status === "succeeded";
+    });
+    setStage(3, "done");
+
+    const quote = await api("POST", "quote", {
+      design_id: S.designId, lead_id: S.leadId,
+      annual_consumption_kwh: annualKwh, battery_modules: +$("battery").value,
+    });
+    S.quote = quote; S.quoteId = quote.quote_id;
+    stopFacts();
+    renderQuote(quote);
+    show("step-result");
+  } catch (e) {
+    stopFacts();
+    showError("progressError", e.message);
+    $("btnStart").disabled = false;
+  }
+};
+
+function renderQuote(qt) {
+  $("kSize").textContent = qt.system.kwp.toFixed(2);
+  $("kPanels").textContent = qt.system.panel_count ?? "—";
+  $("kProd").textContent = qt.system.annual_production_kwh.toLocaleString("nl-BE");
+  $("kBattery").textContent = qt.system.battery.kwh ? qt.system.battery.kwh + " kWh" : "None";
+  $("kPrice").textContent = fmt.format(qt.price.total_incl_vat);
+  $("kSave").textContent = fmt.format(qt.savings.total_20y);
+
+  $("quoteNumber").textContent = qt.quote_number ?? "";
+  $("pdfLink").href = `${API_BASE}/quote-pdf?quote_id=${qt.quote_id}`;
+
+  let html = `<tr><th>#</th><th>OMSCHRIJVING</th><th>AANTAL</th><th>PRIJS</th><th>BTW</th><th>BEDRAG</th></tr>`;
+  qt.items.forEach((it, i) => {
+    html += `<tr><td class="num">${String(i + 1).padStart(2, "0")}</td><td class="desc">${it.description}</td>` +
+      `<td class="r">${fmt2.format(it.quantity)}</td><td class="r">${fmt2.format(it.unit_price)}</td>` +
+      `<td class="r">${(it.vat_rate * 100).toFixed(0)}%</td><td class="r"><b>${fmt2.format(it.amount)}</b></td></tr>`;
+  });
+  html += `<tr><td colspan="5" class="tot-l">Excl. btw</td><td class="r">${fmt2.format(qt.price.subtotal_excl_vat)}</td></tr>`;
+  for (const [rate, g] of Object.entries(qt.price.vat_groups)) {
+    html += `<tr><td colspan="5" class="tot-l">BTW ${rate}% op ${fmt2.format(g.base)}</td><td class="r">${fmt2.format(g.vat)}</td></tr>`;
+  }
+  $("offerteTable").innerHTML = html;
+  $("totV").textContent = `€ ${fmt2.format(qt.price.total_incl_vat)}`;
+  $("depositLine").textContent = `Voorschot bij bestelling (30%): € ${fmt2.format(qt.price.deposit)}`;
+
+  const p = qt.plans;
+  const cards = [
+    { key: "buy", title: "Buy", big: fmt.format(p.buy.upfront), sub: "one-time",
+      items: [`Payback in ± ${p.buy.payback_year ?? "–"} years`, `Net benefit over 20y: ${fmt.format(p.buy.net_benefit_20y)}`, "You own the system from day 1"] },
+    { key: "rent", title: "Rent", big: fmt.format(p.rent.monthly) + "/mo", sub: "20 years, maintenance included",
+      items: [`Total over 20y: ${fmt.format(p.rent.total_cost_20y)}`, `Net benefit over 20y: ${fmt.format(p.rent.net_benefit_20y)}`, "No upfront investment"] },
+    { key: "finance", title: "Finance", big: fmt.format(p.finance.monthly) + "/mo", sub: `${p.finance.term_months / 12} years at ${(p.finance.apr * 100).toFixed(1)}% APR`,
+      items: [`Total over 20y: ${fmt.format(p.finance.total_cost_20y)}`, `Net benefit over 20y: ${fmt.format(p.finance.net_benefit_20y)}`, "Own the system, pay monthly"] },
+  ];
+  const best = cards.reduce((a, b) => (p[a.key].net_benefit_20y >= p[b.key].net_benefit_20y ? a : b));
+  $("plans").innerHTML = cards.map((c) => `
+    <div class="plan" data-plan="${c.key}">
+      <h3>${c.title}${c.key === best.key ? '<span class="badge">BEST VALUE</span>' : ""}</h3>
+      <div class="big">${c.big}</div>
+      <div class="psub">${c.sub}</div>
+      <ul>${c.items.map((i) => `<li>${i}</li>`).join("")}</ul>
+    </div>`).join("");
+
+  document.querySelectorAll(".plan").forEach((el) => {
+    el.onclick = () => {
+      document.querySelectorAll(".plan").forEach((x) => x.classList.remove("selected"));
+      el.classList.add("selected");
+      S.plan = el.dataset.plan;
+      $("btnContinue").disabled = false;
+    };
+  });
+
+  const years = Array.from({ length: qt.savings.horizon_years }, (_, i) => "Y" + (i + 1));
+  new Chart($("chart"), {
+    type: "line",
+    data: {
+      labels: years,
+      datasets: [
+        { label: "Buy — cumulative position (€)", data: p.buy.cumulative, borderColor: "#05ade5", backgroundColor: "rgba(5,173,229,.07)", fill: true, tension: .3 },
+        { label: "Rent", data: p.rent.cumulative, borderColor: "#9aa39e", tension: .3 },
+        { label: "Finance", data: p.finance.cumulative, borderColor: "#0b0d0f", tension: .3 },
+      ],
+    },
+    options: {
+      plugins: { legend: { position: "bottom", labels: { font: { family: "'JetBrains Mono'", size: 10 } } } },
+      scales: { y: { ticks: { callback: (v) => fmt.format(v), font: { family: "'JetBrains Mono'", size: 10 } } },
+                x: { ticks: { font: { family: "'JetBrains Mono'", size: 10 } } } },
+    },
+  });
+
+  const a = qt.assumptions;
+  $("assumptions").textContent =
+    `Assumptions: electricity ${a.electricity_price_eur_kwh.toFixed(2)} €/kWh (+${(a.electricity_inflation * 100).toFixed(0)}%/yr), ` +
+    `injection ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, panel degradation ${(a.panel_degradation * 100).toFixed(1)}%/yr, ` +
+    `VAT ${(a.vat_rate * 100).toFixed(0)}%. Estimates are indicative and not a binding offer.`;
+}
+
+$("btnContinue").onclick = () => show("step-checkout");
+
+$("btnOrder").onclick = async () => {
+  const fields = { first_name: $("fname").value.trim(), last_name: $("lname").value.trim(), email: $("email").value.trim(), phone: $("phone").value.trim() };
+  if (!fields.first_name || !fields.last_name || !fields.email) return showError("checkoutError", "Please fill in your name and email.");
+  $("btnOrder").disabled = true;
+  try {
+    await api("POST", "contact", { project_id: S.projectId, lead_id: S.leadId, ...fields });
+    const order = await api("POST", "order", { quote_id: S.quoteId, lead_id: S.leadId, plan: S.plan });
+    if (order.signing_token) { /* TODO: launch Sumsub WebSDK with order.signing_token */ }
+    if (order.payment_url) { window.location.href = order.payment_url; return; }
+    show("step-done");
+  } catch (e) {
+    showError("checkoutError", e.message);
+    $("btnOrder").disabled = false;
+  }
+};
+
+function showError(id, msg) { const el = $(id); el.textContent = msg; el.classList.remove("hidden"); }
+</script>
+</body>
+</html>
