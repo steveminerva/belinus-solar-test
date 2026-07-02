@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Belinus Solar Calculator</title>
+<title>Belinus — My Energyscan</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -152,7 +152,7 @@
       <div class="co"><b>belinus energy B.V.</b><br>Silversquare · Frankrijklei 5<br>2000 Antwerpen · België</div>
     </div>
     <div class="right">
-      <div class="title" data-i18n="title">Solar Calculator</div>
+      <div class="title" data-i18n="title">My Energyscan</div>
       <div class="sub" data-i18n="subtitle">AI design · offerte · besparing</div>
       <div class="lang">
         <button id="langEn" class="on" onclick="setLang('en')">EN</button>
@@ -280,7 +280,7 @@ const API_BASE = "https://ywuuhcixtzutspcbxelr.supabase.co/functions/v1/solar";
 // ================= I18N =================
 const I18N = {
   en: {
-    title: "Solar Calculator", subtitle: "AI design · quote · savings",
+    title: "My Energyscan", subtitle: "AI design · quote · savings",
     h1: "Design your solar system",
     h1sub: "Get an instant AI-generated design, price and 30-year savings estimate for your home.",
     lStreet: "Street and number", lCity: "City", lPostal: "Postal code",
@@ -343,7 +343,7 @@ const I18N = {
       `injection ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, panel degradation ${(a.panel_degradation * 100).toFixed(1)}%/yr, VAT ${(a.vat_rate * 100).toFixed(0)}%. ` +
       `Battery sized automatically; saves ≥ €${a.battery_dynamic_eur_month_per_10kwh}/month per 10 kWh via dynamic tariffs & peak shaving. ` +
       (ev ? `EV: home charging vs public €${a.ev_public_price.toFixed(2)}/kWh` + (evCompany ? `; employer reimburses €${a.ev_company_reimbursement.toFixed(2)}/kWh. ` : `. `) : ``) +
-      `Estimates are indicative and not a binding offer.`,
+      `For homes with existing panels, only the added value of battery and charger is counted. Estimates are indicative and not a binding offer.`,
     btnContinue: "Continue with selected plan →",
     detailsLbl: "Your details",
     lFirst: "First name", lLast: "Last name", lEmail: "Email", lPhone: "Phone",
@@ -355,7 +355,7 @@ const I18N = {
     timeout: "Timed out waiting for the design service. Please try again.",
   },
   nl: {
-    title: "Zonnecalculator", subtitle: "AI ontwerp · offerte · besparing",
+    title: "Mijn Energiescan", subtitle: "AI ontwerp · offerte · besparing",
     h1: "Ontwerp jouw zonnesysteem",
     h1sub: "Ontvang meteen een AI-ontwerp, prijs en besparingsberekening over 30 jaar voor jouw woning.",
     lStreet: "Straat en nummer", lCity: "Gemeente", lPostal: "Postcode",
@@ -418,7 +418,7 @@ const I18N = {
       `injectie ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, paneeldegradatie ${(a.panel_degradation * 100).toFixed(1)}%/jaar, btw ${(a.vat_rate * 100).toFixed(0)}%. ` +
       `Batterij automatisch gedimensioneerd; bespaart ≥ €${a.battery_dynamic_eur_month_per_10kwh}/maand per 10 kWh via dynamische tarieven & peak shaving. ` +
       (ev ? `EV: thuisladen vs publiek €${a.ev_public_price.toFixed(2)}/kWh` + (evCompany ? `; werkgever vergoedt €${a.ev_company_reimbursement.toFixed(2)}/kWh. ` : `. `) : ``) +
-      `Bedragen zijn indicatief en vormen geen bindend aanbod.`,
+      `Bij bestaande zonnepanelen telt enkel de meerwaarde van batterij en laadpaal. Bedragen zijn indicatief en vormen geen bindend aanbod.`,
     btnContinue: "Ga verder met gekozen formule →",
     detailsLbl: "Jouw gegevens",
     lFirst: "Voornaam", lLast: "Naam", lEmail: "E-mail", lPhone: "Telefoon",
