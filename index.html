@@ -10,20 +10,14 @@
 <style>
   /* Belinus brand — matches offerte template QT2025-000183 */
   :root {
-    --cyan: #05ade5;
-    --black: #0b0d0f;
-    --ink: #212629;
-    --grey: #8c9499;
-    --light: #f2f4f5;
-    --rule: #e0e4e6;
-    --paper: #ffffff;
+    --cyan: #05ade5; --black: #0b0d0f; --ink: #212629; --grey: #8c9499;
+    --light: #f2f4f5; --rule: #e0e4e6; --paper: #ffffff;
   }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: Inter, Helvetica, Arial, sans-serif; background: var(--light); color: var(--ink); }
   .mono { font-family: 'JetBrains Mono', monospace; }
   .bel-widget { max-width: 1020px; margin: 0 auto; }
 
-  /* ---- brand header band ---- */
   .band {
     background: var(--black); color: #fff; padding: 34px 48px 30px;
     border-bottom: 2px solid var(--cyan);
@@ -36,6 +30,12 @@
   .band .right { text-align: right; }
   .band .right .title { font-size: 2.1rem; font-weight: 300; color: #fff; }
   .band .right .sub { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: #b8bfc4; margin-top: 6px; }
+  .lang { margin-top: 12px; }
+  .lang button {
+    background: none; border: 1px solid #3a4147; color: #b8bfc4; padding: 4px 12px;
+    font-family: 'JetBrains Mono', monospace; font-size: .66rem; font-weight: 700; cursor: pointer;
+  }
+  .lang button.on { border-color: var(--cyan); color: var(--cyan); }
 
   .inner { padding: 34px 48px 48px; background: var(--paper); }
   .tableWrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -48,7 +48,7 @@
     .calc { padding: 30px 20px; }
     h1 { font-size: 1.35rem; }
     iframe.cad { height: 320px; }
-    table.offerte { min-width: 560px; } /* scrolls horizontally inside .tableWrap */
+    table.offerte { min-width: 560px; }
     .totaal-band { padding: 12px 14px; }
     .totaal-band .v { font-size: 1.05rem; }
     .kpi b { font-size: 1.05rem; }
@@ -61,11 +61,9 @@
     font-family: 'JetBrains Mono', monospace; font-size: .68rem; font-weight: 700;
     letter-spacing: .22em; text-transform: uppercase; color: var(--cyan); margin: 34px 0 14px;
   }
-
   .steps { display: flex; gap: 6px; margin: 0 0 26px; }
   .steps div { flex: 1; height: 3px; background: var(--rule); }
   .steps div.done { background: var(--cyan); }
-
   .hidden { display: none !important; }
 
   label {
@@ -88,7 +86,6 @@
   button.primary:hover { background: #0895c6; }
   button.primary:disabled { opacity: .4; cursor: not-allowed; }
 
-  /* ---- calculation phase (dark, branded) ---- */
   .calc { background: var(--black); color: #fff; padding: 46px 48px; border-bottom: 2px solid var(--cyan); }
   .calc h2 { font-weight: 300; font-size: 1.6rem; margin: 0 0 6px; }
   .calc .csub { color: #9ea6ab; font-size: .9rem; margin-bottom: 34px; }
@@ -112,7 +109,6 @@
   .kpi b { display: block; font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; color: var(--ink); font-weight: 700; }
   .kpi span { font-family: 'JetBrains Mono', monospace; font-size: .56rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--grey); }
 
-  /* offerte table */
   table.offerte { width: 100%; border-collapse: collapse; }
   table.offerte th { font-family: 'JetBrains Mono', monospace; font-size: .6rem; letter-spacing: .18em; color: var(--grey);
                      text-align: right; padding: 8px 6px; border-bottom: 1px solid var(--rule); }
@@ -127,7 +123,6 @@
   .totaal-band .t { font-family: 'JetBrains Mono', monospace; font-size: .7rem; letter-spacing: .22em; }
   .totaal-band .v { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; }
   .deposit { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: .74rem; color: var(--grey); margin-top: 10px; }
-
   .pdfLink { display: inline-block; margin-top: 14px; color: var(--cyan); font-family: 'JetBrains Mono', monospace;
              font-size: .7rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
 
@@ -150,51 +145,72 @@
 <body>
 <div class="bel-widget">
 
-  <!-- brand header band -->
   <div class="band">
     <div>
       <img class="logo" src="belinus-logo.png" alt="belinus" onerror="this.outerHTML='<div class=wordmark>belinus<sup style=font-size:.5em>®</sup></div>'">
       <div class="co"><b>belinus energy B.V.</b><br>Silversquare · Frankrijklei 5<br>2000 Antwerpen · België</div>
     </div>
     <div class="right">
-      <div class="title">Solar Calculator</div>
-      <div class="sub">AI design · offerte · besparing</div>
+      <div class="title" data-i18n="title">Solar Calculator</div>
+      <div class="sub" data-i18n="subtitle">AI design · offerte · besparing</div>
+      <div class="lang">
+        <button id="langEn" class="on" onclick="setLang('en')">EN</button>
+        <button id="langNl" onclick="setLang('nl')">NL</button>
+      </div>
     </div>
   </div>
 
   <div class="inner">
     <div class="steps"><div id="s1" class="done"></div><div id="s2"></div><div id="s3"></div><div id="s4"></div></div>
 
-    <!-- STEP 1: address + energy -->
+    <!-- STEP 1 -->
     <div id="step-input">
-      <h1>Design your solar system</h1>
-      <p class="sub">Get an instant AI-generated design, price and 20-year savings estimate for your home.</p>
-      <label>Street and number</label>
+      <h1 data-i18n="h1"></h1>
+      <p class="sub" data-i18n="h1sub"></p>
+      <label data-i18n="lStreet"></label>
       <input id="street" placeholder="Frankrijklei 5">
       <div class="row">
-        <div><label>City</label><input id="city" placeholder="Antwerpen"></div>
-        <div><label>Postal code</label><input id="postal" placeholder="2000"></div>
+        <div><label data-i18n="lCity"></label><input id="city" placeholder="Antwerpen"></div>
+        <div><label data-i18n="lPostal"></label><input id="postal" placeholder="2000"></div>
       </div>
       <div class="row">
-        <div><label>Annual electricity use (kWh)</label><input id="annualKwh" type="number" value="3500" min="500" max="50000"></div>
-        <div><label>Home battery</label><select id="battery"></select></div>
+        <div><label data-i18n="lHasPanels"></label>
+          <select id="hasPanels"><option value="0" data-i18n="oHasPanelsNo"></option><option value="1" data-i18n="oHasPanelsYes"></option></select></div>
+        <div id="existingWpWrap" class="hidden"><label data-i18n="lExistingWp"></label><input id="existingWp" type="number" value="4000" min="500" max="20000"></div>
       </div>
-      <div class="note">Not sure? An average Belgian household uses ± 3,500 kWh/year. Check your latest energy bill for your exact figure.</div>
-      <button class="primary" id="btnStart">Design my system →</button>
+      <div class="row">
+        <div><label data-i18n="lPhase"></label>
+          <select id="phase"><option value="single" data-i18n="oPhase1"></option><option value="three" data-i18n="oPhase3"></option></select></div>
+        <div></div>
+      </div>
+      <div class="row">
+        <div><label data-i18n="lAnnual"></label><input id="annualKwh" type="number" value="3500" min="500" max="50000"></div>
+        <div><label data-i18n="lEvHave"></label><select id="evHave"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
+      </div>
+      <div class="row" id="evWantWrap">
+        <div><label data-i18n="lEvWant"></label><select id="evWant"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oEvWantYes"></option></select></div>
+        <div></div>
+      </div>
+      <div class="row hidden" id="evDetails">
+        <div><label data-i18n="lEvKwh"></label><input id="evKwh" type="number" value="2500" min="0" max="20000"></div>
+        <div><label data-i18n="lEvCompany"></label><select id="evCompany"><option value="0" data-i18n="oEvPrivate"></option><option value="1" data-i18n="oEvCompany"></option></select></div>
+      </div>
+      <div class="note" data-i18n="inputNote"></div>
+      <button class="primary" id="btnStart"></button>
       <div id="inputError" class="error hidden"></div>
     </div>
   </div>
 
-  <!-- STEP 2: calculation phase (dark) -->
+  <!-- STEP 2: calculation (dark) -->
   <div class="calc hidden" id="step-progress">
-    <h2>Designing your installation…</h2>
-    <div class="csub">Our AI is analysing satellite and LIDAR imagery of your roof and designing your installation. This can take a few minutes — please keep this page open.</div>
-    <div class="stage" data-stage="0"><span class="dot"></span> Locating your home &amp; fetching imagery</div>
-    <div class="stage" data-stage="1"><span class="dot"></span> Analysing your roof in 3D (AI Roof)</div>
-    <div class="stage" data-stage="2"><span class="dot"></span> Placing solar panels (AutoDesigner)</div>
-    <div class="stage" data-stage="3"><span class="dot"></span> Simulating energy production</div>
+    <h2 data-i18n="calcTitle"></h2>
+    <div class="csub" data-i18n="calcSub"></div>
+    <div class="stage" data-stage="0"><span class="dot"></span>&nbsp;<span data-i18n="stage0"></span></div>
+    <div class="stage" data-stage="1"><span class="dot"></span>&nbsp;<span data-i18n="stage1"></span></div>
+    <div class="stage" data-stage="2"><span class="dot"></span>&nbsp;<span data-i18n="stage2"></span></div>
+    <div class="stage" data-stage="3"><span class="dot"></span>&nbsp;<span data-i18n="stage3"></span></div>
     <div class="fact">
-      <div class="fl mono">D I D &nbsp;Y O U &nbsp;K N O W ?</div>
+      <div class="fl mono" data-i18n="factLbl"></div>
       <div class="ft" id="factText"></div>
     </div>
     <div id="progressError" class="error hidden"></div>
@@ -202,45 +218,46 @@
 
   <!-- STEP 3: result -->
   <div class="inner hidden" id="step-result">
-    <h2 class="lbl">Your solar design</h2>
+    <h2 class="lbl" id="designLbl" data-i18n="designLbl"></h2>
     <iframe class="cad" id="cadFrame" title="3D solar design"></iframe>
+    <div class="note hidden" id="capNote"></div>
     <div class="kpis">
-      <div class="kpi"><b id="kSize">–</b><span>System size (kWp)</span></div>
-      <div class="kpi"><b id="kPanels">–</b><span>Solar panels</span></div>
-      <div class="kpi"><b id="kProd">–</b><span>kWh / year</span></div>
-      <div class="kpi"><b id="kBattery">–</b><span>Battery</span></div>
-      <div class="kpi"><b id="kPrice">–</b><span>Total price incl. VAT</span></div>
-      <div class="kpi"><b id="kSave">–</b><span>Savings over 20 years</span></div>
+      <div class="kpi"><b id="kSize">–</b><span data-i18n="kSize"></span></div>
+      <div class="kpi"><b id="kPanels">–</b><span data-i18n="kPanels"></span></div>
+      <div class="kpi"><b id="kProd">–</b><span data-i18n="kProd"></span></div>
+      <div class="kpi"><b id="kBattery">–</b><span data-i18n="kBattery"></span></div>
+      <div class="kpi"><b id="kPrice">–</b><span data-i18n="kPrice"></span></div>
+      <div class="kpi"><b id="kSave">–</b><span data-i18n="kSave"></span></div>
     </div>
 
-    <h2 class="lbl">Offerte <span class="mono" id="quoteNumber" style="color:var(--grey);letter-spacing:.1em"></span></h2>
+    <h2 class="lbl"><span data-i18n="offerteLbl"></span> <span class="mono" id="quoteNumber" style="color:var(--grey);letter-spacing:.1em"></span></h2>
     <div class="tableWrap"><table class="offerte" id="offerteTable"></table></div>
     <div class="totaal-band"><span class="t">T O T A A L</span><span class="v" id="totV"></span></div>
     <div class="deposit" id="depositLine"></div>
-    <div style="text-align:right"><a id="pdfLink" class="pdfLink" href="#" target="_blank">⬇ Download offerte (PDF)</a></div>
+    <div style="text-align:right"><a id="pdfLink" class="pdfLink" href="#" target="_blank" data-i18n="pdfLink"></a></div>
 
-    <h2 class="lbl">Choose how you want to go solar</h2>
+    <h2 class="lbl" data-i18n="plansLbl"></h2>
     <div class="plans" id="plans"></div>
 
-    <h2 class="lbl">Your savings over 20 years</h2>
+    <h2 class="lbl" data-i18n="chartLbl"></h2>
     <canvas id="chart" height="120"></canvas>
     <div class="note" id="assumptions"></div>
-    <button class="primary" id="btnContinue" disabled>Continue with selected plan →</button>
+    <button class="primary" id="btnContinue" disabled data-i18n="btnContinue"></button>
   </div>
 
   <!-- STEP 4: checkout -->
   <div class="inner hidden" id="step-checkout">
-    <h2 class="lbl">Your details</h2>
+    <h2 class="lbl" data-i18n="detailsLbl"></h2>
     <div class="row">
-      <div><label>First name</label><input id="fname"></div>
-      <div><label>Last name</label><input id="lname"></div>
+      <div><label data-i18n="lFirst"></label><input id="fname"></div>
+      <div><label data-i18n="lLast"></label><input id="lname"></div>
     </div>
     <div class="row">
-      <div><label>Email</label><input id="email" type="email"></div>
-      <div><label>Phone</label><input id="phone" type="tel"></div>
+      <div><label data-i18n="lEmail"></label><input id="email" type="email"></div>
+      <div><label data-i18n="lPhone"></label><input id="phone" type="tel"></div>
     </div>
-    <button class="primary" id="btnOrder">Sign &amp; pay securely →</button>
-    <div class="note">Next you will verify your identity and sign digitally (Sumsub), then pay the 30% deposit via Bancontact, iDEAL or card (Mollie).</div>
+    <button class="primary" id="btnOrder" data-i18n="btnOrder"></button>
+    <div class="note" data-i18n="checkoutNote"></div>
     <div id="checkoutError" class="error hidden"></div>
   </div>
 
@@ -248,8 +265,8 @@
   <div class="inner hidden" id="step-done">
     <div class="success">
       <div class="check">✓</div>
-      <h1>Order received!</h1>
-      <p class="sub" id="doneMsg">We've registered your order. In the live version you would now be redirected to identity verification &amp; digital signing, followed by online payment of the deposit.</p>
+      <h1 data-i18n="doneTitle"></h1>
+      <p class="sub" data-i18n="doneMsg"></p>
     </div>
   </div>
 </div>
@@ -259,20 +276,180 @@
 const API_BASE = "https://ywuuhcixtzutspcbxelr.supabase.co/functions/v1/solar";
 // ==========================================
 
-const S = { projectId: null, designId: null, leadId: null, quote: null, quoteId: null, plan: null };
+// ================= I18N =================
+const I18N = {
+  en: {
+    title: "Solar Calculator", subtitle: "AI design · quote · savings",
+    h1: "Design your solar system",
+    h1sub: "Get an instant AI-generated design, price and 30-year savings estimate for your home.",
+    lStreet: "Street and number", lCity: "City", lPostal: "Postal code",
+    lHasPanels: "Do you already have solar panels?",
+    oHasPanelsNo: "No — I want a quote for panels", oHasPanelsYes: "Yes — I already have panels",
+    lExistingWp: "Total power of your panels (Wp)",
+    lPhase: "Electricity meter",
+    oPhase1: "Single phase (max 5.000 Wp)", oPhase3: "Three phase (max 10.000 Wp)",
+    lAnnual: "Annual electricity use (kWh)",
+    lEvHave: "Do you already have an EV charger?", oNo: "No", oYes: "Yes",
+    lEvWant: "Interested in an EV charger?", oEvWantYes: "Yes — add an EV charger",
+    lEvKwh: "EV home charging (kWh / year)",
+    lEvCompany: "Company car?", oEvPrivate: "No — private car", oEvCompany: "Yes — employer pays €0,30/kWh",
+    inputNote: "Not sure? An average Belgian household uses ± 3,500 kWh/year; an EV adds ± 2,500 kWh (15.000 km). The ideal home battery size is calculated automatically from your meter type, consumption, solar production and EV usage.",
+    btnStart: "Design my system →", btnStartExisting: "Get my battery & EV quote →",
+    errAddress: "Please fill in your full address.",
+    errKwh: "Please enter a valid annual consumption.",
+    errWp: "Please enter the total Wp of your existing panels.",
+    calcTitle: "Designing your installation…",
+    calcSub: "Our AI is analysing satellite and LIDAR imagery of your roof and designing your installation. This can take a few minutes — please keep this page open.",
+    stage0: "Locating your home & fetching imagery", stage1: "Analysing your roof in 3D (AI Roof)",
+    stage2: "Placing solar panels (AutoDesigner)", stage3: "Simulating energy production",
+    factLbl: "D I D  Y O U  K N O W ?",
+    facts: [
+      "Belinus panels carry a 35-year product, performance and labour warranty — among the longest in the industry.",
+      "A home battery lifts your self-consumption of solar power from roughly 35% to 70%.",
+      "A home battery saves at least €50 per month per 10 kWh through dynamic tariffs and peak shaving.",
+      "Public EV charging costs about €0,50/kWh — charging at home from your own solar is nearly free.",
+      "Company car? Employers reimburse €0,30/kWh for home charge sessions in Belgium.",
+      "Our AI analyses LIDAR height data of your roof to place every panel for maximum yield.",
+      "More than 30,000 customers already switched to clean energy with Belinus.",
+    ],
+    designFailed: " — This roof may be too small or complex for an automatic design. Leave your details and we'll design it manually.",
+    designLbl: "Your solar design",
+    capNote: (kwp, cap) => `Note: the automatic design (${kwp} kWp) exceeds the maximum for your meter type (${cap} kWp). The final design will be adjusted during technical inspection.`,
+    kSize: "System size (kWp)", kPanels: "Solar panels", kProd: "kWh / year",
+    kBattery: "Battery (auto-sized)", kPrice: "Total price incl. VAT", kSave: "Savings over 30 years",
+    existing: " (existing)", none: "None",
+    offerteLbl: "Quote", pdfLink: "⬇ Download quote (PDF)",
+    exclVat: "Excl. VAT", vatOn: (r, b) => `VAT ${r}% on ${b}`,
+    depositLine: (d) => `Deposit on order (30%): € ${d}`,
+    plansLbl: "Choose how you want to go solar",
+    planBuy: "Buy", planRent: "Rent", planFinance: "Finance",
+    buySub: "one-time", oneTime: "one-time",
+    rentSub: "20 years, maintenance included",
+    financeSub: (t, apr) => `${t} at ${apr}% APR (legal max duration)`,
+    years: "years", months: "months", perMonth: "/mo",
+    payback: (y) => `Payback in ± ${y} years`,
+    netBenefit: (v) => `Net benefit over 30y: ${v}`,
+    buyOwn: "You own the system from day 1",
+    rentBuyOption: "Buy option at end of contract — system runs 10 more years",
+    rentNoUpfront: "No upfront investment",
+    financeTotal: (v) => `Total repaid: ${v}`,
+    financeOwn: "Own the system, pay monthly",
+    badge: "BEST VALUE",
+    chartLbl: "Your savings over 30 years",
+    chartBuy: "Buy — cumulative position (€)", chartRent: "Rent", chartFinance: "Finance",
+    assumptions: (a, ev, evCompany) =>
+      `Assumptions (${a.horizon_years}-year horizon): electricity ${a.electricity_price_eur_kwh.toFixed(2)} €/kWh (+${(a.electricity_inflation * 100).toFixed(0)}%/yr), ` +
+      `injection ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, panel degradation ${(a.panel_degradation * 100).toFixed(1)}%/yr, VAT ${(a.vat_rate * 100).toFixed(0)}%. ` +
+      `Battery sized automatically; saves ≥ €${a.battery_dynamic_eur_month_per_10kwh}/month per 10 kWh via dynamic tariffs & peak shaving. ` +
+      (ev ? `EV: home charging vs public €${a.ev_public_price.toFixed(2)}/kWh` + (evCompany ? `; employer reimburses €${a.ev_company_reimbursement.toFixed(2)}/kWh. ` : `. `) : ``) +
+      `Estimates are indicative and not a binding offer.`,
+    btnContinue: "Continue with selected plan →",
+    detailsLbl: "Your details",
+    lFirst: "First name", lLast: "Last name", lEmail: "Email", lPhone: "Phone",
+    btnOrder: "Sign & pay securely →",
+    checkoutNote: "Next you will verify your identity and sign digitally (Sumsub), then pay the 30% deposit via Bancontact, iDEAL or card (Mollie).",
+    errContact: "Please fill in your name and email.",
+    doneTitle: "Order received!",
+    doneMsg: "We've registered your order. In the live version you would now be redirected to identity verification & digital signing, followed by online payment of the deposit.",
+    timeout: "Timed out waiting for the design service. Please try again.",
+  },
+  nl: {
+    title: "Zonnecalculator", subtitle: "AI ontwerp · offerte · besparing",
+    h1: "Ontwerp jouw zonnesysteem",
+    h1sub: "Ontvang meteen een AI-ontwerp, prijs en besparingsberekening over 30 jaar voor jouw woning.",
+    lStreet: "Straat en nummer", lCity: "Gemeente", lPostal: "Postcode",
+    lHasPanels: "Heb je al zonnepanelen?",
+    oHasPanelsNo: "Nee — ik wil een offerte voor panelen", oHasPanelsYes: "Ja — ik heb al panelen",
+    lExistingWp: "Totaal vermogen van je panelen (Wp)",
+    lPhase: "Elektriciteitsmeter",
+    oPhase1: "Monofase (max 5.000 Wp)", oPhase3: "Driefase (max 10.000 Wp)",
+    lAnnual: "Jaarlijks elektriciteitsverbruik (kWh)",
+    lEvHave: "Heb je al een EV-laadpaal?", oNo: "Nee", oYes: "Ja",
+    lEvWant: "Interesse in een EV-laadpaal?", oEvWantYes: "Ja — voeg een laadpaal toe",
+    lEvKwh: "EV thuisladen (kWh / jaar)",
+    lEvCompany: "Bedrijfswagen?", oEvPrivate: "Nee — privéwagen", oEvCompany: "Ja — werkgever betaalt €0,30/kWh",
+    inputNote: "Niet zeker? Een gemiddeld Belgisch gezin verbruikt ± 3.500 kWh/jaar; een EV voegt ± 2.500 kWh toe (15.000 km). De ideale thuisbatterij wordt automatisch berekend op basis van je metertype, verbruik, zonneproductie en EV-gebruik.",
+    btnStart: "Ontwerp mijn systeem →", btnStartExisting: "Ontvang mijn batterij & EV offerte →",
+    errAddress: "Vul je volledige adres in.",
+    errKwh: "Vul een geldig jaarverbruik in.",
+    errWp: "Vul het totale Wp-vermogen van je bestaande panelen in.",
+    calcTitle: "Jouw installatie wordt ontworpen…",
+    calcSub: "Onze AI analyseert satelliet- en LIDAR-beelden van je dak en ontwerpt je installatie. Dit kan enkele minuten duren — hou deze pagina open.",
+    stage0: "Je woning lokaliseren & beelden ophalen", stage1: "Je dak analyseren in 3D (AI Roof)",
+    stage2: "Zonnepanelen plaatsen (AutoDesigner)", stage3: "Energieproductie simuleren",
+    factLbl: "W I S T  J E  D A T ?",
+    facts: [
+      "Belinus panelen hebben 35 jaar product-, vermogens- én installatiegarantie — bij de langste in de sector.",
+      "Een thuisbatterij verhoogt je zelfverbruik van zonnestroom van ±35% naar ±70%.",
+      "Een thuisbatterij bespaart minstens €50 per maand per 10 kWh via dynamische tarieven en peak shaving.",
+      "Publiek laden kost ±€0,50/kWh — thuis laden met je eigen zonnestroom is bijna gratis.",
+      "Bedrijfswagen? Werkgevers vergoeden €0,30/kWh voor laadsessies thuis in België.",
+      "Onze AI analyseert LIDAR-hoogtedata van je dak en plaatst elk paneel voor maximale opbrengst.",
+      "Meer dan 30.000 klanten gingen je voor bij Belinus.",
+    ],
+    designFailed: " — Dit dak is mogelijk te klein of complex voor een automatisch ontwerp. Laat je gegevens achter en wij ontwerpen het handmatig.",
+    designLbl: "Jouw zonne-ontwerp",
+    capNote: (kwp, cap) => `Let op: het automatische ontwerp (${kwp} kWp) overschrijdt het maximum voor jouw metertype (${cap} kWp). Het definitieve ontwerp wordt aangepast bij de technische inspectie.`,
+    kSize: "Systeemgrootte (kWp)", kPanels: "Zonnepanelen", kProd: "kWh / jaar",
+    kBattery: "Batterij (auto)", kPrice: "Totaalprijs incl. btw", kSave: "Besparing over 30 jaar",
+    existing: " (bestaand)", none: "Geen",
+    offerteLbl: "Offerte", pdfLink: "⬇ Download offerte (PDF)",
+    exclVat: "Excl. btw", vatOn: (r, b) => `BTW ${r}% op ${b}`,
+    depositLine: (d) => `Voorschot bij bestelling (30%): € ${d}`,
+    plansLbl: "Kies hoe je zonne-energie wil",
+    planBuy: "Kopen", planRent: "Huren", planFinance: "Financieren",
+    buySub: "eenmalig", oneTime: "eenmalig",
+    rentSub: "20 jaar, onderhoud inbegrepen",
+    financeSub: (t, apr) => `${t} aan ${apr}% JKP (wettelijk maximum)`,
+    years: "jaar", months: "maanden", perMonth: "/mnd",
+    payback: (y) => `Terugverdiend in ± ${y} jaar`,
+    netBenefit: (v) => `Netto voordeel over 30 jaar: ${v}`,
+    buyOwn: "Het systeem is vanaf dag 1 van jou",
+    rentBuyOption: "Koopoptie op einde contract — systeem werkt nog 10 jaar langer",
+    rentNoUpfront: "Geen investering vooraf",
+    financeTotal: (v) => `Totaal terugbetaald: ${v}`,
+    financeOwn: "Eigenaar van het systeem, maandelijks betalen",
+    badge: "BESTE KEUZE",
+    chartLbl: "Jouw besparing over 30 jaar",
+    chartBuy: "Kopen — cumulatieve positie (€)", chartRent: "Huren", chartFinance: "Financieren",
+    assumptions: (a, ev, evCompany) =>
+      `Aannames (horizon ${a.horizon_years} jaar): elektriciteit ${a.electricity_price_eur_kwh.toFixed(2)} €/kWh (+${(a.electricity_inflation * 100).toFixed(0)}%/jaar), ` +
+      `injectie ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, paneeldegradatie ${(a.panel_degradation * 100).toFixed(1)}%/jaar, btw ${(a.vat_rate * 100).toFixed(0)}%. ` +
+      `Batterij automatisch gedimensioneerd; bespaart ≥ €${a.battery_dynamic_eur_month_per_10kwh}/maand per 10 kWh via dynamische tarieven & peak shaving. ` +
+      (ev ? `EV: thuisladen vs publiek €${a.ev_public_price.toFixed(2)}/kWh` + (evCompany ? `; werkgever vergoedt €${a.ev_company_reimbursement.toFixed(2)}/kWh. ` : `. `) : ``) +
+      `Bedragen zijn indicatief en vormen geen bindend aanbod.`,
+    btnContinue: "Ga verder met gekozen formule →",
+    detailsLbl: "Jouw gegevens",
+    lFirst: "Voornaam", lLast: "Naam", lEmail: "E-mail", lPhone: "Telefoon",
+    btnOrder: "Onderteken & betaal veilig →",
+    checkoutNote: "Hierna verifieer je je identiteit en onderteken je digitaal (Sumsub), waarna je het voorschot van 30% betaalt via Bancontact, iDEAL of kaart (Mollie).",
+    errContact: "Vul je naam en e-mailadres in.",
+    doneTitle: "Bestelling ontvangen!",
+    doneMsg: "We hebben je bestelling geregistreerd. In de live versie word je nu doorgestuurd naar identiteitsverificatie & digitale ondertekening, gevolgd door de online betaling van het voorschot.",
+    timeout: "Time-out bij het ontwerpen. Probeer het opnieuw.",
+  },
+};
+let LANG = "en";
+const t = (k) => I18N[LANG][k];
+
+function applyLang() {
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const v = I18N[LANG][el.dataset.i18n];
+    if (typeof v === "string") el.textContent = v;
+  });
+  document.documentElement.lang = LANG;
+  $("langEn").classList.toggle("on", LANG === "en");
+  $("langNl").classList.toggle("on", LANG === "nl");
+  const has = $("hasPanels").value === "1";
+  $("btnStart").textContent = has ? t("btnStartExisting") : t("btnStart");
+  if (S.quote) renderQuote(S.quote);
+}
+function setLang(l) { LANG = l; applyLang(); }
+
+const S = { projectId: null, designId: null, leadId: null, quote: null, quoteId: null, plan: null, capWp: null };
 const fmt = new Intl.NumberFormat("nl-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
 const fmt2 = new Intl.NumberFormat("nl-BE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const $ = (id) => document.getElementById(id);
-
-const FACTS = [
-  "Belinus panels carry a 35-year product, performance and labour warranty — among the longest in the industry.",
-  "A home battery can lift your self-consumption of solar power from roughly 35% to 70%.",
-  "The Energywall N1 uses sodium-ion cells — no lithium, made in Belgium, and works from -30°C to +55°C.",
-  "Solar panels still generate 90%+ of their rated output after 20 years of use.",
-  "Our AI analyses LIDAR height data of your roof to place every panel for maximum yield.",
-  "More than 30,000 customers already switched to clean energy with Belinus.",
-  "Electricity prices in Belgium have risen on average ~3% per year — solar locks in your energy cost.",
-];
 
 async function api(method, route, body) {
   const opts = { method, headers: { "Content-Type": "application/json" } };
@@ -292,7 +469,7 @@ async function poll(route, isDone, { interval = 3000, timeout = 300000 } = {}) {
     if (isDone(r)) return r;
     await sleep(interval);
   }
-  throw new Error("Timed out waiting for the design service. Please try again.");
+  throw new Error(t("timeout"));
 }
 
 const STEPS = ["step-input", "step-progress", "step-result", "step-checkout", "step-done"];
@@ -301,7 +478,6 @@ function show(stepId) {
     $(s).classList.toggle("hidden", s !== stepId);
     $("s" + Math.min(i + 1, 4))?.classList.toggle("done", STEPS.indexOf(stepId) >= i);
   });
-  // step-input lives inside the first .inner; hide its siblings correctly
   $("step-input").parentElement.classList.toggle("hidden", stepId !== "step-input");
 }
 
@@ -316,36 +492,75 @@ function setStage(n, state) {
 
 let factTimer = null;
 function startFacts() {
-  let i = Math.floor(Math.random() * FACTS.length);
+  let i = Math.floor(Math.random() * I18N[LANG].facts.length);
   const el = $("factText");
   const next = () => {
     el.style.opacity = 0;
-    setTimeout(() => { el.textContent = FACTS[i % FACTS.length]; el.style.opacity = 1; i++; }, 400);
+    setTimeout(() => { el.textContent = I18N[LANG].facts[i % I18N[LANG].facts.length]; el.style.opacity = 1; i++; }, 400);
   };
   next();
   factTimer = setInterval(next, 9000);
 }
 function stopFacts() { clearInterval(factTimer); }
 
-// -------- battery options --------
-(async () => {
-  try {
-    const r = await api("GET", "pricing-options");
-    $("battery").innerHTML = r.battery_options
-      .map((b) => {
-        const incl = b.price_excl_vat * (1 + r.vat_rate) + b.bebat;
-        return `<option value="${b.modules}">${b.label}${incl ? " (+" + fmt.format(incl) + ")" : ""}</option>`;
-      }).join("");
-  } catch { $("battery").innerHTML = `<option value="0">No battery</option><option value="3">Energywall HV 10.7 kWh</option><option value="5">Energywall HV 17.8 kWh</option>`; }
-})();
+function syncEvFields() {
+  const have = $("evHave").value === "1";
+  const want = $("evWant").value === "1";
+  $("evWantWrap").classList.toggle("hidden", have);
+  $("evDetails").classList.toggle("hidden", !(have || want));
+}
+$("evHave").onchange = syncEvFields;
+$("evWant").onchange = syncEvFields;
+$("hasPanels").onchange = () => {
+  const has = $("hasPanels").value === "1";
+  $("existingWpWrap").classList.toggle("hidden", !has);
+  $("btnStart").textContent = has ? t("btnStartExisting") : t("btnStart");
+};
 
 // -------- main flow --------
 $("btnStart").onclick = async () => {
   const street = $("street").value.trim(), city = $("city").value.trim(), postal = $("postal").value.trim();
   const annualKwh = +$("annualKwh").value;
-  if (!street || !city || !postal) return showError("inputError", "Please fill in your full address.");
-  if (!annualKwh || annualKwh < 500) return showError("inputError", "Please enter a valid annual consumption.");
+  if (!street || !city || !postal) return showError("inputError", t("errAddress"));
+  if (!annualKwh || annualKwh < 500) return showError("inputError", t("errKwh"));
   $("inputError").classList.add("hidden");
+
+  const evHave = $("evHave").value === "1";
+  const evWant = !evHave && $("evWant").value === "1";
+  const evActive = evHave || evWant;
+  const evKwh = evActive ? (+$("evKwh").value || 2500) : 0;
+  const hasPanels = $("hasPanels").value === "1";
+  const phase = $("phase").value;
+
+  const evBody = {
+    phase,
+    ev_present: evHave, ev_add_charger: evWant,
+    ev_annual_kwh: evKwh, ev_company: evActive && $("evCompany").value === "1",
+  };
+
+  // ---- Branch B: customer already has panels → battery/EV quote, no design ----
+  if (hasPanels) {
+    const existingWp = +$("existingWp").value || 0;
+    if (existingWp < 500) return showError("inputError", t("errWp"));
+    $("btnStart").disabled = true;
+    try {
+      const lead = await api("POST", "lead", { address: `${street}, ${city}, ${postal}` });
+      S.leadId = lead.lead_id; S.designId = null;
+      const quote = await api("POST", "quote", {
+        lead_id: S.leadId, existing_panels: true, existing_wp: existingWp,
+        annual_consumption_kwh: annualKwh, ...evBody,
+      });
+      S.quote = quote; S.quoteId = quote.quote_id;
+      renderQuote(quote);
+      show("step-result");
+    } catch (e) {
+      showError("inputError", e.message);
+      $("btnStart").disabled = false;
+    }
+    return;
+  }
+
+  // ---- Branch A: new panel design via Aurora ----
   $("btnStart").disabled = true;
   show("step-progress");
   startFacts();
@@ -355,7 +570,11 @@ $("btnStart").onclick = async () => {
     const start = await api("POST", "start", { street, city, postal_code: postal });
     Object.assign(S, { projectId: start.project_id, designId: start.design_id, leadId: start.lead_id });
 
-    const consumptionP = api("PUT", "consumption", { project_id: S.projectId, annual_kwh: annualKwh });
+    const totalKwh = annualKwh + evKwh;
+    const capWp = phase === "single" ? 5000 : 10000;
+    const targetKwh = Math.min(totalKwh, Math.round((capWp / 1000) * 950));
+    S.capWp = capWp;
+    const consumptionP = api("PUT", "consumption", { project_id: S.projectId, annual_kwh: totalKwh });
 
     await poll(`design-status?design_id=${S.designId}`, (r) => r.ready);
     setStage(0, "done");
@@ -363,14 +582,12 @@ $("btnStart").onclick = async () => {
     setStage(1, "active");
     const roof = await api("POST", "ai-roof/run", { design_id: S.designId });
     await poll(`ai-roof/status?design_id=${S.designId}&job_id=${roof.job_id}`, (r) => {
-      if (r.status === "failed") throw new Error(r.error || "Roof analysis failed for this address.");
+      if (r.status === "failed") throw new Error(r.error || "AI Roof failed");
       return r.status === "succeeded";
     });
     await consumptionP;
     setStage(1, "done");
 
-    // AutoDesigner — attempt 1: energy mode with full components (production).
-    // Attempt 2: max_fit with panels only (works everywhere, incl. sandbox).
     setStage(2, "active");
     const attempts = [
       { mode: "energy", panels_only: false },
@@ -379,17 +596,16 @@ $("btnStart").onclick = async () => {
     for (let i = 0; i < attempts.length; i++) {
       const a = attempts[i];
       const ad = await api("POST", "autodesigner/run", {
-        design_id: S.designId, target_kwh: annualKwh, mode: a.mode, panels_only: a.panels_only,
+        design_id: S.designId, target_kwh: targetKwh, mode: a.mode, panels_only: a.panels_only,
       });
       try {
         await poll(`autodesigner/status?design_id=${S.designId}&job_id=${ad.job_id}`, (r) => {
-          if (r.status === "failed") throw new Error(r.error || "Automatic panel placement failed.");
+          if (r.status === "failed") throw new Error(r.error || "AutoDesigner failed");
           return r.status === "succeeded";
-        }, { timeout: 600000 }); // max_fit can take 5+ minutes
+        }, { timeout: 600000 });
         break;
       } catch (e) {
-        if (i === attempts.length - 1) throw new Error((e.message || "Automatic panel placement failed.") +
-          " — This roof may be too small or complex for an automatic design. Leave your details and we'll design it manually.");
+        if (i === attempts.length - 1) throw new Error((e.message || "") + t("designFailed"));
       }
     }
     setStage(2, "done");
@@ -401,14 +617,14 @@ $("btnStart").onclick = async () => {
     ]);
     $("cadFrame").src = cad.url;
     await poll(`simulation/status?design_id=${S.designId}&job_id=${sim.job_id}`, (r) => {
-      if (r.status === "failed") throw new Error(r.error || "Energy simulation failed.");
+      if (r.status === "failed") throw new Error(r.error || "Simulation failed");
       return r.status === "succeeded";
     });
     setStage(3, "done");
 
     const quote = await api("POST", "quote", {
       design_id: S.designId, lead_id: S.leadId,
-      annual_consumption_kwh: annualKwh, battery_modules: +$("battery").value,
+      annual_consumption_kwh: annualKwh, ...evBody,
     });
     S.quote = quote; S.quoteId = quote.quote_id;
     stopFacts();
@@ -421,13 +637,26 @@ $("btnStart").onclick = async () => {
   }
 };
 
+let chartInstance = null;
+
 function renderQuote(qt) {
-  $("kSize").textContent = qt.system.kwp.toFixed(2);
+  const noDesign = qt.system.existing_panels;
+  $("designLbl").classList.toggle("hidden", noDesign);
+  $("cadFrame").classList.toggle("hidden", noDesign);
+
+  if (!noDesign && S.capWp && qt.system.kwp * 1000 > S.capWp + 200) {
+    $("capNote").textContent = I18N[LANG].capNote(qt.system.kwp.toFixed(2), (S.capWp / 1000).toFixed(1));
+    $("capNote").classList.remove("hidden");
+  } else {
+    $("capNote").classList.add("hidden");
+  }
+
+  $("kSize").textContent = qt.system.kwp.toFixed(2) + (noDesign ? t("existing") : "");
   $("kPanels").textContent = qt.system.panel_count ?? "—";
   $("kProd").textContent = qt.system.annual_production_kwh.toLocaleString("nl-BE");
-  $("kBattery").textContent = qt.system.battery.kwh ? qt.system.battery.kwh + " kWh" : "None";
+  $("kBattery").textContent = qt.system.battery.kwh ? qt.system.battery.kwh + " kWh" : t("none");
   $("kPrice").textContent = fmt.format(qt.price.total_incl_vat);
-  $("kSave").textContent = fmt.format(qt.savings.total_20y);
+  $("kSave").textContent = fmt.format(qt.savings.total_30y);
 
   $("quoteNumber").textContent = qt.quote_number ?? "";
   $("pdfLink").href = `${API_BASE}/quote-pdf?quote_id=${qt.quote_id}`;
@@ -438,27 +667,30 @@ function renderQuote(qt) {
       `<td class="r">${fmt2.format(it.quantity)}</td><td class="r">${fmt2.format(it.unit_price)}</td>` +
       `<td class="r">${(it.vat_rate * 100).toFixed(0)}%</td><td class="r"><b>${fmt2.format(it.amount)}</b></td></tr>`;
   });
-  html += `<tr><td colspan="5" class="tot-l">Excl. btw</td><td class="r">${fmt2.format(qt.price.subtotal_excl_vat)}</td></tr>`;
+  html += `<tr><td colspan="5" class="tot-l">${t("exclVat")}</td><td class="r">${fmt2.format(qt.price.subtotal_excl_vat)}</td></tr>`;
   for (const [rate, g] of Object.entries(qt.price.vat_groups)) {
-    html += `<tr><td colspan="5" class="tot-l">BTW ${rate}% op ${fmt2.format(g.base)}</td><td class="r">${fmt2.format(g.vat)}</td></tr>`;
+    html += `<tr><td colspan="5" class="tot-l">${I18N[LANG].vatOn(rate, fmt2.format(g.base))}</td><td class="r">${fmt2.format(g.vat)}</td></tr>`;
   }
   $("offerteTable").innerHTML = html;
   $("totV").textContent = `€ ${fmt2.format(qt.price.total_incl_vat)}`;
-  $("depositLine").textContent = `Voorschot bij bestelling (30%): € ${fmt2.format(qt.price.deposit)}`;
+  $("depositLine").textContent = I18N[LANG].depositLine(fmt2.format(qt.price.deposit));
 
   const p = qt.plans;
+  const finTerm = p.finance.term_months % 12 === 0
+    ? `${p.finance.term_months / 12} ${t("years")}` : `${p.finance.term_months} ${t("months")}`;
+  const L = I18N[LANG];
   const cards = [
-    { key: "buy", title: "Buy", big: fmt.format(p.buy.upfront), sub: "one-time",
-      items: [`Payback in ± ${p.buy.payback_year ?? "–"} years`, `Net benefit over 20y: ${fmt.format(p.buy.net_benefit_20y)}`, "You own the system from day 1"] },
-    { key: "rent", title: "Rent", big: fmt.format(p.rent.monthly) + "/mo", sub: "20 years, maintenance included",
-      items: [`Total over 20y: ${fmt.format(p.rent.total_cost_20y)}`, `Net benefit over 20y: ${fmt.format(p.rent.net_benefit_20y)}`, "No upfront investment"] },
-    { key: "finance", title: "Finance", big: fmt.format(p.finance.monthly) + "/mo", sub: `${p.finance.term_months / 12} years at ${(p.finance.apr * 100).toFixed(1)}% APR`,
-      items: [`Total over 20y: ${fmt.format(p.finance.total_cost_20y)}`, `Net benefit over 20y: ${fmt.format(p.finance.net_benefit_20y)}`, "Own the system, pay monthly"] },
+    { key: "buy", title: t("planBuy"), big: fmt.format(p.buy.upfront), sub: t("buySub"),
+      items: [L.payback(p.buy.payback_year ?? "–"), L.netBenefit(fmt.format(p.buy.net_benefit_30y)), t("buyOwn")] },
+    { key: "rent", title: t("planRent"), big: fmt.format(p.rent.monthly) + t("perMonth"), sub: t("rentSub"),
+      items: [t("rentBuyOption"), L.netBenefit(fmt.format(p.rent.net_benefit_30y)), t("rentNoUpfront")] },
+    { key: "finance", title: t("planFinance"), big: fmt.format(p.finance.monthly) + t("perMonth"), sub: L.financeSub(finTerm, (p.finance.apr * 100).toFixed(1)),
+      items: [L.financeTotal(fmt.format(p.finance.total_cost_30y)), L.netBenefit(fmt.format(p.finance.net_benefit_30y)), t("financeOwn")] },
   ];
-  const best = cards.reduce((a, b) => (p[a.key].net_benefit_20y >= p[b.key].net_benefit_20y ? a : b));
+  const best = cards.reduce((a, b) => (p[a.key].net_benefit_30y >= p[b.key].net_benefit_30y ? a : b));
   $("plans").innerHTML = cards.map((c) => `
-    <div class="plan" data-plan="${c.key}">
-      <h3>${c.title}${c.key === best.key ? '<span class="badge">BEST VALUE</span>' : ""}</h3>
+    <div class="plan${S.plan === c.key ? " selected" : ""}" data-plan="${c.key}">
+      <h3>${c.title}${c.key === best.key ? `<span class="badge">${t("badge")}</span>` : ""}</h3>
       <div class="big">${c.big}</div>
       <div class="psub">${c.sub}</div>
       <ul>${c.items.map((i) => `<li>${i}</li>`).join("")}</ul>
@@ -474,14 +706,15 @@ function renderQuote(qt) {
   });
 
   const years = Array.from({ length: qt.savings.horizon_years }, (_, i) => "Y" + (i + 1));
-  new Chart($("chart"), {
+  if (chartInstance) chartInstance.destroy();
+  chartInstance = new Chart($("chart"), {
     type: "line",
     data: {
       labels: years,
       datasets: [
-        { label: "Buy — cumulative position (€)", data: p.buy.cumulative, borderColor: "#05ade5", backgroundColor: "rgba(5,173,229,.07)", fill: true, tension: .3 },
-        { label: "Rent", data: p.rent.cumulative, borderColor: "#9aa39e", tension: .3 },
-        { label: "Finance", data: p.finance.cumulative, borderColor: "#0b0d0f", tension: .3 },
+        { label: t("chartBuy"), data: p.buy.cumulative, borderColor: "#05ade5", backgroundColor: "rgba(5,173,229,.07)", fill: true, tension: .3 },
+        { label: t("chartRent"), data: p.rent.cumulative, borderColor: "#9aa39e", tension: .3 },
+        { label: t("chartFinance"), data: p.finance.cumulative, borderColor: "#0b0d0f", tension: .3 },
       ],
     },
     options: {
@@ -491,23 +724,19 @@ function renderQuote(qt) {
     },
   });
 
-  const a = qt.assumptions;
-  $("assumptions").textContent =
-    `Assumptions: electricity ${a.electricity_price_eur_kwh.toFixed(2)} €/kWh (+${(a.electricity_inflation * 100).toFixed(0)}%/yr), ` +
-    `injection ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, panel degradation ${(a.panel_degradation * 100).toFixed(1)}%/yr, ` +
-    `VAT ${(a.vat_rate * 100).toFixed(0)}%. Estimates are indicative and not a binding offer.`;
+  $("assumptions").textContent = I18N[LANG].assumptions(qt.assumptions, qt.system.ev_benefit_counted, qt.system.ev_company);
 }
 
 $("btnContinue").onclick = () => show("step-checkout");
 
 $("btnOrder").onclick = async () => {
   const fields = { first_name: $("fname").value.trim(), last_name: $("lname").value.trim(), email: $("email").value.trim(), phone: $("phone").value.trim() };
-  if (!fields.first_name || !fields.last_name || !fields.email) return showError("checkoutError", "Please fill in your name and email.");
+  if (!fields.first_name || !fields.last_name || !fields.email) return showError("checkoutError", t("errContact"));
   $("btnOrder").disabled = true;
   try {
     await api("POST", "contact", { project_id: S.projectId, lead_id: S.leadId, ...fields });
     const order = await api("POST", "order", { quote_id: S.quoteId, lead_id: S.leadId, plan: S.plan });
-    if (order.signing_token) { /* TODO: launch Sumsub WebSDK with order.signing_token */ }
+    if (order.signing_token) { /* TODO: launch Sumsub WebSDK */ }
     if (order.payment_url) { window.location.href = order.payment_url; return; }
     show("step-done");
   } catch (e) {
@@ -517,6 +746,8 @@ $("btnOrder").onclick = async () => {
 };
 
 function showError(id, msg) { const el = $(id); el.textContent = msg; el.classList.remove("hidden"); }
+
+applyLang();
 </script>
 </body>
 </html>
