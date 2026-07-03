@@ -13,6 +13,14 @@
     --cyan: #05ade5; --black: #0b0d0f; --ink: #212629; --grey: #8c9499;
     --light: #f2f4f5; --rule: #e0e4e6; --paper: #ffffff;
   }
+  /* Dark theme: flips the neutral palette; brand cyan/black stay identical. */
+  body.dark {
+    --light: #0b0d0f; --paper: #14171a; --ink: #e8ecee; --rule: #2a2f33; --grey: #9aa3a8;
+  }
+  body.dark .kit.selected, body.dark .plan.selected, body.dark .usps,
+  body.dark .hwToggle button.on, body.dark button.ghost:hover, body.dark .invoiceBox { background: #10222b; }
+  body.dark .demoNote, body.dark .error { background: #2a1414; }
+  body.dark .plan ul, body.dark .kitUsps, body.dark .usps ul, body.dark .termsBox { color: #aeb6ba; }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: Inter, Helvetica, Arial, sans-serif; background: var(--light); color: var(--ink); }
   .mono { font-family: 'JetBrains Mono', monospace; }
@@ -260,6 +268,10 @@
       <div class="lang">
         <button id="langEn" class="on" onclick="setLang('en')">EN</button>
         <button id="langNl" onclick="setLang('nl')">NL</button>
+      </div>
+      <div class="lang">
+        <button id="thDark" onclick="setTheme('dark')">☾ <span data-i18n="thDark"></span></button>
+        <button id="thLight" class="on" onclick="setTheme('light')">☀ <span data-i18n="thLight"></span></button>
       </div>
     </div>
   </div>
@@ -522,6 +534,7 @@ const API_BASE = "https://ywuuhcixtzutspcbxelr.supabase.co/functions/v1/solar";
 const I18N = {
   en: {
     title: "My Energyscan", subtitle: "design · quote · savings",
+    thDark: "Dark", thLight: "Light",
     h1: "Design your solar system",
     h1sub: "Get an instant design, price and 30-year savings estimate for your home.",
     lStreet: "Street and number", lCity: "City", lPostal: "Postal code",
@@ -700,6 +713,7 @@ const I18N = {
   },
   nl: {
     title: "Mijn Energiescan", subtitle: "ontwerp · offerte · besparing",
+    thDark: "Donker", thLight: "Licht",
     h1: "Ontwerp jouw zonnesysteem",
     h1sub: "Ontvang meteen een ontwerp, prijs en besparingsberekening over 30 jaar voor jouw woning.",
     lStreet: "Straat en nummer", lCity: "Gemeente", lPostal: "Postcode",
@@ -893,6 +907,13 @@ function applyLang() {
   if (S.quote) renderQuote(S.quote);
 }
 function setLang(l) { LANG = l; applyLang(); }
+
+function setTheme(m) {
+  document.body.classList.toggle("dark", m === "dark");
+  $("thDark").classList.toggle("on", m === "dark");
+  $("thLight").classList.toggle("on", m !== "dark");
+  if (S.quote) renderQuote(S.quote); // charts pick up the theme colors
+}
 
 const S = { projectId: null, designId: null, leadId: null, quote: null, quoteId: null, plan: null, capWp: null, catalog: "stock", lastBody: null };
 
@@ -1434,6 +1455,10 @@ function renderQuote(qt) {
   $("reserveCancelNote").textContent = t("reserveCancel");
   $("reserveCancelNote").classList.toggle("hidden", !isNew);
 
+  // BUY is always preselected; the customer can still switch plans.
+  if (!S.plan) S.plan = "buy";
+  $("btnContinue").disabled = false;
+
   const best = cards.reduce((a, b) => (p[a.key].net_benefit_30y >= p[b.key].net_benefit_30y ? a : b));
   $("plans").innerHTML = cards.map((c) => `
     <div class="plan${S.plan === c.key ? " selected" : ""}" data-plan="${c.key}">
@@ -1452,6 +1477,8 @@ function renderQuote(qt) {
     };
   });
 
+  // Near-black chart lines flip to light in dark mode.
+  const inkLine = document.body.classList.contains("dark") ? "#e8ecee" : "#0b0d0f";
   const years = Array.from({ length: qt.savings.horizon_years }, (_, i) => "Y" + (i + 1));
   if (chartInstance) chartInstance.destroy();
   chartInstance = new Chart($("chart"), {
@@ -1461,13 +1488,13 @@ function renderQuote(qt) {
       datasets: [
         { label: t("chartBuy"), data: p.buy.cumulative, borderColor: "#05ade5", backgroundColor: "rgba(5,173,229,.07)", fill: true, tension: .3 },
         { label: t("chartRent"), data: p.rent.cumulative, borderColor: "#9aa39e", tension: .3 },
-        { label: t("chartFinance"), data: p.finance.cumulative, borderColor: "#0b0d0f", tension: .3 },
+        { label: t("chartFinance"), data: p.finance.cumulative, borderColor: inkLine, tension: .3 },
       ],
     },
     options: {
-      plugins: { legend: { position: "bottom", labels: { font: { family: "'JetBrains Mono'", size: 10 } } } },
-      scales: { y: { ticks: { callback: (v) => fmt.format(v), font: { family: "'JetBrains Mono'", size: 10 } } },
-                x: { ticks: { font: { family: "'JetBrains Mono'", size: 10 } } } },
+      plugins: { legend: { position: "bottom", labels: { color: "#8c9499", font: { family: "'JetBrains Mono'", size: 10 } } } },
+      scales: { y: { ticks: { color: "#8c9499", callback: (v) => fmt.format(v), font: { family: "'JetBrains Mono'", size: 10 } } },
+                x: { ticks: { color: "#8c9499", font: { family: "'JetBrains Mono'", size: 10 } } } },
     },
   });
 
@@ -1489,15 +1516,15 @@ function renderQuote(qt) {
       datasets: [
         { label: t("eProd"), data: monthly(qt.system.annual_production_kwh, P_SOLAR),
           borderColor: "#05ade5", backgroundColor: "rgba(5,173,229,.07)", fill: true, tension: .35 },
-        { label: t("eCons"), data: monthly(cons, P_CONS), borderColor: "#0b0d0f", tension: .35 },
+        { label: t("eCons"), data: monthly(cons, P_CONS), borderColor: inkLine, tension: .35 },
         { label: t("eEv"), data: monthly(qt.system.ev_annual_kwh, P_FLAT), borderColor: "#9aa39e", tension: .35 },
         { label: t("eBat"), data: monthly(batThroughput, P_SOLAR), borderColor: "#46B2E9", borderDash: [6, 4], tension: .35 },
       ],
     },
     options: {
-      plugins: { legend: { position: "bottom", labels: { font: { family: "'JetBrains Mono'", size: 10 } } } },
-      scales: { y: { ticks: { callback: (v) => v.toLocaleString("nl-BE") + " kWh", font: { family: "'JetBrains Mono'", size: 10 } } },
-                x: { ticks: { font: { family: "'JetBrains Mono'", size: 10 } } } },
+      plugins: { legend: { position: "bottom", labels: { color: "#8c9499", font: { family: "'JetBrains Mono'", size: 10 } } } },
+      scales: { y: { ticks: { color: "#8c9499", callback: (v) => v.toLocaleString("nl-BE") + " kWh", font: { family: "'JetBrains Mono'", size: 10 } } },
+                x: { ticks: { color: "#8c9499", font: { family: "'JetBrains Mono'", size: 10 } } } },
     },
   });
 
@@ -1572,34 +1599,4 @@ $("btnCallSend").onclick = async () => {
 $("btnOrder").onclick = async () => {
   $("checkoutError").classList.add("hidden");
   $("btnOrder").disabled = true;
-  const origLbl = $("btnOrder").textContent;
-  $("btnOrder").textContent = t("processing");
-  try {
-    await api("POST", "contact", { project_id: S.projectId, lead_id: S.leadId, ...S.contact });
-    const order = await api("POST", "order", { quote_id: S.quoteId, lead_id: S.leadId, plan: S.plan });
-    await sleep(1500); // simulate card processing (DEMO)
-    const pay = await api("POST", "pay-demo", { order_id: order.order_id });
-    // documents screen: invoice (stock) or product reservation (new) + payment receipt
-    $("invNumber").textContent = pay.invoice_number ?? "DEMO";
-    const isNew = S.quote.system.catalog === "new";
-    $("rcptLine").textContent = I18N[LANG].rcptLine(pay.receipt_number ?? "");
-    $("invPaidLine").textContent = I18N[LANG].invPaid(`€ ${fmt2.format(pay.amount_paid ?? S.quote.price.deposit)}`, isNew);
-    $("invMailedLine").textContent = I18N[LANG].invMailed(S.contact.email);
-    $("invDownloadBtn").textContent = isNew ? t("dlReservation") : t("dlInvoice");
-    $("rcptDownloadBtn").textContent = t("dlReceipt");
-    $("invDownload").href = `${API_BASE}/invoice-pdf?order_id=${order.order_id}`;
-    $("rcptDownload").href = `${API_BASE}/receipt-pdf?order_id=${order.order_id}`;
-    show("step-done");
-  } catch (e) {
-    showError("checkoutError", e.message);
-    $("btnOrder").textContent = origLbl;
-  }
-  $("btnOrder").disabled = false;
-};
-
-function showError(id, msg) { const el = $(id); el.textContent = msg; el.classList.remove("hidden"); }
-
-applyLang();
-</script>
-</body>
-</html>
+  const origLbl = $("b
