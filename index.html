@@ -250,7 +250,12 @@
         <div></div>
       </div>
       <div class="row hidden" id="evDetails">
-        <div><label data-i18n="lEvKwh"></label><input id="evKwh" type="number" value="2500" min="0" max="20000"></div>
+        <div>
+          <label><span data-i18n="lEvKwh"></span><span class="qmark" id="evQ">?</span></label>
+          <input id="evKwh" type="number" value="2500" min="0" max="20000">
+          <div class="note" id="evKm" style="margin-top:6px"></div>
+          <div class="note hidden" id="evHelp" data-i18n="evNote"></div>
+        </div>
         <div><label data-i18n="lEvCompany"></label><select id="evCompany"><option value="0" data-i18n="oEvPrivate"></option><option value="1" data-i18n="oEvCompany"></option></select></div>
       </div>
       <button class="primary" id="btnStart"></button>
@@ -376,6 +381,8 @@ const I18N = {
     lEvHave: "Do you already have an EV charger?", oNo: "No", oYes: "Yes",
     lEvWant: "Interested in an EV charger?", oEvWantYes: "Yes — add an EV charger",
     lEvKwh: "EV home charging (kWh / year)",
+    evKm: (km) => `≈ ${km} km / year`,
+    evNote: "Reference: 2,500 kWh equals ± 15,000 km per year — the minimum applied for company cars.",
     lEvCompany: "Company car?", oEvPrivate: "No — private car", oEvCompany: "Yes — employer pays €0,30/kWh",
     inputNote: "Not sure? An average Belgian household uses ± 3,500 kWh/year; an EV adds ± 2,500 kWh (15.000 km). The ideal home battery size is calculated automatically from your meter type, consumption, solar production and EV usage.",
     btnStart: "Design my system →", btnStartExisting: "Get my battery & EV quote →",
@@ -495,6 +502,8 @@ const I18N = {
     lEvHave: "Heb je al een EV-laadpaal?", oNo: "Nee", oYes: "Ja",
     lEvWant: "Interesse in een EV-laadpaal?", oEvWantYes: "Ja — voeg een laadpaal toe",
     lEvKwh: "EV thuisladen (kWh / jaar)",
+    evKm: (km) => `≈ ${km} km / jaar`,
+    evNote: "Referentie: 2.500 kWh komt overeen met ± 15.000 km per jaar — het minimum gehanteerd voor bedrijfswagens.",
     lEvCompany: "Bedrijfswagen?", oEvPrivate: "Nee — privéwagen", oEvCompany: "Ja — werkgever betaalt €0,30/kWh",
     inputNote: "Niet zeker? Een gemiddeld Belgisch gezin verbruikt ± 3.500 kWh/jaar; een EV voegt ± 2.500 kWh toe (15.000 km). De ideale thuisbatterij wordt automatisch berekend op basis van je metertype, verbruik, zonneproductie en EV-gebruik.",
     btnStart: "Ontwerp mijn systeem →", btnStartExisting: "Ontvang mijn batterij & EV offerte →",
@@ -615,6 +624,7 @@ function applyLang() {
   // dynamic button label depends on the has-panels answer
   const has = $("hasPanels").value === "1";
   $("btnStart").textContent = has ? t("btnStartExisting") : t("btnStart");
+  if (typeof updateEvKm === "function") updateEvKm();
   // re-render dynamic content if a quote is on screen
   if (S.quote) renderQuote(S.quote);
 }
@@ -708,6 +718,14 @@ function syncEvFields() {
   $("evDetails").classList.toggle("hidden", !(have || want));
 }
 $("kwhQ").onclick = () => $("kwhHelp").classList.toggle("hidden");
+$("evQ").onclick = () => $("evHelp").classList.toggle("hidden");
+// live km equivalent: 2.500 kWh = 15.000 km → 6 km/kWh
+function updateEvKm() {
+  const kwh = +$("evKwh").value || 0;
+  $("evKm").textContent = kwh > 0 ? I18N[LANG].evKm(Math.round(kwh * 6).toLocaleString("nl-BE")) : "";
+}
+$("evKwh").oninput = updateEvKm;
+updateEvKm();
 $("evHave").onchange = syncEvFields;
 $("evWant").onchange = syncEvFields;
 $("hasPanels").onchange = () => {
