@@ -192,6 +192,7 @@
   .kitUsps { margin: 12px 0 0; padding-left: 18px; font-size: .86rem; line-height: 1.75; color: #2a3438; }
   .kitDelivery { margin-top: 10px; font-size: .66rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--cyan); }
   .kitCta { width: 100%; margin-top: 14px; }
+  .kitTrust { text-align: center; margin-top: 10px; }
   .kpi span.kpiTrees { display: block; font-size: .58rem; color: var(--grey); margin-top: 5px; text-transform: none; letter-spacing: .02em; }
   .ctaRow { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
   button.ghost { background: none; border: 1px solid var(--cyan); color: var(--cyan); }
@@ -640,6 +641,7 @@ const I18N = {
     reserveCancel: "You can cancel at any time, free of any obligation.",
     btnQuote: "I want a quote →", btnCall: "Call me",
     btnOrderNow: "Order now →", btnReserveNow: "Reserve now →",
+    trustLine: "30,000 customers trusted their energy solution to belinus in Belgium",
     promoPopup: "30,000 customers have chosen belinus — order now and get 15% off!",
     callLbl: "Call me", callSub: "Pick a day and time slot — we will call you.",
     lCallDay: "Day", lCallSlot: "Time slot", btnCallSend: "Send →",
@@ -817,6 +819,7 @@ const I18N = {
     reserveCancel: "U kan ten allen tijde vrijblijvend annuleren.",
     btnQuote: "Ik wens een offerte →", btnCall: "Bel mij",
     btnOrderNow: "Bestel nu →", btnReserveNow: "Reserveer nu →",
+    trustLine: "30.000 klanten vertrouwden hun energieoplossing toe aan belinus in België",
     promoPopup: "30.000 klanten kozen al voor belinus — bestel nu en krijg 15% korting!",
     callLbl: "Bel mij", callSub: "Kies een dag en tijdslot — wij bellen jou.",
     lCallDay: "Dag", lCallSlot: "Tijdslot", btnCallSend: "Verstuur →",
@@ -1124,6 +1127,9 @@ $("btnStart").onclick = async () => {
     return;
   }
 
+  // New scans always open the result page on the Standard kit.
+  S.catalog = "stock";
+
   const evHave = $("evHave").value === "1";
   const evWant = !evHave && $("evWant").value === "1";
   const evActive = evHave || evWant;
@@ -1317,7 +1323,10 @@ function renderKits(qt) {
     sb += `<div class="kitPrices"><span class="strike mono">€ ${fmt2.format(listT)}</span><span class="promoPrice mono">€ ${fmt2.format(promoT)}</span></div>`;
   }
   sb += `</div>`;
-  sb += `<button class="primary kitCta" id="kitStockOrder">${t("btnOrderNow")}</button>`;
+  if (!isNew) {
+    sb += `<button class="primary kitCta" id="kitStockOrder">${t("btnOrderNow")}</button>`;
+    sb += `<div class="note kitTrust">${t("trustLine")}</div>`;
+  }
   $("kitStockBody").innerHTML = sb;
 
   // Pro card: USPs + delivery + €100 reservation (always) + components when selected
@@ -1330,12 +1339,15 @@ function renderKits(qt) {
   nb += `<ul class="kitUsps">${I18N[LANG].kitUsps.map((u) => `<li>${u}</li>`).join("")}</ul>`;
   nb += `<div class="kitDelivery mono">${I18N[LANG].delivery((nq && nq.system.delivery) || "Q2 2027")}</div>`;
   nb += `<div class="note">${t("reserveNote")}</div>`;
-  nb += `<button class="primary kitCta" id="kitNewOrder">${t("btnReserveNow")}</button>`;
+  if (isNew) {
+    nb += `<button class="primary kitCta" id="kitNewOrder">${t("btnReserveNow")}</button>`;
+    nb += `<div class="note kitTrust">${t("trustLine")}</div>`;
+  }
   $("kitNewBody").innerHTML = nb;
 
-  // In-card CTAs: select the kit (fetching its quote if needed) → order flow.
-  $("kitStockOrder").onclick = (e) => { e.stopPropagation(); orderKit("stock"); };
-  $("kitNewOrder").onclick = (e) => { e.stopPropagation(); orderKit("new"); };
+  // In-card CTA (only rendered in the selected block) → order flow.
+  if (!isNew) $("kitStockOrder").onclick = (e) => { e.stopPropagation(); orderKit("stock"); };
+  if (isNew) $("kitNewOrder").onclick = (e) => { e.stopPropagation(); orderKit("new"); };
 }
 
 async function orderKit(c) {
