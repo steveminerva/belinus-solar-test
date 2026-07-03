@@ -391,17 +391,17 @@ const I18N = {
     errKwh: "Please enter a valid annual consumption.",
     errWp: "Please enter the total Wp of your existing panels.",
     calcTitle: "Designing your installation…",
-    calcSub: "Our AI is analysing satellite and LIDAR imagery of your roof and designing your installation. This can take a few minutes — please keep this page open.",
-    stage0: "Locating your home & fetching imagery", stage1: "Analysing your roof in 3D (AI Roof)",
-    stage2: "Placing solar panels (AutoDesigner)", stage3: "Simulating energy production",
-    factLbl: "D I D  Y O U  K N O W ?",
+    calcSub: "We are analysing satellite and LIDAR imagery of your roof and designing your installation. This can take a few minutes — please keep this page open.",
+    stage0: "Locating your home & fetching imagery", stage1: "Analysing your roof in 3D",
+    stage2: "Placing solar panels", stage3: "Simulating energy production",
+    factLbl: "DID YOU KNOW?",
     facts: [
       "Belinus panels carry a 35-year product, performance and labour warranty — among the longest in the industry.",
       "A home battery lifts your self-consumption of solar power from roughly 35% to 70%.",
       "A home battery saves at least €50 per month per 10 kWh through dynamic tariffs and peak shaving.",
       "Public EV charging costs about €0,50/kWh — charging at home from your own solar is nearly free.",
       "Company car? Employers reimburse €0,30/kWh for home charge sessions in Belgium.",
-      "Our AI analyses LIDAR height data of your roof to place every panel for maximum yield.",
+      "We analyse LIDAR height data of your roof to place every panel for maximum yield.",
       "More than 30,000 customers already switched to clean energy with Belinus.",
       "belinus develops unique and innovative technologies for home energy solutions with its research and academic partners IMEC, VITO, KUL and KHLIM.",
       "belinus integrates LONGi solar cells into its solar panels and offers a unique 35-year triple warranty for residential customers.",
@@ -448,7 +448,7 @@ const I18N = {
       `CO₂: grid factor 0.20 kg/kWh; EV on solar vs petrol car 120 g/km. ` +
       `For homes with existing panels, only the added value of battery and charger is counted. Estimates are indicative and not a binding offer.`,
     hwLbl: "Your hardware",
-    togStock: "In stock — fast delivery", togNew: "New 2027 — Made in Belgium (+30%)",
+    togStock: "In stock — fast delivery", togNew: "New 2027 — Made in Belgium",
     sheet: "Datasheet (PDF)",
     promoLbl: "O N L I N E  P R O M O T I O N",
     promoTxt: "Order & pay online today and have a chance to win a Made in Belgium COWBOY electric bike!",
@@ -515,17 +515,17 @@ const I18N = {
     errKwh: "Vul een geldig jaarverbruik in.",
     errWp: "Vul het totale Wp-vermogen van je bestaande panelen in.",
     calcTitle: "Jouw installatie wordt ontworpen…",
-    calcSub: "Onze AI analyseert satelliet- en LIDAR-beelden van je dak en ontwerpt je installatie. Dit kan enkele minuten duren — hou deze pagina open.",
-    stage0: "Je woning lokaliseren & beelden ophalen", stage1: "Je dak analyseren in 3D (AI Roof)",
-    stage2: "Zonnepanelen plaatsen (AutoDesigner)", stage3: "Energieproductie simuleren",
-    factLbl: "W I S T  J E  D A T ?",
+    calcSub: "We analyseren satelliet- en LIDAR-beelden van je dak en ontwerpen je installatie. Dit kan enkele minuten duren — hou deze pagina open.",
+    stage0: "Je woning lokaliseren & beelden ophalen", stage1: "Je dak analyseren in 3D",
+    stage2: "Zonnepanelen plaatsen", stage3: "Energieproductie simuleren",
+    factLbl: "WIST JE DAT?",
     facts: [
       "Belinus panelen hebben 35 jaar product-, vermogens- én installatiegarantie — bij de langste in de sector.",
       "Een thuisbatterij verhoogt je zelfverbruik van zonnestroom van ±35% naar ±70%.",
       "Een thuisbatterij bespaart minstens €50 per maand per 10 kWh via dynamische tarieven en peak shaving.",
       "Publiek laden kost ±€0,50/kWh — thuis laden met je eigen zonnestroom is bijna gratis.",
       "Bedrijfswagen? Werkgevers vergoeden €0,30/kWh voor laadsessies thuis in België.",
-      "Onze AI analyseert LIDAR-hoogtedata van je dak en plaatst elk paneel voor maximale opbrengst.",
+      "We analyseren LIDAR-hoogtedata van je dak en plaatsen elk paneel voor maximale opbrengst.",
       "Meer dan 30.000 klanten gingen je voor bij Belinus.",
       "belinus ontwikkelt unieke en innovatieve technologieën voor home energy oplossingen met zijn onderzoeks- en academische partners IMEC, VITO, KUL en KHLIM.",
       "belinus integreert LONGi zonnecellen in zijn zonnepanelen en biedt een unieke 35 jaar triple garantie voor residentiële klanten.",
@@ -572,7 +572,7 @@ const I18N = {
       `CO₂: netfactor 0,20 kg/kWh; EV op zonnestroom vs benzinewagen 120 g/km. ` +
       `Bij bestaande zonnepanelen telt enkel de meerwaarde van batterij en laadpaal. Bedragen zijn indicatief en vormen geen bindend aanbod.`,
     hwLbl: "Jouw hardware",
-    togStock: "Op voorraad — snelle levering", togNew: "Nieuw 2027 — Made in Belgium (+30%)",
+    togStock: "Op voorraad — snelle levering", togNew: "Nieuw 2027 — Made in Belgium",
     sheet: "Datasheet (PDF)",
     promoLbl: "O N L I N E  P R O M O T I E",
     promoTxt: "Bestel en betaal vandaag online en maak kans op een Made in Belgium COWBOY elektrische fiets!",
@@ -832,7 +832,7 @@ $("btnStart").onclick = async () => {
     setStage(1, "active");
     const roof = await api("POST", "ai-roof/run", { design_id: S.designId });
     await poll(`ai-roof/status?design_id=${S.designId}&job_id=${roof.job_id}`, (r) => {
-      if (r.status === "failed") throw new Error(r.error || "AI Roof failed");
+      if (r.status === "failed") throw new Error(r.error || "Roof analysis failed");
       return r.status === "succeeded";
     });
     await consumptionP;
