@@ -176,6 +176,20 @@
   .paidBadge { display: inline-block; background: var(--cyan); color: #fff; font-family: 'JetBrains Mono', monospace;
                font-size: .62rem; font-weight: 700; letter-spacing: .14em; padding: 4px 10px; margin-left: 10px; vertical-align: middle; }
 
+  .modalWrap { position: fixed; inset: 0; background: rgba(11,13,15,.78); display: flex;
+               align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+  .modal { background: var(--black); color: #fff; max-width: 480px; width: 100%; padding: 44px 38px;
+           text-align: center; border-top: 3px solid var(--cyan); }
+  .modal .cowboy { font-weight: 800; letter-spacing: .38em; font-size: 1.7rem; font-family: Inter, sans-serif; }
+  .modal p { margin: 20px 0 0; line-height: 1.65; color: #d6dbde; font-size: .96rem; }
+  .modal .prize { color: var(--cyan); font-weight: 700; }
+
+  .termsBox { max-height: 220px; overflow-y: auto; border: 1px solid var(--rule); padding: 14px 18px;
+              font-size: .78rem; color: #4a5459; margin-top: 16px; line-height: 1.65; background: var(--paper); }
+  .termsBox b { color: var(--ink); }
+  .agreeRow { display: flex; align-items: flex-start; gap: 10px; margin-top: 18px; font-size: .82rem; line-height: 1.5; }
+  .agreeRow input { width: auto; margin-top: 3px; }
+
   .qmark { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px;
            border: 1px solid var(--cyan); border-radius: 50%; color: var(--cyan); font-size: .62rem;
            margin-left: 8px; cursor: pointer; vertical-align: middle; user-select: none; }
@@ -324,6 +338,28 @@
     <button class="primary" id="btnContinue" disabled data-i18n="btnContinue"></button>
   </div>
 
+  <!-- STEP 3b: digital signing (quote or reservation form) -->
+  <div class="inner hidden" id="step-sign">
+    <h2 class="lbl" id="signTitle"></h2>
+    <p class="sub" id="signIntro"></p>
+    <div class="hw" id="signItems"></div>
+    <div class="termsBox" id="signTerms"></div>
+    <div class="agreeRow"><input type="checkbox" id="agreeChk"><span id="agreeLbl"></span></div>
+    <label data-i18n="signNameLbl"></label>
+    <input id="signName" autocomplete="off">
+    <div class="demoNote" data-i18n="signDemoNote"></div>
+    <button class="primary" id="btnSign" disabled></button>
+  </div>
+
+  <!-- COWBOY promo popup (before payment) -->
+  <div class="modalWrap hidden" id="cowboyModal">
+    <div class="modal">
+      <div class="cowboy">COWBOY<span style="font-size:.55em;vertical-align:super">✳</span></div>
+      <p id="cowboyTxt"></p>
+      <button class="primary" id="cowboyGo" style="width:100%"></button>
+    </div>
+  </div>
+
   <!-- STEP 4: demo payment -->
   <div class="inner hidden" id="step-checkout">
     <h2 class="lbl" data-i18n="payLbl"></h2>
@@ -468,6 +504,32 @@ const I18N = {
     btnOrderReserve: "Reserve now for €100 →",
     checkoutNoteReserve: "You verify your identity and sign digitally (Sumsub), then pay the €100 reservation online via Bancontact, iDEAL or card (Mollie) — fully refunded if you cancel. Estimated delivery: March 2027.",
     btnContinue: "Continue with selected plan →",
+    btnContinueReserve: "Reserve — no obligation, €100 fully refundable →",
+    signTitleQuote: "Sign your quote",
+    signTitleReserve: "Sign your reservation form",
+    signIntroQuote: (q) => `Review and digitally sign quote ${q} and the general terms and conditions. After signing you proceed to the payment of the 30% deposit.`,
+    signIntroReserve: "You are reserving the new belinus product line — no obligation, the €100 reservation fee is fully refundable at any time. Review and sign the reservation form below, then proceed to the €100 payment.",
+    signTermsTitle: "GENERAL TERMS AND CONDITIONS — belinus energy B.V.",
+    generalTerms: [
+      "Applicability: these terms apply to all quotes, reservations, orders and invoices of belinus energy B.V.",
+      "Quotes are valid for 30 days and indicative until technical inspection of the home.",
+      "Prices include installation and VAT unless stated otherwise; BEBAT contributions are VAT-exempt (0%).",
+      "Orders: 30% deposit, balance after installation and approval. Reservations of the new product line cost €100 and are fully refundable at any time, without any obligation.",
+      "Delivery times are indicative; the new product line is expected in March 2027.",
+      "Delivered goods remain the property of belinus until full payment.",
+      "Warranty periods per product as stated on the quote; new belinus panels carry a 35-year triple warranty.",
+      "Consumers have a 14-day right of withdrawal under the Belgian Code of Economic Law.",
+      "belinus' liability is limited to the invoice amount, except in case of intent or gross negligence.",
+      "Belgian law applies; the courts of Antwerp have exclusive jurisdiction.",
+    ],
+    agreeQuote: "I have read and accept the quote and the general terms and conditions.",
+    agreeReserve: "I have read and accept the reservation form and the general terms and conditions.",
+    cowboyPromo: "Order now and have a chance to WIN a Made in Belgium COWBOY e-bike valued at €3.000!",
+    cowboyGo: "Continue to payment →",
+    signNameLbl: "Full name (digital signature)",
+    signDemoNote: "DEMO SIGNATURE — in the real application you will verify your identity and sign via Sumsub.",
+    btnSignQuote: "Sign quote digitally →",
+    btnSignReserve: "Sign & reserve for €100 →",
     detailsLbl: "Your details",
     lFirst: "First name", lLast: "Last name", lEmail: "Email", lPhone: "Phone",
     btnOrder: "Sign & pay securely →",
@@ -487,7 +549,7 @@ const I18N = {
     invMailed: (e) => `The documents have been e-mailed to ${e}.`,
     rcptLine: (n) => `Payment receipt ${n}`,
     dlInvoice: "⬇ Download invoice (PDF)",
-    dlReservation: "⬇ Download product reservation (PDF)",
+    dlReservation: "⬇ Download reservation order (PDF)",
     dlReceipt: "⬇ Download payment receipt (PDF)",
     invDemoNote: "DEMO — no real documents, no real e-mail was sent.",
     timeout: "Timed out waiting for the design service. Please try again.",
@@ -592,6 +654,32 @@ const I18N = {
     btnOrderReserve: "Reserveer nu voor €100 →",
     checkoutNoteReserve: "Je verifieert je identiteit en ondertekent digitaal (Sumsub), waarna je de reservatie van €100 online betaalt via Bancontact, iDEAL of kaart (Mollie) — volledig terugbetaald bij annulatie. Geschatte levering: maart 2027.",
     btnContinue: "Ga verder met gekozen formule →",
+    btnContinueReserve: "Reserveer — vrijblijvend, €100 volledig terugbetaalbaar →",
+    signTitleQuote: "Onderteken je offerte",
+    signTitleReserve: "Onderteken je reservatieformulier",
+    signIntroQuote: (q) => `Bekijk en onderteken offerte ${q} en de algemene voorwaarden digitaal. Na ondertekening ga je door naar de betaling van het voorschot van 30%.`,
+    signIntroReserve: "Je reserveert de nieuwe belinus productlijn — vrijblijvend, de reservatie van €100 is op elk moment volledig terugbetaalbaar. Bekijk en onderteken het reservatieformulier hieronder, daarna volgt de betaling van €100.",
+    signTermsTitle: "ALGEMENE VOORWAARDEN — belinus energy B.V.",
+    generalTerms: [
+      "Toepasselijkheid: deze voorwaarden gelden voor alle offertes, reservaties, bestellingen en facturen van belinus energy B.V.",
+      "Offertes zijn 30 dagen geldig en indicatief tot technische inspectie van de woning.",
+      "Prijzen zijn inclusief installatie en btw tenzij anders vermeld; BEBAT-bijdragen zijn vrijgesteld van btw (0%).",
+      "Bestelling: 30% voorschot, saldo na installatie en keuring. Reservaties van de nieuwe productlijn bedragen €100 en zijn op elk moment volledig terugbetaalbaar, zonder enige verplichting.",
+      "Leveringstermijnen zijn indicatief; de nieuwe productlijn wordt verwacht in maart 2027.",
+      "Geleverde goederen blijven eigendom van belinus tot volledige betaling.",
+      "Garantietermijnen per product zoals vermeld op de offerte; nieuwe belinus panelen genieten 35 jaar triple garantie.",
+      "Consumenten beschikken over 14 dagen herroepingsrecht conform het Wetboek Economisch Recht.",
+      "De aansprakelijkheid van belinus is beperkt tot het factuurbedrag, behoudens opzet of zware fout.",
+      "Belgisch recht is van toepassing; de rechtbanken van Antwerpen zijn exclusief bevoegd.",
+    ],
+    agreeQuote: "Ik heb de offerte en de algemene voorwaarden gelezen en aanvaard ze.",
+    agreeReserve: "Ik heb het reservatieformulier en de algemene voorwaarden gelezen en aanvaard ze.",
+    cowboyPromo: "Bestel nu en maak kans op een Made in Belgium COWBOY e-bike ter waarde van €3.000!",
+    cowboyGo: "Ga verder naar betaling →",
+    signNameLbl: "Volledige naam (digitale handtekening)",
+    signDemoNote: "DEMO HANDTEKENING — in de echte applicatie verifieer je je identiteit en onderteken je via Sumsub.",
+    btnSignQuote: "Onderteken offerte digitaal →",
+    btnSignReserve: "Onderteken & reserveer voor €100 →",
     detailsLbl: "Jouw gegevens",
     lFirst: "Voornaam", lLast: "Naam", lEmail: "E-mail", lPhone: "Telefoon",
     btnOrder: "Onderteken & betaal veilig →",
@@ -611,7 +699,7 @@ const I18N = {
     invMailed: (e) => `De documenten werden gemaild naar ${e}.`,
     rcptLine: (n) => `Betaalbewijs ${n}`,
     dlInvoice: "⬇ Download factuur (PDF)",
-    dlReservation: "⬇ Download productreservatie (PDF)",
+    dlReservation: "⬇ Download reservatieorder (PDF)",
     dlReceipt: "⬇ Download betaalbewijs (PDF)",
     invDemoNote: "DEMO — geen echte documenten, er werd geen echte e-mail verzonden.",
     timeout: "Time-out bij het ontwerpen. Probeer het opnieuw.",
@@ -677,7 +765,7 @@ async function poll(route, isDone, { interval = 3000, timeout = 300000 } = {}) {
   throw new Error(t("timeout"));
 }
 
-const STEPS = ["step-input", "step-progress", "step-result", "step-checkout", "step-done"];
+const STEPS = ["step-input", "step-progress", "step-result", "step-sign", "step-checkout", "step-done"];
 function show(stepId) {
   STEPS.forEach((s, i) => {
     $(s).classList.toggle("hidden", s !== stepId);
@@ -974,6 +1062,8 @@ function renderQuote(qt) {
     { key: "finance", title: t("planFinance"), big: fmt.format(p.finance.monthly) + t("perMonth"), sub: L.financeSub(finTerm, (p.finance.apr * 100).toFixed(1)),
       items: [L.financeTotal(fmt.format(p.finance.total_cost_30y)), L.netBenefit(fmt.format(p.finance.net_benefit_30y)), t("financeOwn")] },
   ];
+  $("btnContinue").textContent = isNew ? t("btnContinueReserve") : t("btnContinue");
+
   const best = cards.reduce((a, b) => (p[a.key].net_benefit_30y >= p[b.key].net_benefit_30y ? a : b));
   $("plans").innerHTML = cards.map((c) => `
     <div class="plan${S.plan === c.key ? " selected" : ""}" data-plan="${c.key}">
@@ -1015,7 +1105,34 @@ function renderQuote(qt) {
 }
 
 $("btnContinue").onclick = () => {
-  // DEMO payment page
+  // Digital signing step: quote (stock) or reservation form (new products)
+  const isNew = S.quote.system.catalog === "new";
+  $("signTitle").textContent = isNew ? t("signTitleReserve") : t("signTitleQuote");
+  $("signIntro").textContent = isNew
+    ? t("signIntroReserve")
+    : I18N[LANG].signIntroQuote(S.quote.quote_number ?? "");
+  $("signItems").innerHTML = (S.quote.components || []).map((c) => `
+    <div class="hwRow"><div><div class="n">${c.name}</div>${c.detail ? `<div class="d">${c.detail}</div>` : ""}</div>
+    ${c.warranty ? `<span class="wty">${c.warranty}${/warranty|garantie/i.test(c.warranty) ? "" : (LANG === "nl" ? " garantie" : " warranty")}</span>` : ""}</div>`).join("");
+  $("signTerms").innerHTML = `<b>${t("signTermsTitle")}</b><br>` +
+    I18N[LANG].generalTerms.map((x, i) => `${i + 1}. ${x}`).join("<br>");
+  $("agreeLbl").textContent = isNew ? t("agreeReserve") : t("agreeQuote");
+  $("agreeChk").checked = false;
+  $("signName").value = "";
+  $("btnSign").textContent = isNew ? t("btnSignReserve") : t("btnSignQuote");
+  $("btnSign").disabled = true;
+  show("step-sign");
+};
+
+function syncSignBtn() {
+  $("btnSign").disabled = !($("agreeChk").checked && $("signName").value.trim().length > 2);
+}
+$("agreeChk").onchange = syncSignBtn;
+$("signName").oninput = syncSignBtn;
+
+$("btnSign").onclick = () => {
+  // DEMO signature (Sumsub stubbed) → payment page
+  S.signature = { name: $("signName").value.trim(), signed_at: new Date().toISOString() };
   const isNew = S.quote.system.catalog === "new";
   const amount = fmt2.format(S.quote.price.deposit);
   $("payFor").textContent = isNew ? t("payForReservation") : t("payForDeposit");
@@ -1023,6 +1140,14 @@ $("btnContinue").onclick = () => {
   $("cardName").value = `${S.contact.first_name} ${S.contact.last_name}`;
   $("btnOrder").textContent = I18N[LANG].payBtn(`€ ${amount}`);
   document.querySelector('[data-i18n="checkoutNote"]').textContent = isNew ? t("checkoutNoteReserve") : t("checkoutNote");
+  // COWBOY promo popup before the payment step
+  $("cowboyTxt").innerHTML = t("cowboyPromo").replace(/€\s?3\.000/, '<span class="prize">€3.000</span>');
+  $("cowboyGo").textContent = t("cowboyGo");
+  $("cowboyModal").classList.remove("hidden");
+};
+
+$("cowboyGo").onclick = () => {
+  $("cowboyModal").classList.add("hidden");
   show("step-checkout");
 };
 
@@ -1036,7 +1161,7 @@ $("btnOrder").onclick = async () => {
     const order = await api("POST", "order", { quote_id: S.quoteId, lead_id: S.leadId, plan: S.plan });
     await sleep(1500); // simulate card processing (DEMO)
     const pay = await api("POST", "pay-demo", { order_id: order.order_id });
-    // documents screen: invoice (stock) or product reservation (new) + payment receipt
+    // documents screen: invoice (stock) or reservation order (new) + payment receipt
     $("invNumber").textContent = pay.invoice_number ?? "DEMO";
     const isNew = S.quote.system.catalog === "new";
     $("rcptLine").textContent = I18N[LANG].rcptLine(pay.receipt_number ?? "");
@@ -1060,3 +1185,4 @@ applyLang();
 </script>
 </body>
 </html>
+"}]
