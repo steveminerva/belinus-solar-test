@@ -44,7 +44,7 @@
     .band { flex-direction: column; align-items: flex-start; gap: 18px; padding-top: 24px; padding-bottom: 22px; }
     .band .right { text-align: left; }
     .band .right .title { font-size: 1.45rem; }
-    .band img.logo, .band svg.logo { height: 36px; }
+    .band img.logo { height: 36px; }
     .calc { padding: 30px 20px; }
     h1 { font-size: 1.35rem; }
     iframe.cad { height: 320px; }
@@ -136,6 +136,46 @@
   .plan ul { padding-left: 18px; margin: 14px 0 0; font-size: .84rem; color: #4a5459; line-height: 1.6; }
   .badge { display: inline-block; background: var(--cyan); color: #fff; font-size: .56rem; font-weight: 700; letter-spacing: .1em; padding: 3px 8px; margin-left: 8px; vertical-align: middle; }
 
+  /* hardware catalog */
+  .hwToggle { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .hwToggle button { flex: 1; min-width: 210px; padding: 13px 10px; background: var(--paper); border: 1px solid var(--rule);
+    font-family: 'JetBrains Mono', monospace; font-size: .66rem; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--grey); cursor: pointer; }
+  .hwToggle button.on { border-color: var(--cyan); color: var(--cyan); box-shadow: inset 0 0 0 1px var(--cyan); background: #f4fbfe; }
+  .hw { border: 1px solid var(--rule); }
+  .hwRow { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 13px 16px;
+           border-bottom: 1px solid var(--rule); flex-wrap: wrap; }
+  .hwRow:last-child { border-bottom: none; }
+  .hwRow .n { font-weight: 600; font-size: .92rem; }
+  .hwRow .d { color: var(--grey); font-size: .78rem; }
+  .wty { font-family: 'JetBrains Mono', monospace; font-size: .6rem; font-weight: 700; color: var(--cyan);
+         border: 1px solid var(--cyan); padding: 3px 8px; letter-spacing: .06em; white-space: nowrap; }
+  .sheetLink { font-family: 'JetBrains Mono', monospace; font-size: .62rem; color: var(--grey); white-space: nowrap; }
+  .promo { margin-top: 14px; padding: 18px 22px; background: var(--black); color: #fff; border-left: 3px solid var(--cyan);
+           display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .promo .pl { font-family: 'JetBrains Mono', monospace; font-size: .58rem; letter-spacing: .22em; color: var(--cyan); }
+  .promo .pt { margin-top: 6px; font-size: .93rem; line-height: 1.5; }
+  .promo .cowboy { font-weight: 800; letter-spacing: .38em; font-size: 1.1rem; font-family: Inter, sans-serif; }
+  .usps { margin-top: 14px; border: 1px solid var(--cyan); padding: 18px 22px; background: #f4fbfe; }
+  .usps .dl { font-family: 'JetBrains Mono', monospace; font-size: .68rem; font-weight: 700; letter-spacing: .14em;
+              color: var(--cyan); text-transform: uppercase; }
+  .usps ul { margin: 10px 0 0; padding-left: 18px; font-size: .86rem; line-height: 1.75; color: #2a3438; }
+
+  /* demo mode */
+  .demoBar { background: #c81e1e; color: #fff; text-align: center; padding: 8px 12px;
+             font-family: 'JetBrains Mono', monospace; font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+  .demoRed { color: #c81e1e; font-weight: 700; }
+  .demoNote { border: 1px dashed #c81e1e; color: #c81e1e; padding: 12px 16px; margin-top: 14px;
+              font-size: .82rem; line-height: 1.6; background: #fff5f5; }
+  .paySummary { display: flex; justify-content: space-between; align-items: center; background: var(--black);
+                border-left: 3px solid var(--cyan); color: #fff; padding: 16px 20px; margin: 6px 0 10px; }
+  .paySummary .t { font-family: 'JetBrains Mono', monospace; font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; }
+  .paySummary .v { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 700; }
+  .invoiceBox { border: 1px solid var(--cyan); background: #f4fbfe; padding: 22px 26px; margin: 22px auto 0; max-width: 560px; text-align: left; }
+  .invoiceBox .in { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.05rem; }
+  .paidBadge { display: inline-block; background: var(--cyan); color: #fff; font-family: 'JetBrains Mono', monospace;
+               font-size: .62rem; font-weight: 700; letter-spacing: .14em; padding: 4px 10px; margin-left: 10px; vertical-align: middle; }
+
   .error { border-left: 3px solid #c0392b; background: #fdf1ef; color: #9b1c1c; padding: 14px 18px; margin-top: 16px; font-size: .9rem; }
   .note { font-size: .76rem; color: var(--grey); margin-top: 14px; line-height: 1.6; }
   .success { text-align: center; padding: 46px 20px; }
@@ -144,6 +184,8 @@
 </head>
 <body>
 <div class="bel-widget">
+
+  <div class="demoBar" data-i18n="demoBar"></div>
 
   <div class="band">
     <div>
@@ -167,6 +209,14 @@
     <!-- STEP 1 -->
     <div id="step-input">
       <p class="sub" data-i18n="h1sub"></p>
+      <div class="row">
+        <div><label data-i18n="lFirst"></label><input id="fname"></div>
+        <div><label data-i18n="lLast"></label><input id="lname"></div>
+      </div>
+      <div class="row">
+        <div><label data-i18n="lEmail"></label><input id="email" type="email"></div>
+        <div><label data-i18n="lPhone"></label><input id="phone" type="tel"></div>
+      </div>
       <label data-i18n="lStreet"></label>
       <input id="street" placeholder="Frankrijklei 5">
       <div class="row">
@@ -230,6 +280,22 @@
       <div class="kpi"><b id="kSave">–</b><span data-i18n="kSave"></span></div>
     </div>
 
+    <h2 class="lbl" data-i18n="hwLbl"></h2>
+    <div class="hwToggle">
+      <button id="togStock" onclick="setCatalog('stock')"></button>
+      <button id="togNew" onclick="setCatalog('new')"></button>
+    </div>
+    <div class="hw" id="hwList"></div>
+    <div class="promo hidden" id="promoStock">
+      <div><div class="pl" data-i18n="promoLbl"></div><div class="pt" data-i18n="promoTxt"></div></div>
+      <div class="cowboy">COWBOY<span style="font-size:.55em;vertical-align:super">✳</span></div>
+    </div>
+    <div class="usps hidden" id="newBlock">
+      <div class="dl" id="deliveryLine"></div>
+      <ul id="uspList"></ul>
+      <div class="note" data-i18n="reserveNote"></div>
+    </div>
+
     <h2 class="lbl"><span data-i18n="offerteLbl"></span> <span class="mono" id="quoteNumber" style="color:var(--grey);letter-spacing:.1em"></span></h2>
     <div class="tableWrap"><table class="offerte" id="offerteTable"></table></div>
     <div class="totaal-band"><span class="t">T O T A A L</span><span class="v" id="totV"></span></div>
@@ -245,28 +311,39 @@
     <button class="primary" id="btnContinue" disabled data-i18n="btnContinue"></button>
   </div>
 
-  <!-- STEP 4: checkout -->
+  <!-- STEP 4: demo payment -->
   <div class="inner hidden" id="step-checkout">
-    <h2 class="lbl" data-i18n="detailsLbl"></h2>
+    <h2 class="lbl" data-i18n="payLbl"></h2>
+    <div class="paySummary"><span class="t" id="payFor"></span><span class="v" id="payAmount"></span></div>
+    <div class="demoNote" data-i18n="demoCardNote"></div>
     <div class="row">
-      <div><label data-i18n="lFirst"></label><input id="fname"></div>
-      <div><label data-i18n="lLast"></label><input id="lname"></div>
+      <div><label data-i18n="lCardName"></label><input id="cardName"></div>
+      <div><label data-i18n="lCard"></label><input id="cardNum" value="4242 4242 4242 4242" class="demoRed" style="color:#c81e1e"></div>
     </div>
     <div class="row">
-      <div><label data-i18n="lEmail"></label><input id="email" type="email"></div>
-      <div><label data-i18n="lPhone"></label><input id="phone" type="tel"></div>
+      <div><label data-i18n="lExpiry"></label><input id="cardExp" value="12/28" style="color:#c81e1e"></div>
+      <div><label data-i18n="lCvc"></label><input id="cardCvc" value="123" style="color:#c81e1e"></div>
     </div>
-    <button class="primary" id="btnOrder" data-i18n="btnOrder"></button>
+    <button class="primary" id="btnOrder"></button>
     <div class="note" data-i18n="checkoutNote"></div>
     <div id="checkoutError" class="error hidden"></div>
   </div>
 
-  <!-- STEP 5: done -->
+  <!-- STEP 5: paid + documents -->
   <div class="inner hidden" id="step-done">
     <div class="success">
       <div class="check">✓</div>
       <h1 data-i18n="doneTitle"></h1>
       <p class="sub" data-i18n="doneMsg"></p>
+      <div class="invoiceBox">
+        <div><span class="in" id="invNumber"></span><span class="paidBadge" data-i18n="paidBadge"></span></div>
+        <div class="note" id="rcptLine" style="margin-top:6px"></div>
+        <div class="note" id="invPaidLine" style="margin-top:8px"></div>
+        <div class="note" id="invMailedLine"></div>
+        <a id="invDownload" href="#" target="_blank"><button class="primary" id="invDownloadBtn" style="margin-top:16px"></button></a>
+        <a id="rcptDownload" href="#" target="_blank"><button class="primary" id="rcptDownloadBtn" style="margin-top:8px"></button></a>
+        <div class="note demoRed" data-i18n="invDemoNote"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -343,14 +420,49 @@ const I18N = {
       `Battery sized automatically; saves ≥ €${a.battery_dynamic_eur_month_per_10kwh}/month per 10 kWh via dynamic tariffs & peak shaving. ` +
       (ev ? `EV: home charging vs public €${a.ev_public_price.toFixed(2)}/kWh` + (evCompany ? `; employer reimburses €${a.ev_company_reimbursement.toFixed(2)}/kWh. ` : `. `) : ``) +
       `For homes with existing panels, only the added value of battery and charger is counted. Estimates are indicative and not a binding offer.`,
+    hwLbl: "Your hardware",
+    togStock: "In stock — fast delivery", togNew: "New 2027 — Made in Belgium (+30%)",
+    sheet: "Datasheet (PDF)",
+    promoLbl: "O N L I N E  P R O M O T I O N",
+    promoTxt: "Order & pay online today and have a chance to win a Made in Belgium COWBOY electric bike!",
+    delivery: (d) => `Estimated delivery: ${d}`,
+    usps: [
+      "35-year triple warranty on solar panels",
+      "10-year inverter warranty",
+      "20-year battery warranty",
+      "The best warranty in Europe",
+      "Made in Belgium",
+      "NO lithium — sodium-ion battery",
+      "Silicon-carbide power electronics inverter",
+      "New custom-developed belinus AI energy management system",
+    ],
+    reserveNote: "Reserve the first all-in-one kit of the best energy solution in Europe, made in Belgium, for €100 — fully refunded if cancelled.",
+    depositReservation: (d) => `Reservation: € ${d} (fully refunded if cancelled)`,
+    btnOrderReserve: "Reserve now for €100 →",
+    checkoutNoteReserve: "You verify your identity and sign digitally (Sumsub), then pay the €100 reservation online via Bancontact, iDEAL or card (Mollie) — fully refunded if you cancel. Estimated delivery: March 2027.",
     btnContinue: "Continue with selected plan →",
     detailsLbl: "Your details",
     lFirst: "First name", lLast: "Last name", lEmail: "Email", lPhone: "Phone",
     btnOrder: "Sign & pay securely →",
     checkoutNote: "Next you will verify your identity and sign digitally (Sumsub), then pay the 30% deposit via Bancontact, iDEAL or card (Mollie).",
     errContact: "Please fill in your name and email.",
-    doneTitle: "Order received!",
-    doneMsg: "We've registered your order. In the live version you would now be redirected to identity verification & digital signing, followed by online payment of the deposit.",
+    demoBar: "⚠ DEMO APPLICATION — test environment, no real payments, no real orders ⚠",
+    payLbl: "Payment",
+    payForDeposit: "DEPOSIT (30%)", payForReservation: "RESERVATION (REFUNDABLE)",
+    lCardName: "Cardholder name", lCard: "Card number", lExpiry: "Expiry", lCvc: "CVC",
+    demoCardNote: "DEMO PAYMENT — this is NOT a real payment. Use the pre-filled test card 4242 4242 4242 4242 · 12/28 · CVC 123. No money will be charged.",
+    payBtn: (v) => `Pay ${v} (demo) →`,
+    processing: "Processing demo payment…",
+    doneTitle: "Payment received!",
+    doneMsg: "Thank you! Your order has been registered and your payment confirmed.",
+    paidBadge: "PAID",
+    invPaid: (v, res) => res ? `Reservation paid: ${v} — fully refunded if cancelled.` : `Deposit paid: ${v} (30% of the total).`,
+    invMailed: (e) => `The documents have been e-mailed to ${e}.`,
+    rcptLine: (n) => `Payment receipt ${n}`,
+    dlInvoice: "⬇ Download invoice (PDF)",
+    dlReservation: "⬇ Download product reservation (PDF)",
+    dlReceipt: "⬇ Download payment receipt (PDF)",
+    invDemoNote: "DEMO — no real documents, no real e-mail was sent.",
     timeout: "Timed out waiting for the design service. Please try again.",
   },
   nl: {
@@ -418,14 +530,49 @@ const I18N = {
       `Batterij automatisch gedimensioneerd; bespaart ≥ €${a.battery_dynamic_eur_month_per_10kwh}/maand per 10 kWh via dynamische tarieven & peak shaving. ` +
       (ev ? `EV: thuisladen vs publiek €${a.ev_public_price.toFixed(2)}/kWh` + (evCompany ? `; werkgever vergoedt €${a.ev_company_reimbursement.toFixed(2)}/kWh. ` : `. `) : ``) +
       `Bij bestaande zonnepanelen telt enkel de meerwaarde van batterij en laadpaal. Bedragen zijn indicatief en vormen geen bindend aanbod.`,
+    hwLbl: "Jouw hardware",
+    togStock: "Op voorraad — snelle levering", togNew: "Nieuw 2027 — Made in Belgium (+30%)",
+    sheet: "Datasheet (PDF)",
+    promoLbl: "O N L I N E  P R O M O T I E",
+    promoTxt: "Bestel en betaal vandaag online en maak kans op een Made in Belgium COWBOY elektrische fiets!",
+    delivery: (d) => `Geschatte levering: ${d === "March 2027" ? "maart 2027" : d}`,
+    usps: [
+      "35 jaar triple garantie op zonnepanelen",
+      "10 jaar garantie op de omvormer",
+      "20 jaar garantie op de batterij",
+      "De beste garantie van Europa",
+      "Made in Belgium",
+      "GEEN lithium — natrium-ion batterij",
+      "Silicium-carbide power electronics omvormer",
+      "Nieuw op maat ontwikkeld belinus AI energiemanagementsysteem",
+    ],
+    reserveNote: "Reserveer de eerste all-in-one kit van de beste energieoplossing van Europa, made in Belgium, voor €100 — volledig terugbetaald bij annulatie.",
+    depositReservation: (d) => `Reservatie: € ${d} (volledig terugbetaald bij annulatie)`,
+    btnOrderReserve: "Reserveer nu voor €100 →",
+    checkoutNoteReserve: "Je verifieert je identiteit en ondertekent digitaal (Sumsub), waarna je de reservatie van €100 online betaalt via Bancontact, iDEAL of kaart (Mollie) — volledig terugbetaald bij annulatie. Geschatte levering: maart 2027.",
     btnContinue: "Ga verder met gekozen formule →",
     detailsLbl: "Jouw gegevens",
     lFirst: "Voornaam", lLast: "Naam", lEmail: "E-mail", lPhone: "Telefoon",
     btnOrder: "Onderteken & betaal veilig →",
     checkoutNote: "Hierna verifieer je je identiteit en onderteken je digitaal (Sumsub), waarna je het voorschot van 30% betaalt via Bancontact, iDEAL of kaart (Mollie).",
     errContact: "Vul je naam en e-mailadres in.",
-    doneTitle: "Bestelling ontvangen!",
-    doneMsg: "We hebben je bestelling geregistreerd. In de live versie word je nu doorgestuurd naar identiteitsverificatie & digitale ondertekening, gevolgd door de online betaling van het voorschot.",
+    demoBar: "⚠ DEMO APPLICATIE — testomgeving, geen echte betalingen, geen echte bestellingen ⚠",
+    payLbl: "Betaling",
+    payForDeposit: "VOORSCHOT (30%)", payForReservation: "RESERVATIE (TERUGBETAALBAAR)",
+    lCardName: "Naam kaarthouder", lCard: "Kaartnummer", lExpiry: "Vervaldatum", lCvc: "CVC",
+    demoCardNote: "DEMO BETALING — dit is GEEN echte betaling. Gebruik de vooraf ingevulde testkaart 4242 4242 4242 4242 · 12/28 · CVC 123. Er wordt geen geld afgehouden.",
+    payBtn: (v) => `Betaal ${v} (demo) →`,
+    processing: "Demo betaling verwerken…",
+    doneTitle: "Betaling ontvangen!",
+    doneMsg: "Bedankt! Je bestelling is geregistreerd en je betaling is bevestigd.",
+    paidBadge: "BETAALD",
+    invPaid: (v, res) => res ? `Reservatie betaald: ${v} — volledig terugbetaald bij annulatie.` : `Voorschot betaald: ${v} (30% van het totaal).`,
+    invMailed: (e) => `De documenten werden gemaild naar ${e}.`,
+    rcptLine: (n) => `Betaalbewijs ${n}`,
+    dlInvoice: "⬇ Download factuur (PDF)",
+    dlReservation: "⬇ Download productreservatie (PDF)",
+    dlReceipt: "⬇ Download betaalbewijs (PDF)",
+    invDemoNote: "DEMO — geen echte documenten, er werd geen echte e-mail verzonden.",
     timeout: "Time-out bij het ontwerpen. Probeer het opnieuw.",
   },
 };
@@ -440,13 +587,29 @@ function applyLang() {
   document.documentElement.lang = LANG;
   $("langEn").classList.toggle("on", LANG === "en");
   $("langNl").classList.toggle("on", LANG === "nl");
+  // dynamic button label depends on the has-panels answer
   const has = $("hasPanels").value === "1";
   $("btnStart").textContent = has ? t("btnStartExisting") : t("btnStart");
+  // re-render dynamic content if a quote is on screen
   if (S.quote) renderQuote(S.quote);
 }
 function setLang(l) { LANG = l; applyLang(); }
 
-const S = { projectId: null, designId: null, leadId: null, quote: null, quoteId: null, plan: null, capWp: null };
+const S = { projectId: null, designId: null, leadId: null, quote: null, quoteId: null, plan: null, capWp: null, catalog: "stock", lastBody: null };
+
+async function setCatalog(c) {
+  if (!S.lastBody || c === S.catalog) return;
+  S.catalog = c;
+  $("togStock").disabled = true; $("togNew").disabled = true;
+  try {
+    const quote = await api("POST", "quote", { ...S.lastBody, catalog: c });
+    S.quote = quote; S.quoteId = quote.quote_id;
+    renderQuote(quote);
+  } catch (e) {
+    showError("progressError", e.message);
+  }
+  $("togStock").disabled = false; $("togNew").disabled = false;
+}
 const fmt = new Intl.NumberFormat("nl-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
 const fmt2 = new Intl.NumberFormat("nl-BE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const $ = (id) => document.getElementById(id);
@@ -503,6 +666,7 @@ function startFacts() {
 }
 function stopFacts() { clearInterval(factTimer); }
 
+// conditional fields
 function syncEvFields() {
   const have = $("evHave").value === "1";
   const want = $("evWant").value === "1";
@@ -521,6 +685,13 @@ $("hasPanels").onchange = () => {
 $("btnStart").onclick = async () => {
   const street = $("street").value.trim(), city = $("city").value.trim(), postal = $("postal").value.trim();
   const annualKwh = +$("annualKwh").value;
+  S.contact = {
+    first_name: $("fname").value.trim(), last_name: $("lname").value.trim(),
+    email: $("email").value.trim(), phone: $("phone").value.trim(),
+  };
+  if (!S.contact.first_name || !S.contact.last_name || !/.+@.+\..+/.test(S.contact.email)) {
+    return showError("inputError", t("errContact"));
+  }
   if (!street || !city || !postal) return showError("inputError", t("errAddress"));
   if (!annualKwh || annualKwh < 500) return showError("inputError", t("errKwh"));
   $("inputError").classList.add("hidden");
@@ -546,10 +717,11 @@ $("btnStart").onclick = async () => {
     try {
       const lead = await api("POST", "lead", { address: `${street}, ${city}, ${postal}` });
       S.leadId = lead.lead_id; S.designId = null;
-      const quote = await api("POST", "quote", {
+      S.lastBody = {
         lead_id: S.leadId, existing_panels: true, existing_wp: existingWp,
         annual_consumption_kwh: annualKwh, ...evBody,
-      });
+      };
+      const quote = await api("POST", "quote", { ...S.lastBody, catalog: S.catalog });
       S.quote = quote; S.quoteId = quote.quote_id;
       renderQuote(quote);
       show("step-result");
@@ -570,6 +742,8 @@ $("btnStart").onclick = async () => {
     const start = await api("POST", "start", { street, city, postal_code: postal });
     Object.assign(S, { projectId: start.project_id, designId: start.design_id, leadId: start.lead_id });
 
+    // Total consumption incl. EV home charging — sizes the system accordingly,
+    // capped by the meter type (single phase 5.000 Wp / three phase 10.000 Wp).
     const totalKwh = annualKwh + evKwh;
     const capWp = phase === "single" ? 5000 : 10000;
     const targetKwh = Math.min(totalKwh, Math.round((capWp / 1000) * 950));
@@ -588,6 +762,8 @@ $("btnStart").onclick = async () => {
     await consumptionP;
     setStage(1, "done");
 
+    // AutoDesigner — attempt 1: energy mode with full components (production).
+    // Attempt 2: max_fit with panels only (works everywhere, incl. sandbox).
     setStage(2, "active");
     const attempts = [
       { mode: "energy", panels_only: false },
@@ -622,10 +798,11 @@ $("btnStart").onclick = async () => {
     });
     setStage(3, "done");
 
-    const quote = await api("POST", "quote", {
+    S.lastBody = {
       design_id: S.designId, lead_id: S.leadId,
       annual_consumption_kwh: annualKwh, ...evBody,
-    });
+    };
+    const quote = await api("POST", "quote", { ...S.lastBody, catalog: S.catalog });
     S.quote = quote; S.quoteId = quote.quote_id;
     stopFacts();
     renderQuote(quote);
@@ -661,6 +838,27 @@ function renderQuote(qt) {
   $("quoteNumber").textContent = qt.quote_number ?? "";
   $("pdfLink").href = `${API_BASE}/quote-pdf?quote_id=${qt.quote_id}`;
 
+  // ---- hardware catalog ----
+  const isNew = qt.system.catalog === "new";
+  $("togStock").textContent = t("togStock");
+  $("togNew").textContent = t("togNew");
+  $("togStock").classList.toggle("on", !isNew);
+  $("togNew").classList.toggle("on", isNew);
+  $("hwList").innerHTML = (qt.components || []).map((c) => `
+    <div class="hwRow">
+      <div><div class="n">${c.name}</div>${c.detail ? `<div class="d">${c.detail}</div>` : ""}</div>
+      <div style="display:flex;gap:10px;align-items:center">
+        ${c.warranty ? `<span class="wty">${c.warranty}${/warranty|garantie/i.test(c.warranty) ? "" : (LANG === "nl" ? " garantie" : " warranty")}</span>` : ""}
+        ${c.sheet ? `<a class="sheetLink" href="datasheets/${encodeURIComponent(c.sheet)}" target="_blank">${t("sheet")}</a>` : ""}
+      </div>
+    </div>`).join("");
+  $("promoStock").classList.toggle("hidden", isNew);
+  $("newBlock").classList.toggle("hidden", !isNew);
+  if (isNew) {
+    $("deliveryLine").textContent = I18N[LANG].delivery(qt.system.delivery || "March 2027");
+    $("uspList").innerHTML = I18N[LANG].usps.map((u) => `<li>${u}</li>`).join("");
+  }
+
   let html = `<tr><th>#</th><th>OMSCHRIJVING</th><th>AANTAL</th><th>PRIJS</th><th>BTW</th><th>BEDRAG</th></tr>`;
   qt.items.forEach((it, i) => {
     html += `<tr><td class="num">${String(i + 1).padStart(2, "0")}</td><td class="desc">${it.description}</td>` +
@@ -673,7 +871,9 @@ function renderQuote(qt) {
   }
   $("offerteTable").innerHTML = html;
   $("totV").textContent = `€ ${fmt2.format(qt.price.total_incl_vat)}`;
-  $("depositLine").textContent = I18N[LANG].depositLine(fmt2.format(qt.price.deposit));
+  $("depositLine").textContent = qt.price.deposit_label === "reservation"
+    ? I18N[LANG].depositReservation(fmt2.format(qt.price.deposit))
+    : I18N[LANG].depositLine(fmt2.format(qt.price.deposit));
 
   const p = qt.plans;
   const finTerm = p.finance.term_months % 12 === 0
@@ -727,22 +927,44 @@ function renderQuote(qt) {
   $("assumptions").textContent = I18N[LANG].assumptions(qt.assumptions, qt.system.ev_benefit_counted, qt.system.ev_company);
 }
 
-$("btnContinue").onclick = () => show("step-checkout");
+$("btnContinue").onclick = () => {
+  // DEMO payment page
+  const isNew = S.quote.system.catalog === "new";
+  const amount = fmt2.format(S.quote.price.deposit);
+  $("payFor").textContent = isNew ? t("payForReservation") : t("payForDeposit");
+  $("payAmount").textContent = `€ ${amount}`;
+  $("cardName").value = `${S.contact.first_name} ${S.contact.last_name}`;
+  $("btnOrder").textContent = I18N[LANG].payBtn(`€ ${amount}`);
+  document.querySelector('[data-i18n="checkoutNote"]').textContent = isNew ? t("checkoutNoteReserve") : t("checkoutNote");
+  show("step-checkout");
+};
 
 $("btnOrder").onclick = async () => {
-  const fields = { first_name: $("fname").value.trim(), last_name: $("lname").value.trim(), email: $("email").value.trim(), phone: $("phone").value.trim() };
-  if (!fields.first_name || !fields.last_name || !fields.email) return showError("checkoutError", t("errContact"));
+  $("checkoutError").classList.add("hidden");
   $("btnOrder").disabled = true;
+  const origLbl = $("btnOrder").textContent;
+  $("btnOrder").textContent = t("processing");
   try {
-    await api("POST", "contact", { project_id: S.projectId, lead_id: S.leadId, ...fields });
+    await api("POST", "contact", { project_id: S.projectId, lead_id: S.leadId, ...S.contact });
     const order = await api("POST", "order", { quote_id: S.quoteId, lead_id: S.leadId, plan: S.plan });
-    if (order.signing_token) { /* TODO: launch Sumsub WebSDK */ }
-    if (order.payment_url) { window.location.href = order.payment_url; return; }
+    await sleep(1500); // simulate card processing (DEMO)
+    const pay = await api("POST", "pay-demo", { order_id: order.order_id });
+    // documents screen: invoice (stock) or product reservation (new) + payment receipt
+    $("invNumber").textContent = pay.invoice_number ?? "DEMO";
+    const isNew = S.quote.system.catalog === "new";
+    $("rcptLine").textContent = I18N[LANG].rcptLine(pay.receipt_number ?? "");
+    $("invPaidLine").textContent = I18N[LANG].invPaid(`€ ${fmt2.format(pay.amount_paid ?? S.quote.price.deposit)}`, isNew);
+    $("invMailedLine").textContent = I18N[LANG].invMailed(S.contact.email);
+    $("invDownloadBtn").textContent = isNew ? t("dlReservation") : t("dlInvoice");
+    $("rcptDownloadBtn").textContent = t("dlReceipt");
+    $("invDownload").href = `${API_BASE}/invoice-pdf?order_id=${order.order_id}`;
+    $("rcptDownload").href = `${API_BASE}/receipt-pdf?order_id=${order.order_id}`;
     show("step-done");
   } catch (e) {
     showError("checkoutError", e.message);
-    $("btnOrder").disabled = false;
+    $("btnOrder").textContent = origLbl;
   }
+  $("btnOrder").disabled = false;
 };
 
 function showError(id, msg) { const el = $(id); el.textContent = msg; el.classList.remove("hidden"); }
