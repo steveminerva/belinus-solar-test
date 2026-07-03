@@ -1600,3 +1600,47 @@ function goQuote() {
 $("btnCallSend").onclick = async () => {
   $("callError").classList.add("hidden");
   const phone = $("callPhone").value.trim();
+  if (phone.length < 8) return showError("callError", t("errContact"));
+  try {
+    await api("POST", "contact", { lead_id: S.leadId, ...S.contact, phone });
+    if (S.contact) S.contact.phone = phone;
+    const dayTxt = $("callDay").selectedOptions[0] ? $("callDay").selectedOptions[0].textContent : "";
+    $("callConfirm").textContent = I18N[LANG].callConfirm(dayTxt, $("callSlot").value);
+    $("callConfirm").classList.remove("hidden");
+  } catch (e) { showError("callError", e.message); }
+};
+
+$("btnOrder").onclick = async () => {
+  $("checkoutError").classList.add("hidden");
+  $("btnOrder").disabled = true;
+  const origLbl = $("btnOrder").textContent;
+  $("btnOrder").textContent = t("processing");
+  try {
+    await api("POST", "contact", { project_id: S.projectId, lead_id: S.leadId, ...S.contact });
+    const order = await api("POST", "order", { quote_id: S.quoteId, lead_id: S.leadId, plan: S.plan });
+    await sleep(1500); // simulate card processing (DEMO)
+    const pay = await api("POST", "pay-demo", { order_id: order.order_id });
+    // documents screen: invoice (stock) or product reservation (new) + payment receipt
+    $("invNumber").textContent = pay.invoice_number ?? "DEMO";
+    const isNew = S.quote.system.catalog === "new";
+    $("rcptLine").textContent = I18N[LANG].rcptLine(pay.receipt_number ?? "");
+    $("invPaidLine").textContent = I18N[LANG].invPaid(`€ ${fmt2.format(pay.amount_paid ?? S.quote.price.deposit)}`, isNew);
+    $("invMailedLine").textContent = I18N[LANG].invMailed(S.contact.email);
+    $("invDownloadBtn").textContent = isNew ? t("dlReservation") : t("dlInvoice");
+    $("rcptDownloadBtn").textContent = t("dlReceipt");
+    $("invDownload").href = `${API_BASE}/invoice-pdf?order_id=${order.order_id}`;
+    $("rcptDownload").href = `${API_BASE}/receipt-pdf?order_id=${order.order_id}`;
+    show("step-done");
+  } catch (e) {
+    showError("checkoutError", e.message);
+    $("btnOrder").textContent = origLbl;
+  }
+  $("btnOrder").disabled = false;
+};
+
+function showError(id, msg) { const el = $(id); el.textContent = msg; el.classList.remove("hidden"); }
+
+applyLang();
+</script>
+</body>
+</html>
