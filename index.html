@@ -64,6 +64,12 @@
     .totaal-band .v { font-size: 1.05rem; }
     .kpi b { font-size: 1.05rem; }
     button.primary { width: 100%; }
+    /* Mobile header: stack cleanly — full-width admin dropdown, wrapping toggles */
+    .band > div { width: 100%; min-width: 0; }
+    .band .right { text-align: left; }
+    .lang { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .lang button { white-space: nowrap; }
+    .scanSel { width: 100%; max-width: 100%; }
   }
 
   h1 { font-size: 1.7rem; font-weight: 700; margin: 0 0 6px; letter-spacing: -.01em; }
@@ -1322,6 +1328,24 @@ function compRows(q) {
     </div>`).join("");
 }
 
+// Offerte line-item table (shared by the quote page and the signing page).
+function quoteTableHtml(qt) {
+  let html = `<tr><th>#</th><th>OMSCHRIJVING</th><th>AANTAL</th><th>PRIJS</th><th>BTW</th><th>BEDRAG</th></tr>`;
+  qt.items.forEach((it, i) => {
+    html += `<tr><td class="num">${String(i + 1).padStart(2, "0")}</td><td class="desc">${it.description}</td>` +
+      `<td class="r">${fmt2.format(it.quantity)}</td><td class="r">${fmt2.format(it.unit_price)}</td>` +
+      `<td class="r">${(it.vat_rate * 100).toFixed(0)}%</td><td class="r"><b>${fmt2.format(it.amount)}</b></td></tr>`;
+  });
+  html += `<tr><td colspan="5" class="tot-l">${t("exclVat")}</td><td class="r">${fmt2.format(qt.price.subtotal_excl_vat)}</td></tr>`;
+  for (const [rate, g] of Object.entries(qt.price.vat_groups)) {
+    html += `<tr><td colspan="5" class="tot-l">${I18N[LANG].vatOn(rate, fmt2.format(g.base))}</td><td class="r">${fmt2.format(g.vat)}</td></tr>`;
+  }
+  return html;
+}
+const depositText = (qt) => qt.price.deposit_label === "reservation"
+  ? I18N[LANG].depositReservation(fmt2.format(qt.price.deposit))
+  : I18N[LANG].depositLine(fmt2.format(qt.price.deposit));
+
 // Two selectable kit cards: only the selected card shows the full component
 // list + pricing; the unselected card shows only the kit name + its teaser.
 function renderKits(qt) {
@@ -1423,21 +1447,9 @@ function renderQuote(qt) {
   const isNew = qt.system.catalog === "new";
   renderKits(qt);
 
-  let html = `<tr><th>#</th><th>OMSCHRIJVING</th><th>AANTAL</th><th>PRIJS</th><th>BTW</th><th>BEDRAG</th></tr>`;
-  qt.items.forEach((it, i) => {
-    html += `<tr><td class="num">${String(i + 1).padStart(2, "0")}</td><td class="desc">${it.description}</td>` +
-      `<td class="r">${fmt2.format(it.quantity)}</td><td class="r">${fmt2.format(it.unit_price)}</td>` +
-      `<td class="r">${(it.vat_rate * 100).toFixed(0)}%</td><td class="r"><b>${fmt2.format(it.amount)}</b></td></tr>`;
-  });
-  html += `<tr><td colspan="5" class="tot-l">${t("exclVat")}</td><td class="r">${fmt2.format(qt.price.subtotal_excl_vat)}</td></tr>`;
-  for (const [rate, g] of Object.entries(qt.price.vat_groups)) {
-    html += `<tr><td colspan="5" class="tot-l">${I18N[LANG].vatOn(rate, fmt2.format(g.base))}</td><td class="r">${fmt2.format(g.vat)}</td></tr>`;
-  }
-  $("offerteTable").innerHTML = html;
+  $("offerteTable").innerHTML = quoteTableHtml(qt);
   $("totV").textContent = `€ ${fmt2.format(qt.price.total_incl_vat)}`;
-  $("depositLine").textContent = qt.price.deposit_label === "reservation"
-    ? I18N[LANG].depositReservation(fmt2.format(qt.price.deposit))
-    : I18N[LANG].depositLine(fmt2.format(qt.price.deposit));
+  $("depositLine").textContent = depositText(qt);
 
   const p = qt.plans;
   const finTerm = p.finance.term_months % 12 === 0
@@ -1538,9 +1550,11 @@ $("btnContinue").onclick = () => {
   $("signIntro").textContent = isNew
     ? t("signIntroReserve")
     : I18N[LANG].signIntroQuote(S.quote.quote_number ?? "");
-  $("signItems").innerHTML = (S.quote.components || []).map((c) => `
-    <div class="hwRow"><div><div class="n">${c.name}</div>${c.detail ? `<div class="d">${c.detail}</div>` : ""}</div>
-    ${c.warranty ? `<span class="wty">${c.warranty}${/warranty|garantie/i.test(c.warranty) ? "" : (LANG === "nl" ? " garantie" : " warranty")}</span>` : ""}</div>`).join("");
+  // Full priced quote — line items, totals and deposit — on the signing page.
+  $("signItems").innerHTML =
+    `<div class="tableWrap" style="padding:0 16px"><table class="offerte">${quoteTableHtml(S.quote)}</table></div>` +
+    `<div class="totaal-band" style="margin-top:0"><span class="t">T O T A A L</span><span class="v">€ ${fmt2.format(S.quote.price.total_incl_vat)}</span></div>` +
+    `<div class="deposit" style="padding:10px 16px 14px">${depositText(S.quote)}</div>`;
   $("signTerms").innerHTML = `<b>${t("signTermsTitle")}</b><br>` +
     I18N[LANG].generalTerms.map((x, i) => `${i + 1}. ${x}`).join("<br>");
   $("agreeLbl").textContent = isNew ? t("agreeReserve") : t("agreeQuote");
@@ -1586,17 +1600,3 @@ function goQuote() {
 $("btnCallSend").onclick = async () => {
   $("callError").classList.add("hidden");
   const phone = $("callPhone").value.trim();
-  if (phone.length < 8) return showError("callError", t("errContact"));
-  try {
-    await api("POST", "contact", { lead_id: S.leadId, ...S.contact, phone });
-    if (S.contact) S.contact.phone = phone;
-    const dayTxt = $("callDay").selectedOptions[0] ? $("callDay").selectedOptions[0].textContent : "";
-    $("callConfirm").textContent = I18N[LANG].callConfirm(dayTxt, $("callSlot").value);
-    $("callConfirm").classList.remove("hidden");
-  } catch (e) { showError("callError", e.message); }
-};
-
-$("btnOrder").onclick = async () => {
-  $("checkoutError").classList.add("hidden");
-  $("btnOrder").disabled = true;
-  const origLbl = $("b
