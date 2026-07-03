@@ -66,6 +66,17 @@
   .steps div.done { background: var(--cyan); }
   .hidden { display: none !important; }
 
+  /* input wizard */
+  #wiz0 { text-align: center; padding: 40px 0 26px; }
+  #wiz0 h1 { font-size: 2.1rem; margin-bottom: 10px; }
+  .backLink { display: inline-block; margin: 26px 22px 0 0; font-family: 'JetBrains Mono', monospace;
+              font-size: .7rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+              color: var(--grey); cursor: pointer; user-select: none; }
+  .backLink:hover { color: var(--cyan); }
+
+  /* progress screen: only the currently active stage is visible */
+  #step-progress.solo .stage:not(.active) { display: none; }
+
   label {
     display: block; font-family: 'JetBrains Mono', monospace; font-weight: 700;
     font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--grey); margin: 18px 0 6px;
@@ -224,61 +235,104 @@
   <div class="inner">
     <div class="steps"><div id="s1" class="done"></div><div id="s2"></div><div id="s3"></div><div id="s4"></div></div>
 
-    <!-- STEP 1 -->
+    <!-- STEP 1: multi-section wizard -->
     <div id="step-input">
-      <p class="sub" data-i18n="h1sub"></p>
-      <div class="row">
-        <div><label data-i18n="lFirst"></label><input id="fname"></div>
-        <div><label data-i18n="lLast"></label><input id="lname"></div>
+
+      <!-- Wizard 0: welcome -->
+      <div class="wiz" id="wiz0">
+        <h1 data-i18n="wizWelcomeTitle"></h1>
+        <p class="sub" data-i18n="wizWelcomeSub"></p>
+        <button class="primary" data-i18n="wizStart" onclick="showWiz(1)"></button>
       </div>
-      <div class="row">
-        <div><label data-i18n="lEmail"></label><input id="email" type="email"></div>
-        <div><label data-i18n="lPhone"></label><input id="phone" type="tel"></div>
-      </div>
-      <label data-i18n="lStreet"></label>
-      <input id="street" placeholder="Frankrijklei 5">
-      <div class="row">
-        <div><label data-i18n="lCity"></label><input id="city" placeholder="Antwerpen"></div>
-        <div><label data-i18n="lPostal"></label><input id="postal" placeholder="2000"></div>
-      </div>
-      <div class="row">
-        <div><label data-i18n="lHasPanels"></label>
-          <select id="hasPanels"><option value="0" data-i18n="oHasPanelsNo"></option><option value="1" data-i18n="oHasPanelsYes"></option></select></div>
-        <div id="existingWpWrap" class="hidden"><label data-i18n="lExistingWp"></label><input id="existingWp" type="number" value="4000" min="500" max="20000"></div>
-      </div>
-      <div class="row">
-        <div><label data-i18n="lPhase"></label>
-          <select id="phase"><option value="single" data-i18n="oPhase1"></option><option value="three" data-i18n="oPhase3"></option></select></div>
-        <div></div>
-      </div>
-      <div class="row">
-        <div>
-          <label><span data-i18n="lAnnual"></span><span class="qmark" id="kwhQ">?</span></label>
-          <input id="annualKwh" type="number" value="3500" min="500" max="50000">
-          <div class="note hidden" id="kwhHelp" data-i18n="inputNote"></div>
+
+      <!-- Wizard 1: current situation — energy consumption -->
+      <div class="wiz hidden" id="wiz1">
+        <h2 class="lbl" data-i18n="wiz1Lbl"></h2>
+        <label data-i18n="lStreet"></label>
+        <input id="street" placeholder="Frankrijklei 5">
+        <div class="row">
+          <div><label data-i18n="lCity"></label><input id="city" placeholder="Antwerpen"></div>
+          <div><label data-i18n="lPostal"></label><input id="postal" placeholder="2000"></div>
         </div>
-        <div><label data-i18n="lEvHave"></label><select id="evHave"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
-      </div>
-      <div class="row" id="evWantWrap">
-        <div><label data-i18n="lEvWant"></label><select id="evWant"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oEvWantYes"></option></select></div>
-        <div></div>
-      </div>
-      <div class="row hidden" id="evDetails">
-        <div>
-          <label><span data-i18n="lEvKwh"></span><span class="qmark" id="evQ">?</span></label>
-          <input id="evKwh" type="number" value="2500" min="0" max="20000">
-          <div class="note" id="evKm" style="margin-top:6px"></div>
-          <div class="note hidden" id="evHelp" data-i18n="evNote"></div>
+        <div class="row">
+          <div><label data-i18n="lPhase"></label>
+            <select id="phase"><option value="single" data-i18n="oPhase1"></option><option value="three" data-i18n="oPhase3"></option></select></div>
+          <div>
+            <label><span data-i18n="lAnnual"></span><span class="qmark" id="kwhQ">?</span></label>
+            <input id="annualKwh" type="number" value="3500" min="500" max="50000">
+            <div class="note hidden" id="kwhHelp" data-i18n="inputNote"></div>
+          </div>
         </div>
-        <div><label data-i18n="lEvCompany"></label><select id="evCompany"><option value="0" data-i18n="oEvPrivate"></option><option value="1" data-i18n="oEvCompany"></option></select></div>
+        <div class="row">
+          <div><label data-i18n="lHeatPump"></label><select id="heatPump"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
+          <div><label data-i18n="lPool"></label><select id="pool"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
+        </div>
+        <div class="row">
+          <div><label data-i18n="lJacuzzi"></label><select id="jacuzzi"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
+          <div><label data-i18n="lOtherLoads"></label><select id="otherLoads"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
+        </div>
+        <span class="backLink" data-i18n="wizBack" onclick="showWiz(0)"></span>
+        <button class="primary" data-i18n="wizNext" onclick="showWiz(2)"></button>
       </div>
-      <button class="primary" id="btnStart"></button>
-      <div id="inputError" class="error hidden"></div>
+
+      <!-- Wizard 2: solar panels -->
+      <div class="wiz hidden" id="wiz2">
+        <h2 class="lbl" data-i18n="wiz2Lbl"></h2>
+        <div class="row">
+          <div><label data-i18n="lHasPanels"></label>
+            <select id="hasPanels"><option value="0" data-i18n="oHasPanelsNo"></option><option value="1" data-i18n="oHasPanelsYes"></option></select></div>
+          <div id="existingWpWrap" class="hidden"><label data-i18n="lExistingWp"></label><input id="existingWp" type="number" value="4000" min="500" max="20000"></div>
+        </div>
+        <span class="backLink" data-i18n="wizBack" onclick="showWiz(1)"></span>
+        <button class="primary" data-i18n="wizNext" onclick="showWiz(3)"></button>
+      </div>
+
+      <!-- Wizard 3: electric vehicle -->
+      <div class="wiz hidden" id="wiz3">
+        <h2 class="lbl" data-i18n="wiz3Lbl"></h2>
+        <div class="row">
+          <div><label data-i18n="lEvHave"></label><select id="evHave"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
+          <div></div>
+        </div>
+        <div class="row" id="evWantWrap">
+          <div><label data-i18n="lEvWant"></label><select id="evWant"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oEvWantYes"></option></select></div>
+          <div></div>
+        </div>
+        <div class="row hidden" id="evDetails">
+          <div>
+            <label><span data-i18n="lEvKwh"></span><span class="qmark" id="evQ">?</span></label>
+            <input id="evKwh" type="number" value="2500" min="0" max="20000">
+            <div class="note" id="evKm" style="margin-top:6px"></div>
+            <div class="note hidden" id="evHelp" data-i18n="evNote"></div>
+          </div>
+          <div><label data-i18n="lEvCompany"></label><select id="evCompany"><option value="0" data-i18n="oEvPrivate"></option><option value="1" data-i18n="oEvCompany"></option></select></div>
+        </div>
+        <span class="backLink" data-i18n="wizBack" onclick="showWiz(2)"></span>
+        <button class="primary" data-i18n="wizNext" onclick="showWiz(4)"></button>
+      </div>
+
+      <!-- Wizard 4: personal details -->
+      <div class="wiz hidden" id="wiz4">
+        <h2 class="lbl" data-i18n="wiz4Lbl"></h2>
+        <div class="row">
+          <div><label data-i18n="lFirst"></label><input id="fname"></div>
+          <div><label data-i18n="lLast"></label><input id="lname"></div>
+        </div>
+        <div class="row">
+          <div><label data-i18n="lEmail"></label><input id="email" type="email"></div>
+          <div><label data-i18n="lPhone"></label><input id="phone" type="tel"></div>
+        </div>
+        <div class="agreeRow"><input type="checkbox" id="chkPrivacy"><span data-i18n="chkPrivacy"></span></div>
+        <div class="agreeRow"><input type="checkbox" id="chkMail"><span data-i18n="chkMail"></span></div>
+        <span class="backLink" data-i18n="wizBack" onclick="showWiz(3)"></span>
+        <button class="primary" id="btnStart" data-i18n="btnGenerate"></button>
+        <div id="inputError" class="error hidden"></div>
+      </div>
     </div>
   </div>
 
   <!-- STEP 2: calculation (dark) -->
-  <div class="calc hidden" id="step-progress">
+  <div class="calc solo hidden" id="step-progress">
     <h2 data-i18n="calcTitle"></h2>
     <div class="csub" data-i18n="calcSub"></div>
     <div class="stage" data-stage="0"><span class="dot"></span>&nbsp;<span data-i18n="stage0"></span></div>
@@ -378,7 +432,7 @@
     <div id="checkoutError" class="error hidden"></div>
   </div>
 
-  <!-- STEP 5: paid + documents -->
+  <!-- STEP 5: paid + invoice -->
   <div class="inner hidden" id="step-done">
     <div class="success">
       <div class="check">✓</div>
@@ -422,7 +476,15 @@ const I18N = {
     evNote: "Reference: 2,500 kWh equals ± 15,000 km per year — the minimum applied for company cars.",
     lEvCompany: "Company car?", oEvPrivate: "No — private car", oEvCompany: "Yes — employer pays €0,30/kWh",
     inputNote: "Not sure? An average Belgian household uses ± 3,500 kWh/year; an EV adds ± 2,500 kWh (15.000 km). The ideal home battery size is calculated automatically from your meter type, consumption, solar production and EV usage.",
-    btnStart: "Design my system →", btnStartExisting: "Get my battery & EV quote →",
+    btnGenerate: "Generate Energy Scan →",
+    wizWelcomeTitle: "Welcome to your Energyscan", wizWelcomeSub: "Let's get started!",
+    wizStart: "Start →", wizNext: "Next →", wizBack: "← Back",
+    wiz1Lbl: "YOUR CURRENT SITUATION — ENERGY CONSUMPTION",
+    wiz2Lbl: "SOLAR PANELS", wiz3Lbl: "ELECTRIC VEHICLE", wiz4Lbl: "PERSONAL DETAILS",
+    lHeatPump: "Do you have a heat pump?", lPool: "Do you have a heated swimming pool?",
+    lJacuzzi: "Do you have a jacuzzi?", lOtherLoads: "Other high-consumption appliances?",
+    chkPrivacy: "I have read and accept the privacy policy.",
+    chkMail: "I agree to receive this energy scan advice by e-mail and future promotions.",
     errAddress: "Please fill in your full address.",
     errKwh: "Please enter a valid annual consumption.",
     errWp: "Please enter the total Wp of your existing panels.",
@@ -481,7 +543,6 @@ const I18N = {
       `injection ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, panel degradation ${(a.panel_degradation * 100).toFixed(1)}%/yr, VAT ${(a.vat_rate * 100).toFixed(0)}%. ` +
       `Battery sized automatically; saves ≥ €${a.battery_dynamic_eur_month_per_10kwh}/month per 10 kWh via dynamic tariffs & peak shaving. ` +
       (ev ? `EV: home charging vs public €${a.ev_public_price.toFixed(2)}/kWh` + (evCompany ? `; employer reimburses €${a.ev_company_reimbursement.toFixed(2)}/kWh. ` : `. `) : ``) +
-      `CO₂: grid factor 0.20 kg/kWh; EV on solar vs petrol car 120 g/km. ` +
       `For homes with existing panels, only the added value of battery and charger is counted. Estimates are indicative and not a binding offer.`,
     hwLbl: "Your hardware",
     togStock: "In stock — fast delivery", togNew: "New 2027 — Made in Belgium",
@@ -549,7 +610,7 @@ const I18N = {
     invMailed: (e) => `The documents have been e-mailed to ${e}.`,
     rcptLine: (n) => `Payment receipt ${n}`,
     dlInvoice: "⬇ Download invoice (PDF)",
-    dlReservation: "⬇ Download reservation order (PDF)",
+    dlReservation: "⬇ Download product reservation (PDF)",
     dlReceipt: "⬇ Download payment receipt (PDF)",
     invDemoNote: "DEMO — no real documents, no real e-mail was sent.",
     timeout: "Timed out waiting for the design service. Please try again.",
@@ -572,7 +633,15 @@ const I18N = {
     evNote: "Referentie: 2.500 kWh komt overeen met ± 15.000 km per jaar — het minimum gehanteerd voor bedrijfswagens.",
     lEvCompany: "Bedrijfswagen?", oEvPrivate: "Nee — privéwagen", oEvCompany: "Ja — werkgever betaalt €0,30/kWh",
     inputNote: "Niet zeker? Een gemiddeld Belgisch gezin verbruikt ± 3.500 kWh/jaar; een EV voegt ± 2.500 kWh toe (15.000 km). De ideale thuisbatterij wordt automatisch berekend op basis van je metertype, verbruik, zonneproductie en EV-gebruik.",
-    btnStart: "Ontwerp mijn systeem →", btnStartExisting: "Ontvang mijn batterij & EV offerte →",
+    btnGenerate: "Genereer Energiescan →",
+    wizWelcomeTitle: "Welkom bij jouw Energiescan", wizWelcomeSub: "Laten we beginnen!",
+    wizStart: "Start →", wizNext: "Volgende →", wizBack: "← Terug",
+    wiz1Lbl: "JOUW HUIDIGE SITUATIE — ENERGIEVERBRUIK",
+    wiz2Lbl: "ZONNEPANELEN", wiz3Lbl: "ELEKTRISCH VOERTUIG", wiz4Lbl: "PERSOONLIJKE GEGEVENS",
+    lHeatPump: "Heb je een warmtepomp?", lPool: "Heb je een verwarmd zwembad?",
+    lJacuzzi: "Heb je een jacuzzi?", lOtherLoads: "Andere grootverbruikers?",
+    chkPrivacy: "Ik heb het privacybeleid gelezen en aanvaard het.",
+    chkMail: "Ik ga akkoord dat ik dit energiescan-advies per e-mail ontvang, alsook toekomstige promoties.",
     errAddress: "Vul je volledige adres in.",
     errKwh: "Vul een geldig jaarverbruik in.",
     errWp: "Vul het totale Wp-vermogen van je bestaande panelen in.",
@@ -631,7 +700,6 @@ const I18N = {
       `injectie ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, paneeldegradatie ${(a.panel_degradation * 100).toFixed(1)}%/jaar, btw ${(a.vat_rate * 100).toFixed(0)}%. ` +
       `Batterij automatisch gedimensioneerd; bespaart ≥ €${a.battery_dynamic_eur_month_per_10kwh}/maand per 10 kWh via dynamische tarieven & peak shaving. ` +
       (ev ? `EV: thuisladen vs publiek €${a.ev_public_price.toFixed(2)}/kWh` + (evCompany ? `; werkgever vergoedt €${a.ev_company_reimbursement.toFixed(2)}/kWh. ` : `. `) : ``) +
-      `CO₂: netfactor 0,20 kg/kWh; EV op zonnestroom vs benzinewagen 120 g/km. ` +
       `Bij bestaande zonnepanelen telt enkel de meerwaarde van batterij en laadpaal. Bedragen zijn indicatief en vormen geen bindend aanbod.`,
     hwLbl: "Jouw hardware",
     togStock: "Op voorraad — snelle levering", togNew: "Nieuw 2027 — Made in Belgium",
@@ -699,7 +767,7 @@ const I18N = {
     invMailed: (e) => `De documenten werden gemaild naar ${e}.`,
     rcptLine: (n) => `Betaalbewijs ${n}`,
     dlInvoice: "⬇ Download factuur (PDF)",
-    dlReservation: "⬇ Download reservatieorder (PDF)",
+    dlReservation: "⬇ Download productreservatie (PDF)",
     dlReceipt: "⬇ Download betaalbewijs (PDF)",
     invDemoNote: "DEMO — geen echte documenten, er werd geen echte e-mail verzonden.",
     timeout: "Time-out bij het ontwerpen. Probeer het opnieuw.",
@@ -716,9 +784,6 @@ function applyLang() {
   document.documentElement.lang = LANG;
   $("langEn").classList.toggle("on", LANG === "en");
   $("langNl").classList.toggle("on", LANG === "nl");
-  // dynamic button label depends on the has-panels answer
-  const has = $("hasPanels").value === "1";
-  $("btnStart").textContent = has ? t("btnStartExisting") : t("btnStart");
   if (typeof updateEvKm === "function") updateEvKm();
   // re-render dynamic content if a quote is on screen
   if (S.quote) renderQuote(S.quote);
@@ -826,11 +891,29 @@ $("evWant").onchange = syncEvFields;
 $("hasPanels").onchange = () => {
   const has = $("hasPanels").value === "1";
   $("existingWpWrap").classList.toggle("hidden", !has);
-  $("btnStart").textContent = has ? t("btnStartExisting") : t("btnStart");
 };
+
+// -------- input wizard --------
+function showWiz(n) {
+  for (let i = 0; i <= 4; i++) $("wiz" + i).classList.toggle("hidden", i !== n);
+}
+// both consent checkboxes are required before generating the energy scan
+function syncConsent() {
+  $("btnStart").disabled = !($("chkPrivacy").checked && $("chkMail").checked);
+}
+$("chkPrivacy").onchange = syncConsent;
+$("chkMail").onchange = syncConsent;
+syncConsent();
 
 // -------- main flow --------
 $("btnStart").onclick = async () => {
+  // household consumption profile (kept client-side, not sent to the backend)
+  S.profile = {
+    heat_pump: $("heatPump").value === "1",
+    pool: $("pool").value === "1",
+    jacuzzi: $("jacuzzi").value === "1",
+    other_loads: $("otherLoads").value === "1",
+  };
   const street = $("street").value.trim(), city = $("city").value.trim(), postal = $("postal").value.trim();
   const annualKwh = +$("annualKwh").value;
   S.contact = {
@@ -1161,7 +1244,7 @@ $("btnOrder").onclick = async () => {
     const order = await api("POST", "order", { quote_id: S.quoteId, lead_id: S.leadId, plan: S.plan });
     await sleep(1500); // simulate card processing (DEMO)
     const pay = await api("POST", "pay-demo", { order_id: order.order_id });
-    // documents screen: invoice (stock) or reservation order (new) + payment receipt
+    // documents screen: invoice (stock) or product reservation (new) + payment receipt
     $("invNumber").textContent = pay.invoice_number ?? "DEMO";
     const isNew = S.quote.system.catalog === "new";
     $("rcptLine").textContent = I18N[LANG].rcptLine(pay.receipt_number ?? "");
@@ -1185,4 +1268,3 @@ applyLang();
 </script>
 </body>
 </html>
-"}]
