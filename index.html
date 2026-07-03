@@ -191,6 +191,7 @@
   .promoPrice { color: var(--cyan); font-size: 1.25rem; font-weight: 700; }
   .kitUsps { margin: 12px 0 0; padding-left: 18px; font-size: .86rem; line-height: 1.75; color: #2a3438; }
   .kitDelivery { margin-top: 10px; font-size: .66rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--cyan); }
+  .kitCta { width: 100%; margin-top: 14px; }
   .kpi span.kpiTrees { display: block; font-size: .58rem; color: var(--grey); margin-top: 5px; text-transform: none; letter-spacing: .02em; }
   .ctaRow { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
   button.ghost { background: none; border: 1px solid var(--cyan); color: var(--cyan); }
@@ -412,9 +413,6 @@
     <canvas id="energyChart" height="120"></canvas>
     <div class="note" id="assumptions"></div>
     <span class="backLink" data-i18n="wizBack" onclick="show('step-input');syncConsent()"></span>
-    <div class="ctaRow">
-      <button class="primary" id="btnQuote" data-i18n="btnQuote"></button>
-    </div>
   </div>
 
   <!-- STEP 3b: quote details + plan choice -->
@@ -587,7 +585,7 @@ const I18N = {
     stageB2: "Integrating belinus hardware within the solution",
     stageB3: "Finalizing your energy scan",
     designFailed: " — This roof may be too small or complex for an automatic design. Leave your details and we'll design it manually.",
-    designLbl: "Your solar design",
+    designLbl: "Lay-out of your solar panels",
     capNote: (kwp, cap) => `Note: the automatic design (${kwp} kWp) exceeds the maximum for your meter type (${cap} kWp). The final design will be adjusted during technical inspection.`,
     kSize: "System size (kWp)", kPanels: "Solar panels", kProd: "kWh / year",
     kBattery: "Battery (auto-sized)", kPrice: "Total price incl. VAT", kSave: "Savings over 30 years",
@@ -650,6 +648,7 @@ const I18N = {
     btnContinueReserve: "Reserve your system →",
     reserveCancel: "You can cancel at any time, free of any obligation.",
     btnQuote: "I want a quote →", btnCall: "Call me",
+    btnOrderNow: "Order now →", btnReserveNow: "Reserve now →",
     promoPopup: "30,000 customers have chosen belinus — order now and get 15% off!",
     callLbl: "Call me", callSub: "Pick a day and time slot — we will call you.",
     lCallDay: "Day", lCallSlot: "Time slot", btnCallSend: "Send →",
@@ -763,7 +762,7 @@ const I18N = {
     stageB2: "belinus hardware integreren in de oplossing",
     stageB3: "Jouw energiescan finaliseren",
     designFailed: " — Dit dak is mogelijk te klein of complex voor een automatisch ontwerp. Laat je gegevens achter en wij ontwerpen het handmatig.",
-    designLbl: "Jouw zonne-ontwerp",
+    designLbl: "Lay-out van je zonnepanelen",
     capNote: (kwp, cap) => `Let op: het automatische ontwerp (${kwp} kWp) overschrijdt het maximum voor jouw metertype (${cap} kWp). Het definitieve ontwerp wordt aangepast bij de technische inspectie.`,
     kSize: "Systeemgrootte (kWp)", kPanels: "Zonnepanelen", kProd: "kWh / jaar",
     kBattery: "Batterij (auto)", kPrice: "Totaalprijs incl. btw", kSave: "Besparing over 30 jaar",
@@ -826,6 +825,7 @@ const I18N = {
     btnContinueReserve: "Reserveer uw systeem →",
     reserveCancel: "U kan ten allen tijde vrijblijvend annuleren.",
     btnQuote: "Ik wens een offerte →", btnCall: "Bel mij",
+    btnOrderNow: "Bestel nu →", btnReserveNow: "Reserveer nu →",
     promoPopup: "30.000 klanten kozen al voor belinus — bestel nu en krijg 15% korting!",
     callLbl: "Bel mij", callSub: "Kies een dag en tijdslot — wij bellen jou.",
     lCallDay: "Dag", lCallSlot: "Tijdslot", btnCallSend: "Verstuur →",
@@ -1326,6 +1326,7 @@ function renderKits(qt) {
     sb += `<div class="kitPrices"><span class="strike mono">€ ${fmt2.format(listT)}</span><span class="promoPrice mono">€ ${fmt2.format(promoT)}</span></div>`;
   }
   sb += `</div>`;
+  sb += `<button class="primary kitCta" id="kitStockOrder">${t("btnOrderNow")}</button>`;
   $("kitStockBody").innerHTML = sb;
 
   // Pro card: USPs + delivery + €100 reservation (always) + components when selected
@@ -1338,7 +1339,17 @@ function renderKits(qt) {
   nb += `<ul class="kitUsps">${I18N[LANG].kitUsps.map((u) => `<li>${u}</li>`).join("")}</ul>`;
   nb += `<div class="kitDelivery mono">${I18N[LANG].delivery((nq && nq.system.delivery) || "Q2 2027")}</div>`;
   nb += `<div class="note">${t("reserveNote")}</div>`;
+  nb += `<button class="primary kitCta" id="kitNewOrder">${t("btnReserveNow")}</button>`;
   $("kitNewBody").innerHTML = nb;
+
+  // In-card CTAs: select the kit (fetching its quote if needed) → order flow.
+  $("kitStockOrder").onclick = (e) => { e.stopPropagation(); orderKit("stock"); };
+  $("kitNewOrder").onclick = (e) => { e.stopPropagation(); orderKit("new"); };
+}
+
+async function orderKit(c) {
+  if (S.catalog !== c) await setCatalog(c);
+  if (S.catalog === c && S.quote) goQuote();
 }
 
 function renderQuote(qt) {
@@ -1538,7 +1549,7 @@ function openCowboy() {
 $("cowboyX").onclick = () => $("cowboyModal").classList.add("hidden");
 
 // -------- result page → quote or call-me --------
-$("btnQuote").onclick = () => {
+function goQuote() {
   show("step-quote");
   // "30.000 customers" promo popup, once per scan
   if (!S.promoShown) {
@@ -1546,7 +1557,7 @@ $("btnQuote").onclick = () => {
     $("promoModalTxt").textContent = t("promoPopup");
     $("promoModal").classList.remove("hidden");
   }
-};
+}
 $("promoX").onclick = () => $("promoModal").classList.add("hidden");
 
 $("btnCallSend").onclick = async () => {
