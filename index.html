@@ -176,6 +176,11 @@
   .paidBadge { display: inline-block; background: var(--cyan); color: #fff; font-family: 'JetBrains Mono', monospace;
                font-size: .62rem; font-weight: 700; letter-spacing: .14em; padding: 4px 10px; margin-left: 10px; vertical-align: middle; }
 
+  .qmark { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px;
+           border: 1px solid var(--cyan); border-radius: 50%; color: var(--cyan); font-size: .62rem;
+           margin-left: 8px; cursor: pointer; vertical-align: middle; user-select: none; }
+  .qmark:hover { background: var(--cyan); color: #fff; }
+
   .error { border-left: 3px solid #c0392b; background: #fdf1ef; color: #9b1c1c; padding: 14px 18px; margin-top: 16px; font-size: .9rem; }
   .note { font-size: .76rem; color: var(--grey); margin-top: 14px; line-height: 1.6; }
   .success { text-align: center; padding: 46px 20px; }
@@ -191,11 +196,10 @@
     <div>
       <!-- Official belinus vector logo -->
       <svg class="logo" viewBox="0 0 640.5 158.6" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="belinus"><g fill="#46B2E9"><path d="M 28.5 0.0 L 28.5 101.8 C 28.5 117.6 39.0 128.7 53.9 128.7 C 67.5 128.7 77.9 117.6 77.9 101.8 C 77.9 86.0 67.5 74.8 53.0 74.8 C 46.8 74.8 42.1 76.2 37.6 78.2 L 37.6 48.1 C 43.2 46.6 49.0 45.0 54.8 45.0 C 85.3 45.0 106.5 72.4 106.5 101.6 C 106.5 133.2 84.6 158.6 53.4 158.6 C 21.8 158.6 0.0 133.2 0.0 101.6 L 0.0 0.0 Z M 28.5 0.0"/><path d="M 232.1 110.0 C 226.7 139.2 204.2 158.6 173.7 158.6 C 140.1 158.6 118.9 132.7 118.9 101.8 C 118.9 70.8 140.1 45.0 173.7 45.0 C 202.7 45.0 219.2 60.6 226.3 77.1 L 171.3 118.3 L 157.5 100.2 L 185.7 78.4 C 182.9 75.1 177.7 73.5 171.7 73.5 C 157.7 73.5 147.4 86.2 147.4 101.8 C 147.4 115.1 157.9 130.1 174.8 130.1 C 189.1 130.1 200.9 121.4 203.3 106.9 Z M 232.1 110.0"/><path d="M 247.9 0.0 L 276.4 0.0 L 276.4 155.9 L 247.9 155.9 Z M 247.9 0.0"/><path d="M 297.3 47.7 L 325.8 47.7 L 325.8 155.9 L 297.3 155.9 Z M 297.3 47.7"/><path d="M 347.2 155.9 L 347.2 81.1 C 347.2 57.5 365.5 45.0 392.0 45.0 C 418.5 45.0 436.7 57.5 436.7 81.1 L 436.7 155.9 L 408.2 155.9 L 408.2 90.9 C 408.2 79.7 402.4 73.5 392.0 73.5 C 381.5 73.5 375.7 79.7 375.7 90.9 L 375.7 155.9 Z M 347.2 155.9"/><path d="M 487.1 47.7 L 487.1 112.7 C 487.1 123.8 492.9 130.1 503.3 130.1 C 513.8 130.1 519.6 123.8 519.6 112.7 L 519.6 47.7 L 548.1 47.7 L 548.1 122.5 C 548.1 146.1 529.8 158.6 503.3 158.6 C 476.8 158.6 458.6 146.1 458.6 122.5 L 458.6 47.7 Z M 487.1 47.7"/><path d="M 564.1 129.2 L 600.9 129.2 C 606.2 129.2 608.9 126.5 608.9 123.2 C 608.9 109.6 565.3 106.5 565.3 79.5 C 565.3 56.1 581.7 47.7 600.4 47.7 L 634.7 47.7 L 634.7 74.4 L 601.8 74.4 C 598.2 74.4 594.7 74.8 594.7 79.3 C 594.7 89.1 640.5 94.4 640.5 122.9 C 640.5 144.5 624.5 155.9 604.0 155.9 L 564.1 155.9 Z M 564.1 129.2"/><path d="M 311.6 29.3 C 304.3 29.3 298.5 23.7 298.5 16.7 C 298.5 9.8 304.3 4.2 311.6 4.2 C 318.8 4.2 324.7 9.8 324.7 16.7 C 324.7 23.7 318.8 29.3 311.6 29.3 M 311.6 0.0 C 301.9 0.0 294.1 7.5 294.1 16.7 C 294.1 26.0 301.9 33.5 311.6 33.5 C 321.3 33.5 329.1 26.0 329.1 16.7 C 329.1 7.5 321.3 0.0 311.6 0.0"/><path d="M 308.1 16.1 L 311.3 16.1 C 312.2 16.1 313.0 15.9 313.5 15.4 C 314.1 14.9 314.3 14.2 314.3 13.4 C 314.3 12.5 314.1 11.8 313.6 11.3 C 313.1 10.8 312.3 10.6 311.2 10.6 L 308.1 10.6 Z M 311.2 19.2 L 308.1 19.2 L 308.1 26.0 L 304.2 26.0 L 304.2 7.5 L 311.2 7.5 C 313.5 7.5 315.2 8.0 316.4 9.0 C 317.7 9.9 318.3 11.3 318.3 13.1 C 318.3 14.3 318.0 15.4 317.4 16.2 C 316.9 17.1 316.0 17.8 314.9 18.2 L 319.0 25.8 L 319.0 26.0 L 314.8 26.0 Z M 311.2 19.2"/></g></svg>
-      <div class="co"><b>belinus energy B.V.</b><br>Silversquare · Frankrijklei 5<br>2000 Antwerpen · België</div>
     </div>
     <div class="right">
       <div class="title" data-i18n="title">My Energyscan</div>
-      <div class="sub" data-i18n="subtitle">AI design · offerte · besparing</div>
+      <div class="sub" data-i18n="subtitle">design · offerte · besparing</div>
       <div class="lang">
         <button id="langEn" class="on" onclick="setLang('en')">EN</button>
         <button id="langNl" onclick="setLang('nl')">NL</button>
@@ -234,7 +238,11 @@
         <div></div>
       </div>
       <div class="row">
-        <div><label data-i18n="lAnnual"></label><input id="annualKwh" type="number" value="3500" min="500" max="50000"></div>
+        <div>
+          <label><span data-i18n="lAnnual"></span><span class="qmark" id="kwhQ">?</span></label>
+          <input id="annualKwh" type="number" value="3500" min="500" max="50000">
+          <div class="note hidden" id="kwhHelp" data-i18n="inputNote"></div>
+        </div>
         <div><label data-i18n="lEvHave"></label><select id="evHave"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
       </div>
       <div class="row" id="evWantWrap">
@@ -242,10 +250,14 @@
         <div></div>
       </div>
       <div class="row hidden" id="evDetails">
-        <div><label data-i18n="lEvKwh"></label><input id="evKwh" type="number" value="2500" min="0" max="20000"></div>
+        <div>
+          <label><span data-i18n="lEvKwh"></span><span class="qmark" id="evQ">?</span></label>
+          <input id="evKwh" type="number" value="2500" min="0" max="20000">
+          <div class="note" id="evKm" style="margin-top:6px"></div>
+          <div class="note hidden" id="evHelp" data-i18n="evNote"></div>
+        </div>
         <div><label data-i18n="lEvCompany"></label><select id="evCompany"><option value="0" data-i18n="oEvPrivate"></option><option value="1" data-i18n="oEvCompany"></option></select></div>
       </div>
-      <div class="note" data-i18n="inputNote"></div>
       <button class="primary" id="btnStart"></button>
       <div id="inputError" class="error hidden"></div>
     </div>
@@ -356,9 +368,9 @@ const API_BASE = "https://ywuuhcixtzutspcbxelr.supabase.co/functions/v1/solar";
 // ================= I18N =================
 const I18N = {
   en: {
-    title: "My Energyscan", subtitle: "AI design · quote · savings",
+    title: "My Energyscan", subtitle: "design · quote · savings",
     h1: "Design your solar system",
-    h1sub: "Get an instant AI-generated design, price and 30-year savings estimate for your home.",
+    h1sub: "Get an instant design, price and 30-year savings estimate for your home.",
     lStreet: "Street and number", lCity: "City", lPostal: "Postal code",
     lHasPanels: "Do you already have solar panels?",
     oHasPanelsNo: "No — I want a quote for belinus panels", oHasPanelsYes: "Yes — I already have panels",
@@ -369,6 +381,8 @@ const I18N = {
     lEvHave: "Do you already have an EV charger?", oNo: "No", oYes: "Yes",
     lEvWant: "Interested in an EV charger?", oEvWantYes: "Yes — add an EV charger",
     lEvKwh: "EV home charging (kWh / year)",
+    evKm: (km) => `≈ ${km} km / year`,
+    evNote: "Reference: 2,500 kWh equals ± 15,000 km per year — the minimum applied for company cars.",
     lEvCompany: "Company car?", oEvPrivate: "No — private car", oEvCompany: "Yes — employer pays €0,30/kWh",
     inputNote: "Not sure? An average Belgian household uses ± 3,500 kWh/year; an EV adds ± 2,500 kWh (15.000 km). The ideal home battery size is calculated automatically from your meter type, consumption, solar production and EV usage.",
     btnStart: "Design my system →", btnStartExisting: "Get my battery & EV quote →",
@@ -388,7 +402,16 @@ const I18N = {
       "Company car? Employers reimburse €0,30/kWh for home charge sessions in Belgium.",
       "Our AI analyses LIDAR height data of your roof to place every panel for maximum yield.",
       "More than 30,000 customers already switched to clean energy with Belinus.",
+      "belinus develops unique and innovative technologies for home energy solutions with its research and academic partners IMEC, VITO, KUL and KHLIM.",
+      "belinus integrates LONGi solar cells into its solar panels and offers a unique 35-year triple warranty for residential customers.",
+      "belinus launches lithium-free sodium-ion energy storage, made in Belgium, with superior safety and social and environmental responsibility performance.",
+      "belinus' new back contact solar panels offer superior safety, performance, aesthetics and warranty.",
+      "Unlock the power of nature with belinus! Order online and win a made in Belgium electric bike from Cowboy.",
     ],
+    stageB0: "Analysing your energy solution parameters",
+    stageB1: "Developing optimization scenarios",
+    stageB2: "Integrating belinus hardware within the solution",
+    stageB3: "Finalizing your energy scan",
     designFailed: " — This roof may be too small or complex for an automatic design. Leave your details and we'll design it manually.",
     designLbl: "Your solar design",
     capNote: (kwp, cap) => `Note: the automatic design (${kwp} kWp) exceeds the maximum for your meter type (${cap} kWp). The final design will be adjusted during technical inspection.`,
@@ -466,9 +489,9 @@ const I18N = {
     timeout: "Timed out waiting for the design service. Please try again.",
   },
   nl: {
-    title: "Mijn Energiescan", subtitle: "AI ontwerp · offerte · besparing",
+    title: "Mijn Energiescan", subtitle: "ontwerp · offerte · besparing",
     h1: "Ontwerp jouw zonnesysteem",
-    h1sub: "Ontvang meteen een AI-ontwerp, prijs en besparingsberekening over 30 jaar voor jouw woning.",
+    h1sub: "Ontvang meteen een ontwerp, prijs en besparingsberekening over 30 jaar voor jouw woning.",
     lStreet: "Straat en nummer", lCity: "Gemeente", lPostal: "Postcode",
     lHasPanels: "Heb je al zonnepanelen?",
     oHasPanelsNo: "Nee — ik wil een offerte voor belinus panelen", oHasPanelsYes: "Ja — ik heb al panelen",
@@ -479,6 +502,8 @@ const I18N = {
     lEvHave: "Heb je al een EV-laadpaal?", oNo: "Nee", oYes: "Ja",
     lEvWant: "Interesse in een EV-laadpaal?", oEvWantYes: "Ja — voeg een laadpaal toe",
     lEvKwh: "EV thuisladen (kWh / jaar)",
+    evKm: (km) => `≈ ${km} km / jaar`,
+    evNote: "Referentie: 2.500 kWh komt overeen met ± 15.000 km per jaar — het minimum gehanteerd voor bedrijfswagens.",
     lEvCompany: "Bedrijfswagen?", oEvPrivate: "Nee — privéwagen", oEvCompany: "Ja — werkgever betaalt €0,30/kWh",
     inputNote: "Niet zeker? Een gemiddeld Belgisch gezin verbruikt ± 3.500 kWh/jaar; een EV voegt ± 2.500 kWh toe (15.000 km). De ideale thuisbatterij wordt automatisch berekend op basis van je metertype, verbruik, zonneproductie en EV-gebruik.",
     btnStart: "Ontwerp mijn systeem →", btnStartExisting: "Ontvang mijn batterij & EV offerte →",
@@ -498,7 +523,16 @@ const I18N = {
       "Bedrijfswagen? Werkgevers vergoeden €0,30/kWh voor laadsessies thuis in België.",
       "Onze AI analyseert LIDAR-hoogtedata van je dak en plaatst elk paneel voor maximale opbrengst.",
       "Meer dan 30.000 klanten gingen je voor bij Belinus.",
+      "belinus ontwikkelt unieke en innovatieve technologieën voor home energy oplossingen met zijn onderzoeks- en academische partners IMEC, VITO, KUL en KHLIM.",
+      "belinus integreert LONGi zonnecellen in zijn zonnepanelen en biedt een unieke 35 jaar triple garantie voor residentiële klanten.",
+      "belinus lanceert lithiumvrije natrium-ion energieopslag, made in Belgium, met superieure veiligheid en sociale en ecologische verantwoordelijkheid.",
+      "De nieuwe back contact zonnepanelen van belinus bieden superieure veiligheid, prestaties, esthetiek en garantie.",
+      "Unlock the power of nature with belinus! Bestel online en win een made in Belgium elektrische fiets van Cowboy.",
     ],
+    stageB0: "Jouw energieparameters analyseren",
+    stageB1: "Optimalisatiescenario's ontwikkelen",
+    stageB2: "belinus hardware integreren in de oplossing",
+    stageB3: "Jouw energiescan finaliseren",
     designFailed: " — Dit dak is mogelijk te klein of complex voor een automatisch ontwerp. Laat je gegevens achter en wij ontwerpen het handmatig.",
     designLbl: "Jouw zonne-ontwerp",
     capNote: (kwp, cap) => `Let op: het automatische ontwerp (${kwp} kWp) overschrijdt het maximum voor jouw metertype (${cap} kWp). Het definitieve ontwerp wordt aangepast bij de technische inspectie.`,
@@ -590,6 +624,7 @@ function applyLang() {
   // dynamic button label depends on the has-panels answer
   const has = $("hasPanels").value === "1";
   $("btnStart").textContent = has ? t("btnStartExisting") : t("btnStart");
+  if (typeof updateEvKm === "function") updateEvKm();
   // re-render dynamic content if a quote is on screen
   if (S.quote) renderQuote(S.quote);
 }
@@ -644,6 +679,14 @@ function show(stepId) {
   $("step-input").parentElement.classList.toggle("hidden", stepId !== "step-input");
 }
 
+// Stage labels: "A" = Aurora roof design flow, "B" = existing-panels energy scan
+function setStageLabels(set) {
+  document.querySelectorAll(".stage span[data-i18n]").forEach((el, i) => {
+    el.dataset.i18n = (set === "B" ? "stageB" : "stage") + i;
+    el.textContent = t(el.dataset.i18n);
+  });
+}
+
 function setStage(n, state) {
   document.querySelectorAll(".stage").forEach((el) => {
     const i = +el.dataset.stage;
@@ -654,15 +697,16 @@ function setStage(n, state) {
 }
 
 let factTimer = null;
-function startFacts() {
-  let i = Math.floor(Math.random() * I18N[LANG].facts.length);
+function startFacts(interval = 9000) {
+  // start with the 5 belinus brand messages (last block of the array), then rotate through all
+  let i = I18N[LANG].facts.length - 5;
   const el = $("factText");
   const next = () => {
     el.style.opacity = 0;
     setTimeout(() => { el.textContent = I18N[LANG].facts[i % I18N[LANG].facts.length]; el.style.opacity = 1; i++; }, 400);
   };
   next();
-  factTimer = setInterval(next, 9000);
+  factTimer = setInterval(next, interval);
 }
 function stopFacts() { clearInterval(factTimer); }
 
@@ -673,6 +717,15 @@ function syncEvFields() {
   $("evWantWrap").classList.toggle("hidden", have);
   $("evDetails").classList.toggle("hidden", !(have || want));
 }
+$("kwhQ").onclick = () => $("kwhHelp").classList.toggle("hidden");
+$("evQ").onclick = () => $("evHelp").classList.toggle("hidden");
+// live km equivalent: 2.500 kWh = 15.000 km → 6 km/kWh
+function updateEvKm() {
+  const kwh = +$("evKwh").value || 0;
+  $("evKm").textContent = kwh > 0 ? I18N[LANG].evKm(Math.round(kwh * 6).toLocaleString("nl-BE")) : "";
+}
+$("evKwh").oninput = updateEvKm;
+updateEvKm();
 $("evHave").onchange = syncEvFields;
 $("evWant").onchange = syncEvFields;
 $("hasPanels").onchange = () => {
@@ -709,24 +762,39 @@ $("btnStart").onclick = async () => {
     ev_annual_kwh: evKwh, ev_company: evActive && $("evCompany").value === "1",
   };
 
-  // ---- Branch B: customer already has panels → battery/EV quote, no design ----
+  // ---- Branch B: customer already has panels → battery/EV energy scan ----
   if (hasPanels) {
     const existingWp = +$("existingWp").value || 0;
     if (existingWp < 500) return showError("inputError", t("errWp"));
     $("btnStart").disabled = true;
+    setStageLabels("B");
+    setStage(0, "active");
+    show("step-progress");
+    startFacts(5500); // all 5 brand messages fit within the scan
     try {
-      const lead = await api("POST", "lead", { address: `${street}, ${city}, ${postal}` });
-      S.leadId = lead.lead_id; S.designId = null;
-      S.lastBody = {
-        lead_id: S.leadId, existing_panels: true, existing_wp: existingWp,
-        annual_consumption_kwh: annualKwh, ...evBody,
-      };
-      const quote = await api("POST", "quote", { ...S.lastBody, catalog: S.catalog });
+      // real work runs in the background while the scan stages animate
+      const work = (async () => {
+        const lead = await api("POST", "lead", { address: `${street}, ${city}, ${postal}` });
+        S.leadId = lead.lead_id; S.designId = null;
+        S.lastBody = {
+          lead_id: S.leadId, existing_panels: true, existing_wp: existingWp,
+          annual_consumption_kwh: annualKwh, ...evBody,
+        };
+        return await api("POST", "quote", { ...S.lastBody, catalog: S.catalog });
+      })();
+      for (let i = 0; i < 4; i++) {
+        setStage(i, "active");
+        await sleep(7000);
+        setStage(i, "done");
+      }
+      const quote = await work;
       S.quote = quote; S.quoteId = quote.quote_id;
+      stopFacts();
       renderQuote(quote);
       show("step-result");
     } catch (e) {
-      showError("inputError", e.message);
+      stopFacts();
+      showError("progressError", e.message);
       $("btnStart").disabled = false;
     }
     return;
@@ -734,6 +802,7 @@ $("btnStart").onclick = async () => {
 
   // ---- Branch A: new panel design via Aurora ----
   $("btnStart").disabled = true;
+  setStageLabels("A");
   show("step-progress");
   startFacts();
 
