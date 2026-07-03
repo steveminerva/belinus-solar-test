@@ -264,15 +264,15 @@
           </div>
         </div>
         <div class="row">
-          <div><label data-i18n="lHeatPump"></label><select id="heatPump"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
-          <div><label data-i18n="lPool"></label><select id="pool"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
+          <div><label data-i18n="lHeatPump"></label><select id="hasHeatPump"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
+          <div><label data-i18n="lPool"></label><select id="hasPool"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
         </div>
         <div class="row">
-          <div><label data-i18n="lJacuzzi"></label><select id="jacuzzi"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
-          <div><label data-i18n="lOtherLoads"></label><select id="otherLoads"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
+          <div><label data-i18n="lJacuzzi"></label><select id="hasJacuzzi"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
+          <div><label data-i18n="lOtherLoads"></label><select id="hasOtherHigh"><option value="0" data-i18n="oNo"></option><option value="1" data-i18n="oYes"></option></select></div>
         </div>
         <span class="backLink" data-i18n="wizBack" onclick="showWiz(0)"></span>
-        <button class="primary" data-i18n="wizNext" onclick="showWiz(2)"></button>
+        <button class="primary" data-i18n="wizNext" onclick="storeProfile();showWiz(2)"></button>
       </div>
 
       <!-- Wizard 2: solar panels -->
@@ -326,8 +326,9 @@
         <div class="agreeRow"><input type="checkbox" id="chkMail"><span data-i18n="chkMail"></span></div>
         <span class="backLink" data-i18n="wizBack" onclick="showWiz(3)"></span>
         <button class="primary" id="btnStart" data-i18n="btnGenerate"></button>
-        <div id="inputError" class="error hidden"></div>
       </div>
+
+      <div id="inputError" class="error hidden"></div>
     </div>
   </div>
 
@@ -477,14 +478,16 @@ const I18N = {
     lEvCompany: "Company car?", oEvPrivate: "No — private car", oEvCompany: "Yes — employer pays €0,30/kWh",
     inputNote: "Not sure? An average Belgian household uses ± 3,500 kWh/year; an EV adds ± 2,500 kWh (15.000 km). The ideal home battery size is calculated automatically from your meter type, consumption, solar production and EV usage.",
     btnGenerate: "Generate Energy Scan →",
-    wizWelcomeTitle: "Welcome to your Energyscan", wizWelcomeSub: "Let's get started!",
+    wizWelcomeTitle: "Welcome to your Energyscan — let's get started!",
+    wizWelcomeSub: "Answer a few quick questions and receive your personal design, price and savings.",
     wizStart: "Start →", wizNext: "Next →", wizBack: "← Back",
     wiz1Lbl: "YOUR CURRENT SITUATION — ENERGY CONSUMPTION",
     wiz2Lbl: "SOLAR PANELS", wiz3Lbl: "ELECTRIC VEHICLE", wiz4Lbl: "PERSONAL DETAILS",
     lHeatPump: "Do you have a heat pump?", lPool: "Do you have a heated swimming pool?",
     lJacuzzi: "Do you have a jacuzzi?", lOtherLoads: "Other high-consumption appliances?",
     chkPrivacy: "I have read and accept the privacy policy.",
-    chkMail: "I agree to receive this energy scan advice by e-mail and future promotions.",
+    chkMail: "I accept to receive this energy scan advice by e-mail and future promotions.",
+    errConsent: "Please accept the privacy policy and e-mail consent.",
     errAddress: "Please fill in your full address.",
     errKwh: "Please enter a valid annual consumption.",
     errWp: "Please enter the total Wp of your existing panels.",
@@ -634,14 +637,16 @@ const I18N = {
     lEvCompany: "Bedrijfswagen?", oEvPrivate: "Nee — privéwagen", oEvCompany: "Ja — werkgever betaalt €0,30/kWh",
     inputNote: "Niet zeker? Een gemiddeld Belgisch gezin verbruikt ± 3.500 kWh/jaar; een EV voegt ± 2.500 kWh toe (15.000 km). De ideale thuisbatterij wordt automatisch berekend op basis van je metertype, verbruik, zonneproductie en EV-gebruik.",
     btnGenerate: "Genereer Energiescan →",
-    wizWelcomeTitle: "Welkom bij jouw Energiescan", wizWelcomeSub: "Laten we beginnen!",
+    wizWelcomeTitle: "Welkom bij jouw Energiescan — laten we starten!",
+    wizWelcomeSub: "Beantwoord enkele korte vragen en ontvang jouw persoonlijk ontwerp, prijs en besparing.",
     wizStart: "Start →", wizNext: "Volgende →", wizBack: "← Terug",
     wiz1Lbl: "JOUW HUIDIGE SITUATIE — ENERGIEVERBRUIK",
     wiz2Lbl: "ZONNEPANELEN", wiz3Lbl: "ELEKTRISCH VOERTUIG", wiz4Lbl: "PERSOONLIJKE GEGEVENS",
     lHeatPump: "Heb je een warmtepomp?", lPool: "Heb je een verwarmd zwembad?",
     lJacuzzi: "Heb je een jacuzzi?", lOtherLoads: "Andere grootverbruikers?",
     chkPrivacy: "Ik heb het privacybeleid gelezen en aanvaard het.",
-    chkMail: "Ik ga akkoord dat ik dit energiescan-advies per e-mail ontvang, alsook toekomstige promoties.",
+    chkMail: "Ik aanvaard deze energiescan per e-mail te ontvangen, alsook toekomstige promoties.",
+    errConsent: "Aanvaard het privacybeleid en de e-mailtoestemming.",
     errAddress: "Vul je volledige adres in.",
     errKwh: "Vul een geldig jaarverbruik in.",
     errWp: "Vul het totale Wp-vermogen van je bestaande panelen in.",
@@ -895,7 +900,17 @@ $("hasPanels").onchange = () => {
 
 // -------- input wizard --------
 function showWiz(n) {
+  $("inputError").classList.add("hidden");
   for (let i = 0; i <= 4; i++) $("wiz" + i).classList.toggle("hidden", i !== n);
+}
+// household consumption profile — informational only, kept client-side, never sent to the backend
+function storeProfile() {
+  S.profile = {
+    heat_pump: $("hasHeatPump").value === "1",
+    pool: $("hasPool").value === "1",
+    jacuzzi: $("hasJacuzzi").value === "1",
+    other_high: $("hasOtherHigh").value === "1",
+  };
 }
 // both consent checkboxes are required before generating the energy scan
 function syncConsent() {
@@ -907,24 +922,21 @@ syncConsent();
 
 // -------- main flow --------
 $("btnStart").onclick = async () => {
-  // household consumption profile (kept client-side, not sent to the backend)
-  S.profile = {
-    heat_pump: $("heatPump").value === "1",
-    pool: $("pool").value === "1",
-    jacuzzi: $("jacuzzi").value === "1",
-    other_loads: $("otherLoads").value === "1",
-  };
+  storeProfile();
   const street = $("street").value.trim(), city = $("city").value.trim(), postal = $("postal").value.trim();
   const annualKwh = +$("annualKwh").value;
   S.contact = {
     first_name: $("fname").value.trim(), last_name: $("lname").value.trim(),
     email: $("email").value.trim(), phone: $("phone").value.trim(),
   };
+  if (!($("chkPrivacy").checked && $("chkMail").checked)) {
+    return showError("inputError", t("errConsent"));
+  }
   if (!S.contact.first_name || !S.contact.last_name || !/.+@.+\..+/.test(S.contact.email)) {
     return showError("inputError", t("errContact"));
   }
-  if (!street || !city || !postal) return showError("inputError", t("errAddress"));
-  if (!annualKwh || annualKwh < 500) return showError("inputError", t("errKwh"));
+  if (!street || !city || !postal) { showWiz(1); return showError("inputError", t("errAddress")); }
+  if (!annualKwh || annualKwh < 500) { showWiz(1); return showError("inputError", t("errKwh")); }
   $("inputError").classList.add("hidden");
 
   const evHave = $("evHave").value === "1";
@@ -943,7 +955,7 @@ $("btnStart").onclick = async () => {
   // ---- Branch B: customer already has panels → battery/EV energy scan ----
   if (hasPanels) {
     const existingWp = +$("existingWp").value || 0;
-    if (existingWp < 500) return showError("inputError", t("errWp"));
+    if (existingWp < 500) { showWiz(2); return showError("inputError", t("errWp")); }
     $("btnStart").disabled = true;
     setStageLabels("B");
     setStage(0, "active");
