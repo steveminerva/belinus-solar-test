@@ -242,18 +242,18 @@
       <div class="wiz" id="wiz0">
         <h1 data-i18n="wizWelcomeTitle"></h1>
         <p class="sub" data-i18n="wizWelcomeSub"></p>
-        <button class="primary" data-i18n="wizStart" onclick="showWiz(1)"></button>
-      </div>
-
-      <!-- Wizard 1: current situation — energy consumption -->
-      <div class="wiz hidden" id="wiz1">
-        <h2 class="lbl" data-i18n="wiz1Lbl"></h2>
         <label data-i18n="lStreet"></label>
         <input id="street" placeholder="Frankrijklei 5">
         <div class="row">
           <div><label data-i18n="lCity"></label><input id="city" placeholder="Antwerpen"></div>
           <div><label data-i18n="lPostal"></label><input id="postal" placeholder="2000"></div>
         </div>
+        <button class="primary" data-i18n="wizStart" onclick="startWiz()"></button>
+      </div>
+
+      <!-- Wizard 1: current situation — energy consumption -->
+      <div class="wiz hidden" id="wiz1">
+        <h2 class="lbl" data-i18n="wiz1Lbl"></h2>
         <div class="row">
           <div><label data-i18n="lPhase"></label>
             <select id="phase"><option value="single" data-i18n="oPhase1"></option><option value="three" data-i18n="oPhase3"></option></select></div>
@@ -903,6 +903,12 @@ function showWiz(n) {
   $("inputError").classList.add("hidden");
   for (let i = 0; i <= 4; i++) $("wiz" + i).classList.toggle("hidden", i !== n);
 }
+// welcome screen: address is required before starting the wizard
+function startWiz() {
+  const street = $("street").value.trim(), city = $("city").value.trim(), postal = $("postal").value.trim();
+  if (!street || !city || !postal) return showError("inputError", t("errAddress"));
+  showWiz(1);
+}
 // household consumption profile — informational only, kept client-side, never sent to the backend
 function storeProfile() {
   S.profile = {
@@ -935,7 +941,7 @@ $("btnStart").onclick = async () => {
   if (!S.contact.first_name || !S.contact.last_name || !/.+@.+\..+/.test(S.contact.email)) {
     return showError("inputError", t("errContact"));
   }
-  if (!street || !city || !postal) { showWiz(1); return showError("inputError", t("errAddress")); }
+  if (!street || !city || !postal) { showWiz(0); return showError("inputError", t("errAddress")); }
   if (!annualKwh || annualKwh < 500) { showWiz(1); return showError("inputError", t("errKwh")); }
   $("inputError").classList.add("hidden");
 
