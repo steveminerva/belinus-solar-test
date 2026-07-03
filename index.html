@@ -904,8 +904,18 @@ const S = { projectId: null, designId: null, leadId: null, quote: null, quoteId:
 
 async function setCatalog(c) {
   if (!S.lastBody || c === S.catalog || S.catBusy) return;
-  S.catBusy = true;
   S.catalog = c;
+  // Instant feedback: highlight the clicked card immediately.
+  $("kitStock").classList.toggle("selected", c === "stock");
+  $("kitNew").classList.toggle("selected", c === "new");
+  // Quote for this kit already fetched → render it without a backend call.
+  if (S.quoteByCat && S.quoteByCat[c]) {
+    S.quote = S.quoteByCat[c]; S.quoteId = S.quote.quote_id;
+    renderQuote(S.quote);
+    return;
+  }
+  S.catBusy = true;
+  document.body.style.cursor = "progress";
   try {
     const quote = await api("POST", "quote", { ...S.lastBody, catalog: c });
     S.quote = quote; S.quoteId = quote.quote_id;
@@ -913,6 +923,7 @@ async function setCatalog(c) {
   } catch (e) {
     showError("progressError", e.message);
   }
+  document.body.style.cursor = "";
   S.catBusy = false;
 }
 const fmt = new Intl.NumberFormat("nl-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
