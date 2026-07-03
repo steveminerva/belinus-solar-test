@@ -21,7 +21,7 @@
   .band {
     background: var(--black); color: #fff; padding: 34px 48px 30px;
     border-bottom: 2px solid var(--cyan);
-    display: flex; justify-content: space-between; align-items: flex-end;
+    display: flex; justify-content: space-between; align-items: flex-start;
   }
   .band img.logo, .band svg.logo { height: 44px; width: auto; display: block; }
   .band .wordmark { color: var(--cyan); font-weight: 700; font-size: 2rem; letter-spacing: -.02em; }
@@ -290,6 +290,7 @@
       <div class="kpi"><b id="kBattery">–</b><span data-i18n="kBattery"></span></div>
       <div class="kpi"><b id="kPrice">–</b><span data-i18n="kPrice"></span></div>
       <div class="kpi"><b id="kSave">–</b><span data-i18n="kSave"></span></div>
+      <div class="kpi"><b id="kCo2">–</b><span data-i18n="kCo2"></span></div>
     </div>
 
     <h2 class="lbl" data-i18n="hwLbl"></h2>
@@ -417,6 +418,8 @@ const I18N = {
     capNote: (kwp, cap) => `Note: the automatic design (${kwp} kWp) exceeds the maximum for your meter type (${cap} kWp). The final design will be adjusted during technical inspection.`,
     kSize: "System size (kWp)", kPanels: "Solar panels", kProd: "kWh / year",
     kBattery: "Battery (auto-sized)", kPrice: "Total price incl. VAT", kSave: "Savings over 30 years",
+    kCo2: "CO₂ avoided over 30 years",
+    co2Trees: (n) => `≈ ${n} trees planted`,
     existing: " (existing)", none: "None",
     offerteLbl: "Quote", pdfLink: "⬇ Download quote (PDF)",
     exclVat: "Excl. VAT", vatOn: (r, b) => `VAT ${r}% on ${b}`,
@@ -442,6 +445,7 @@ const I18N = {
       `injection ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, panel degradation ${(a.panel_degradation * 100).toFixed(1)}%/yr, VAT ${(a.vat_rate * 100).toFixed(0)}%. ` +
       `Battery sized automatically; saves ≥ €${a.battery_dynamic_eur_month_per_10kwh}/month per 10 kWh via dynamic tariffs & peak shaving. ` +
       (ev ? `EV: home charging vs public €${a.ev_public_price.toFixed(2)}/kWh` + (evCompany ? `; employer reimburses €${a.ev_company_reimbursement.toFixed(2)}/kWh. ` : `. `) : ``) +
+      `CO₂: grid factor 0.20 kg/kWh; EV on solar vs petrol car 120 g/km. ` +
       `For homes with existing panels, only the added value of battery and charger is counted. Estimates are indicative and not a binding offer.`,
     hwLbl: "Your hardware",
     togStock: "In stock — fast delivery", togNew: "New 2027 — Made in Belgium (+30%)",
@@ -538,6 +542,8 @@ const I18N = {
     capNote: (kwp, cap) => `Let op: het automatische ontwerp (${kwp} kWp) overschrijdt het maximum voor jouw metertype (${cap} kWp). Het definitieve ontwerp wordt aangepast bij de technische inspectie.`,
     kSize: "Systeemgrootte (kWp)", kPanels: "Zonnepanelen", kProd: "kWh / jaar",
     kBattery: "Batterij (auto)", kPrice: "Totaalprijs incl. btw", kSave: "Besparing over 30 jaar",
+    kCo2: "CO₂ vermeden over 30 jaar",
+    co2Trees: (n) => `≈ ${n} bomen geplant`,
     existing: " (bestaand)", none: "Geen",
     offerteLbl: "Offerte", pdfLink: "⬇ Download offerte (PDF)",
     exclVat: "Excl. btw", vatOn: (r, b) => `BTW ${r}% op ${b}`,
@@ -563,6 +569,7 @@ const I18N = {
       `injectie ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, paneeldegradatie ${(a.panel_degradation * 100).toFixed(1)}%/jaar, btw ${(a.vat_rate * 100).toFixed(0)}%. ` +
       `Batterij automatisch gedimensioneerd; bespaart ≥ €${a.battery_dynamic_eur_month_per_10kwh}/maand per 10 kWh via dynamische tarieven & peak shaving. ` +
       (ev ? `EV: thuisladen vs publiek €${a.ev_public_price.toFixed(2)}/kWh` + (evCompany ? `; werkgever vergoedt €${a.ev_company_reimbursement.toFixed(2)}/kWh. ` : `. `) : ``) +
+      `CO₂: netfactor 0,20 kg/kWh; EV op zonnestroom vs benzinewagen 120 g/km. ` +
       `Bij bestaande zonnepanelen telt enkel de meerwaarde van batterij en laadpaal. Bedragen zijn indicatief en vormen geen bindend aanbod.`,
     hwLbl: "Jouw hardware",
     togStock: "Op voorraad — snelle levering", togNew: "Nieuw 2027 — Made in Belgium (+30%)",
@@ -903,6 +910,17 @@ function renderQuote(qt) {
   $("kBattery").textContent = qt.system.battery.kwh ? qt.system.battery.kwh + " kWh" : t("none");
   $("kPrice").textContent = fmt.format(qt.price.total_incl_vat);
   $("kSave").textContent = fmt.format(qt.savings.total_30y);
+
+  // CO₂ impact over 30 years: solar production (with degradation) × Belgian
+  // grid factor 0,20 kg CO₂/kWh + EV solar km vs petrol car (120 g CO₂/km).
+  {
+    const deg = qt.assumptions.panel_degradation, N = qt.assumptions.horizon_years;
+    const prodTotal = qt.system.annual_production_kwh * (1 - Math.pow(1 - deg, N)) / deg;
+    const gridCo2 = prodTotal * 0.20; // kg
+    const evCo2 = qt.system.ev_benefit_counted ? qt.system.ev_annual_kwh * 6 * 0.120 * N : 0; // kg
+    const tonnes = (gridCo2 + evCo2) / 1000;
+    $("kCo2").textContent = tonnes.toLocaleString("nl-BE", { maximumFractionDigits: 1 }) + " ton";
+  }
 
   $("quoteNumber").textContent = qt.quote_number ?? "";
   $("pdfLink").href = `${API_BASE}/quote-pdf?quote_id=${qt.quote_id}`;
