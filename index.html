@@ -449,15 +449,6 @@
     <button class="primary" id="btnCallSend" data-i18n="btnCallSend"></button>
   </div>
 
-  <!-- ONLINE PROMO popup (quote page) -->
-  <div class="modalWrap hidden" id="promoModal">
-    <div class="modal">
-      <span class="modalX" id="promoX">✕</span>
-      <div class="kitPromoLbl mono" data-i18n="promoLbl15"></div>
-      <p id="promoModalTxt"></p>
-    </div>
-  </div>
-
   <!-- STEP 3d: digital signing (quote or reservation form) -->
   <div class="inner hidden" id="step-sign">
     <h2 class="lbl" id="signTitle"></h2>
@@ -1551,14 +1542,7 @@ $("cowboyX").onclick = () => $("cowboyModal").classList.add("hidden");
 // -------- result page → quote or call-me --------
 function goQuote() {
   show("step-quote");
-  // "30.000 customers" promo popup, once per scan
-  if (!S.promoShown) {
-    S.promoShown = true;
-    $("promoModalTxt").textContent = t("promoPopup");
-    $("promoModal").classList.remove("hidden");
-  }
 }
-$("promoX").onclick = () => $("promoModal").classList.add("hidden");
 
 $("btnCallSend").onclick = async () => {
   $("callError").classList.add("hidden");
