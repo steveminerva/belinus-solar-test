@@ -414,7 +414,6 @@
     <span class="backLink" data-i18n="wizBack" onclick="show('step-input');syncConsent()"></span>
     <div class="ctaRow">
       <button class="primary" id="btnQuote" data-i18n="btnQuote"></button>
-      <button class="primary ghost" id="btnCall" data-i18n="btnCall"></button>
     </div>
   </div>
 
@@ -430,6 +429,7 @@
     <div class="plans" id="plans"></div>
     <span class="backLink" data-i18n="wizBack" onclick="show('step-result')"></span>
     <button class="primary" id="btnContinue" disabled data-i18n="btnContinue"></button>
+    <span class="note hidden" id="reserveCancelNote" style="display:inline-block;margin-left:14px"></span>
   </div>
 
   <!-- STEP 3c: call-me request -->
@@ -480,7 +480,6 @@
       <span class="modalX" id="cowboyX">✕</span>
       <div class="cowboy">COWBOY<span style="font-size:.55em;vertical-align:super">✳</span></div>
       <p id="cowboyTxt"></p>
-      <button class="primary" id="cowboyGo" style="width:100%"></button>
       <div><a id="cowboyTerms" class="modalLink" href="https://steveminerva.github.io/belinus-solar-test/cowboy-voorwaarden.html" download target="_blank"></a></div>
     </div>
   </div>
@@ -615,8 +614,8 @@ const I18N = {
     badge: "BEST VALUE",
     chartLbl: "Your savings over 30 years",
     chartBuy: "Buy — cumulative position (€)", chartRent: "Rent", chartFinance: "Finance",
-    energyLbl: "Energy analysis (kWh/year)",
-    energyBars: ["Production", "Consumption", "EV charging", "Battery"],
+    energyLbl: "Energy analysis (kWh/month)",
+    months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     assumptions: (a, ev, evCompany) =>
       `Assumptions (${a.horizon_years}-year horizon): electricity ${a.electricity_price_eur_kwh.toFixed(2)} €/kWh (+${(a.electricity_inflation * 100).toFixed(0)}%/yr), ` +
       `injection ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, panel degradation ${(a.panel_degradation * 100).toFixed(1)}%/yr, VAT ${(a.vat_rate * 100).toFixed(0)}%. ` +
@@ -648,7 +647,8 @@ const I18N = {
     btnOrderReserve: "Reserve now for €100 →",
     checkoutNoteReserve: "You verify your identity and sign digitally (Sumsub), then pay the €100 reservation online via Bancontact, iDEAL or card (Mollie) — fully refunded if you cancel. Estimated delivery: Q2 2027.",
     btnContinue: "Continue with selected plan →",
-    btnContinueReserve: "Reserve — no obligation, €100 fully refundable →",
+    btnContinueReserve: "Reserve your system →",
+    reserveCancel: "You can cancel at any time, free of any obligation.",
     btnQuote: "I want a quote →", btnCall: "Call me",
     promoPopup: "30,000 customers have chosen belinus — order now and get 15% off!",
     callLbl: "Call me", callSub: "Pick a day and time slot — we will call you.",
@@ -790,8 +790,8 @@ const I18N = {
     badge: "BESTE KEUZE",
     chartLbl: "Jouw besparing over 30 jaar",
     chartBuy: "Kopen — cumulatieve positie (€)", chartRent: "Huren", chartFinance: "Financieren",
-    energyLbl: "Energie-analyse (kWh/jaar)",
-    energyBars: ["Productie", "Verbruik", "EV laden", "Batterij"],
+    energyLbl: "Energie-analyse (kWh/maand)",
+    months: ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"],
     assumptions: (a, ev, evCompany) =>
       `Aannames (horizon ${a.horizon_years} jaar): elektriciteit ${a.electricity_price_eur_kwh.toFixed(2)} €/kWh (+${(a.electricity_inflation * 100).toFixed(0)}%/jaar), ` +
       `injectie ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, paneeldegradatie ${(a.panel_degradation * 100).toFixed(1)}%/jaar, btw ${(a.vat_rate * 100).toFixed(0)}%. ` +
@@ -823,7 +823,8 @@ const I18N = {
     btnOrderReserve: "Reserveer nu voor €100 →",
     checkoutNoteReserve: "Je verifieert je identiteit en ondertekent digitaal (Sumsub), waarna je de reservatie van €100 online betaalt via Bancontact, iDEAL of kaart (Mollie) — volledig terugbetaald bij annulatie. Geschatte levering: Q2 2027.",
     btnContinue: "Ga verder met gekozen formule →",
-    btnContinueReserve: "Reserveer — vrijblijvend, €100 volledig terugbetaalbaar →",
+    btnContinueReserve: "Reserveer uw systeem →",
+    reserveCancel: "U kan ten allen tijde vrijblijvend annuleren.",
     btnQuote: "Ik wens een offerte →", btnCall: "Bel mij",
     promoPopup: "30.000 klanten kozen al voor belinus — bestel nu en krijg 15% korting!",
     callLbl: "Bel mij", callSub: "Kies een dag en tijdslot — wij bellen jou.",
@@ -1261,6 +1262,26 @@ let energyChartInstance = null;
 // Datasheets hosted on GitHub Pages — absolute URLs + download attribute.
 const SHEETS_BASE = "https://steveminerva.github.io/belinus-solar-test/datasheets/";
 
+// Force datasheet downloads: fetch as blob → object URL. The plain `download`
+// attribute is silently ignored with target="_blank" in some browsers and
+// whenever the widget is embedded on another domain.
+document.addEventListener("click", async (e) => {
+  const a = e.target.closest && e.target.closest("a.sheetLink");
+  if (!a) return;
+  e.preventDefault(); e.stopPropagation();
+  try {
+    const res = await fetch(a.href);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const dl = document.createElement("a");
+    dl.href = url;
+    dl.download = decodeURIComponent((a.href.split("/").pop() || "datasheet.pdf"));
+    document.body.appendChild(dl); dl.click(); dl.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  } catch (_) { window.open(a.href, "_blank"); }
+});
+
 function compRows(q) {
   return (q.components || []).map((c) => `
     <div class="hwRow">
@@ -1322,7 +1343,10 @@ function renderQuote(qt) {
     $("capNote").classList.add("hidden");
   }
 
-  $("kSize").textContent = qt.system.kwp.toFixed(2) + (noDesign ? t("existing") : "");
+  // Systeemgrootte = theoretical panel power (panel count × 500 Wp).
+  // Aurora's irradiation-based kWp is used only for production output.
+  const sizeKwp = noDesign ? qt.system.kwp : (qt.system.kwp_theoretical ?? qt.system.kwp);
+  $("kSize").textContent = sizeKwp.toFixed(2) + (noDesign ? t("existing") : "");
   $("kPanels").textContent = qt.system.panel_count ?? "—";
   $("kProd").textContent = qt.system.annual_production_kwh.toLocaleString("nl-BE");
   $("kBattery").textContent = qt.system.battery.kwh ? qt.system.battery.kwh + " kWh" : t("none");
@@ -1382,6 +1406,8 @@ function renderQuote(qt) {
       items: [L.financeTotal(fmt.format(p.finance.total_cost_30y)), L.netBenefit(fmt.format(p.finance.net_benefit_30y)), t("financeOwn")] },
   ];
   $("btnContinue").textContent = isNew ? t("btnContinueReserve") : t("btnContinue");
+  $("reserveCancelNote").textContent = t("reserveCancel");
+  $("reserveCancelNote").classList.toggle("hidden", !isNew);
 
   const best = cards.reduce((a, b) => (p[a.key].net_benefit_30y >= p[b.key].net_benefit_30y ? a : b));
   $("plans").innerHTML = cards.map((c) => `
@@ -1420,21 +1446,31 @@ function renderQuote(qt) {
     },
   });
 
-  // ---- energy analysis graph (kWh/year) ----
+  // ---- energy analysis graph: monthly kWh over the year (line chart) ----
   const cons = (S.lastBody && S.lastBody.annual_consumption_kwh) || 0;
   const batThroughput = Math.round(qt.system.battery.kwh * 300); // ≈300 cycles/year
+  // Monthly distribution profiles (fraction of the annual total, sum = 1):
+  // Belgian solar irradiation curve, Belgian household consumption curve,
+  // flat EV charging; battery throughput follows the solar surplus curve.
+  const P_SOLAR = [0.030, 0.050, 0.085, 0.115, 0.125, 0.125, 0.125, 0.110, 0.090, 0.065, 0.045, 0.035];
+  const P_CONS = [0.105, 0.095, 0.090, 0.080, 0.070, 0.065, 0.065, 0.065, 0.075, 0.085, 0.095, 0.110];
+  const P_FLAT = Array(12).fill(1 / 12);
+  const monthly = (annual, prof) => prof.map((f) => Math.round(annual * f));
   if (energyChartInstance) energyChartInstance.destroy();
   energyChartInstance = new Chart($("energyChart"), {
-    type: "bar",
+    type: "line",
     data: {
-      labels: [t("eProd"), t("eCons"), t("eEv"), t("eBat")],
-      datasets: [{
-        data: [qt.system.annual_production_kwh, cons, qt.system.ev_annual_kwh, batThroughput],
-        backgroundColor: ["#05ade5", "#0b0d0f", "#9aa39e", "#46B2E9"],
-      }],
+      labels: I18N[LANG].months,
+      datasets: [
+        { label: t("eProd"), data: monthly(qt.system.annual_production_kwh, P_SOLAR),
+          borderColor: "#05ade5", backgroundColor: "rgba(5,173,229,.07)", fill: true, tension: .35 },
+        { label: t("eCons"), data: monthly(cons, P_CONS), borderColor: "#0b0d0f", tension: .35 },
+        { label: t("eEv"), data: monthly(qt.system.ev_annual_kwh, P_FLAT), borderColor: "#9aa39e", tension: .35 },
+        { label: t("eBat"), data: monthly(batThroughput, P_SOLAR), borderColor: "#46B2E9", borderDash: [6, 4], tension: .35 },
+      ],
     },
     options: {
-      plugins: { legend: { display: false } },
+      plugins: { legend: { position: "bottom", labels: { font: { family: "'JetBrains Mono'", size: 10 } } } },
       scales: { y: { ticks: { callback: (v) => v.toLocaleString("nl-BE") + " kWh", font: { family: "'JetBrains Mono'", size: 10 } } },
                 x: { ticks: { font: { family: "'JetBrains Mono'", size: 10 } } } },
     },
@@ -1485,11 +1521,9 @@ $("btnSign").onclick = () => {
 // COWBOY promo popup (auto-opens 10 s after the result page shows)
 function openCowboy() {
   $("cowboyTxt").innerHTML = t("cowboyPromo").replace(/€\s?3\.000/, '<span class="prize">€3.000</span>');
-  $("cowboyGo").textContent = t("cowboyGo");
   $("cowboyTerms").textContent = t("cowboyTermsLbl");
   $("cowboyModal").classList.remove("hidden");
 }
-$("cowboyGo").onclick = () => $("cowboyModal").classList.add("hidden");
 $("cowboyX").onclick = () => $("cowboyModal").classList.add("hidden");
 
 // -------- result page → quote or call-me --------
@@ -1503,25 +1537,6 @@ $("btnQuote").onclick = () => {
   }
 };
 $("promoX").onclick = () => $("promoModal").classList.add("hidden");
-
-$("btnCall").onclick = () => {
-  // next 5 weekdays
-  const sel = $("callDay");
-  sel.innerHTML = "";
-  const d = new Date();
-  while (sel.options.length < 5) {
-    d.setDate(d.getDate() + 1);
-    if (d.getDay() === 0 || d.getDay() === 6) continue;
-    const o = document.createElement("option");
-    o.value = d.toISOString().slice(0, 10);
-    o.textContent = d.toLocaleDateString(LANG === "nl" ? "nl-BE" : "en-GB", { weekday: "long", day: "numeric", month: "long" });
-    sel.appendChild(o);
-  }
-  $("callPhone").value = (S.contact && S.contact.phone) || "";
-  $("callConfirm").classList.add("hidden");
-  $("callError").classList.add("hidden");
-  show("step-call");
-};
 
 $("btnCallSend").onclick = async () => {
   $("callError").classList.add("hidden");
