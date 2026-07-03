@@ -36,6 +36,9 @@
     font-family: 'JetBrains Mono', monospace; font-size: .66rem; font-weight: 700; cursor: pointer;
   }
   .lang button.on { border-color: var(--cyan); color: var(--cyan); }
+  .scanSel { margin-top: 14px; width: auto; max-width: 300px; background: #14171a; color: #b8bfc4;
+             border: 1px solid #3a4147; font-family: 'JetBrains Mono', monospace; font-size: .64rem;
+             padding: 6px 8px; display: block; }
 
   .inner { padding: 34px 48px 48px; background: var(--paper); }
   .tableWrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -172,6 +175,31 @@
               color: var(--cyan); text-transform: uppercase; }
   .usps ul { margin: 10px 0 0; padding-left: 18px; font-size: .86rem; line-height: 1.75; color: #2a3438; }
 
+  /* kit selection cards */
+  .kits { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; align-items: start; }
+  .kit { border: 1px solid var(--rule); padding: 22px; cursor: pointer; transition: all .15s; background: var(--paper); }
+  .kit:hover { border-color: var(--cyan); }
+  .kit.selected { border-color: var(--cyan); box-shadow: inset 0 0 0 1px var(--cyan); background: #f4fbfe; }
+  .kit h3 { margin: 0 0 6px; font-family: 'JetBrains Mono', monospace; font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--grey); }
+  .kit.selected h3 { color: var(--cyan); }
+  .kitName { font-size: .82rem; font-weight: 700; color: var(--ink); letter-spacing: .04em; margin-bottom: 10px; }
+  .kitHw { margin: 12px 0; background: var(--paper); }
+  .kitPromo { margin-top: 12px; padding: 14px 16px; background: var(--black); border-left: 3px solid var(--cyan); }
+  .kitPromoLbl { font-size: .58rem; letter-spacing: .22em; color: var(--cyan); font-weight: 700; }
+  .kitPrices { margin-top: 8px; }
+  .strike { text-decoration: line-through; color: var(--grey); font-size: .9rem; margin-right: 10px; }
+  .promoPrice { color: var(--cyan); font-size: 1.25rem; font-weight: 700; }
+  .kitUsps { margin: 12px 0 0; padding-left: 18px; font-size: .86rem; line-height: 1.75; color: #2a3438; }
+  .kitDelivery { margin-top: 10px; font-size: .66rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--cyan); }
+  .kpi span.kpiTrees { display: block; font-size: .58rem; color: var(--grey); margin-top: 5px; text-transform: none; letter-spacing: .02em; }
+  .ctaRow { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  button.ghost { background: none; border: 1px solid var(--cyan); color: var(--cyan); }
+  button.ghost:hover { background: #f4fbfe; }
+  .modal { position: relative; }
+  .modalX { position: absolute; top: 12px; right: 16px; cursor: pointer; color: #8c9499; font-size: 1rem; line-height: 1; }
+  .modalX:hover { color: #fff; }
+  .modalLink { display: inline-block; margin-top: 18px; color: var(--cyan); font-family: 'JetBrains Mono', monospace; font-size: .64rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+
   /* demo mode */
   .demoBar { background: #c81e1e; color: #fff; text-align: center; padding: 8px 12px;
              font-family: 'JetBrains Mono', monospace; font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
@@ -221,6 +249,8 @@
     <div>
       <!-- Official belinus vector logo -->
       <svg class="logo" viewBox="0 0 640.5 158.6" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="belinus"><g fill="#46B2E9"><path d="M 28.5 0.0 L 28.5 101.8 C 28.5 117.6 39.0 128.7 53.9 128.7 C 67.5 128.7 77.9 117.6 77.9 101.8 C 77.9 86.0 67.5 74.8 53.0 74.8 C 46.8 74.8 42.1 76.2 37.6 78.2 L 37.6 48.1 C 43.2 46.6 49.0 45.0 54.8 45.0 C 85.3 45.0 106.5 72.4 106.5 101.6 C 106.5 133.2 84.6 158.6 53.4 158.6 C 21.8 158.6 0.0 133.2 0.0 101.6 L 0.0 0.0 Z M 28.5 0.0"/><path d="M 232.1 110.0 C 226.7 139.2 204.2 158.6 173.7 158.6 C 140.1 158.6 118.9 132.7 118.9 101.8 C 118.9 70.8 140.1 45.0 173.7 45.0 C 202.7 45.0 219.2 60.6 226.3 77.1 L 171.3 118.3 L 157.5 100.2 L 185.7 78.4 C 182.9 75.1 177.7 73.5 171.7 73.5 C 157.7 73.5 147.4 86.2 147.4 101.8 C 147.4 115.1 157.9 130.1 174.8 130.1 C 189.1 130.1 200.9 121.4 203.3 106.9 Z M 232.1 110.0"/><path d="M 247.9 0.0 L 276.4 0.0 L 276.4 155.9 L 247.9 155.9 Z M 247.9 0.0"/><path d="M 297.3 47.7 L 325.8 47.7 L 325.8 155.9 L 297.3 155.9 Z M 297.3 47.7"/><path d="M 347.2 155.9 L 347.2 81.1 C 347.2 57.5 365.5 45.0 392.0 45.0 C 418.5 45.0 436.7 57.5 436.7 81.1 L 436.7 155.9 L 408.2 155.9 L 408.2 90.9 C 408.2 79.7 402.4 73.5 392.0 73.5 C 381.5 73.5 375.7 79.7 375.7 90.9 L 375.7 155.9 Z M 347.2 155.9"/><path d="M 487.1 47.7 L 487.1 112.7 C 487.1 123.8 492.9 130.1 503.3 130.1 C 513.8 130.1 519.6 123.8 519.6 112.7 L 519.6 47.7 L 548.1 47.7 L 548.1 122.5 C 548.1 146.1 529.8 158.6 503.3 158.6 C 476.8 158.6 458.6 146.1 458.6 122.5 L 458.6 47.7 Z M 487.1 47.7"/><path d="M 564.1 129.2 L 600.9 129.2 C 606.2 129.2 608.9 126.5 608.9 123.2 C 608.9 109.6 565.3 106.5 565.3 79.5 C 565.3 56.1 581.7 47.7 600.4 47.7 L 634.7 47.7 L 634.7 74.4 L 601.8 74.4 C 598.2 74.4 594.7 74.8 594.7 79.3 C 594.7 89.1 640.5 94.4 640.5 122.9 C 640.5 144.5 624.5 155.9 604.0 155.9 L 564.1 155.9 Z M 564.1 129.2"/><path d="M 311.6 29.3 C 304.3 29.3 298.5 23.7 298.5 16.7 C 298.5 9.8 304.3 4.2 311.6 4.2 C 318.8 4.2 324.7 9.8 324.7 16.7 C 324.7 23.7 318.8 29.3 311.6 29.3 M 311.6 0.0 C 301.9 0.0 294.1 7.5 294.1 16.7 C 294.1 26.0 301.9 33.5 311.6 33.5 C 321.3 33.5 329.1 26.0 329.1 16.7 C 329.1 7.5 321.3 0.0 311.6 0.0"/><path d="M 308.1 16.1 L 311.3 16.1 C 312.2 16.1 313.0 15.9 313.5 15.4 C 314.1 14.9 314.3 14.2 314.3 13.4 C 314.3 12.5 314.1 11.8 313.6 11.3 C 313.1 10.8 312.3 10.6 311.2 10.6 L 308.1 10.6 Z M 311.2 19.2 L 308.1 19.2 L 308.1 26.0 L 304.2 26.0 L 304.2 7.5 L 311.2 7.5 C 313.5 7.5 315.2 8.0 316.4 9.0 C 317.7 9.9 318.3 11.3 318.3 13.1 C 318.3 14.3 318.0 15.4 317.4 16.2 C 316.9 17.1 316.0 17.8 314.9 18.2 L 319.0 25.8 L 319.0 26.0 L 314.8 26.0 Z M 311.2 19.2"/></g></svg>
+      <!-- Admin/testing: load a previous energy scan by its unique id -->
+      <select id="scanSel" class="scanSel" title="Admin — load previous energy scan"><option value="" data-i18n="scanNew"></option></select>
     </div>
     <div class="right">
       <div class="title" data-i18n="title">My Energyscan</div>
@@ -359,25 +389,37 @@
       <div class="kpi"><b id="kBattery">–</b><span data-i18n="kBattery"></span></div>
       <div class="kpi"><b id="kPrice">–</b><span data-i18n="kPrice"></span></div>
       <div class="kpi"><b id="kSave">–</b><span data-i18n="kSave"></span></div>
-      <div class="kpi"><b id="kCo2">–</b><span data-i18n="kCo2"></span></div>
+      <div class="kpi"><b id="kCo2">–</b><span data-i18n="kCo2"></span><span class="kpiTrees" id="kCo2Trees"></span></div>
     </div>
 
     <h2 class="lbl" data-i18n="hwLbl"></h2>
-    <div class="hwToggle">
-      <button id="togStock" onclick="setCatalog('stock')"></button>
-      <button id="togNew" onclick="setCatalog('new')"></button>
-    </div>
-    <div class="hw" id="hwList"></div>
-    <div class="promo hidden" id="promoStock">
-      <div><div class="pl" data-i18n="promoLbl"></div><div class="pt" data-i18n="promoTxt"></div></div>
-      <div class="cowboy">COWBOY<span style="font-size:.55em;vertical-align:super">✳</span></div>
-    </div>
-    <div class="usps hidden" id="newBlock">
-      <div class="dl" id="deliveryLine"></div>
-      <ul id="uspList"></ul>
-      <div class="note" data-i18n="reserveNote"></div>
+    <div class="kits">
+      <div class="kit" id="kitStock" onclick="setCatalog('stock')">
+        <h3 id="kitStockTitle"></h3>
+        <div class="kitName mono" id="kitStockName"></div>
+        <div id="kitStockBody"></div>
+      </div>
+      <div class="kit" id="kitNew" onclick="setCatalog('new')">
+        <h3 id="kitNewTitle"></h3>
+        <div class="kitName mono" id="kitNewName"></div>
+        <div id="kitNewBody"></div>
+      </div>
     </div>
 
+    <h2 class="lbl" data-i18n="chartLbl"></h2>
+    <canvas id="chart" height="120"></canvas>
+    <h2 class="lbl" data-i18n="energyLbl"></h2>
+    <canvas id="energyChart" height="120"></canvas>
+    <div class="note" id="assumptions"></div>
+    <span class="backLink" data-i18n="wizBack" onclick="show('step-input');syncConsent()"></span>
+    <div class="ctaRow">
+      <button class="primary" id="btnQuote" data-i18n="btnQuote"></button>
+      <button class="primary ghost" id="btnCall" data-i18n="btnCall"></button>
+    </div>
+  </div>
+
+  <!-- STEP 3b: quote details + plan choice -->
+  <div class="inner hidden" id="step-quote">
     <h2 class="lbl"><span data-i18n="offerteLbl"></span> <span class="mono" id="quoteNumber" style="color:var(--grey);letter-spacing:.1em"></span></h2>
     <div class="tableWrap"><table class="offerte" id="offerteTable"></table></div>
     <div class="totaal-band"><span class="t">T O T A A L</span><span class="v" id="totV"></span></div>
@@ -386,15 +428,39 @@
 
     <h2 class="lbl" data-i18n="plansLbl"></h2>
     <div class="plans" id="plans"></div>
-
-    <h2 class="lbl" data-i18n="chartLbl"></h2>
-    <canvas id="chart" height="120"></canvas>
-    <div class="note" id="assumptions"></div>
-    <span class="backLink" data-i18n="wizBack" onclick="show('step-input');syncConsent()"></span>
+    <span class="backLink" data-i18n="wizBack" onclick="show('step-result')"></span>
     <button class="primary" id="btnContinue" disabled data-i18n="btnContinue"></button>
   </div>
 
-  <!-- STEP 3b: digital signing (quote or reservation form) -->
+  <!-- STEP 3c: call-me request -->
+  <div class="inner hidden" id="step-call">
+    <h2 class="lbl" data-i18n="callLbl"></h2>
+    <p class="sub" data-i18n="callSub"></p>
+    <div class="row">
+      <div><label data-i18n="lCallDay"></label><select id="callDay"></select></div>
+      <div><label data-i18n="lCallSlot"></label><select id="callSlot">
+        <option value="9-12">9–12</option><option value="12-15">12–15</option>
+        <option value="15-18">15–18</option><option value="18-20">18–20</option>
+      </select></div>
+    </div>
+    <label data-i18n="lPhone"></label>
+    <input id="callPhone" type="tel">
+    <div class="note hidden" id="callConfirm" style="color:var(--cyan);font-weight:700"></div>
+    <div id="callError" class="error hidden"></div>
+    <span class="backLink" data-i18n="wizBack" onclick="show('step-result')"></span>
+    <button class="primary" id="btnCallSend" data-i18n="btnCallSend"></button>
+  </div>
+
+  <!-- ONLINE PROMO popup (quote page) -->
+  <div class="modalWrap hidden" id="promoModal">
+    <div class="modal">
+      <span class="modalX" id="promoX">✕</span>
+      <div class="kitPromoLbl mono" data-i18n="promoLbl15"></div>
+      <p id="promoModalTxt"></p>
+    </div>
+  </div>
+
+  <!-- STEP 3d: digital signing (quote or reservation form) -->
   <div class="inner hidden" id="step-sign">
     <h2 class="lbl" id="signTitle"></h2>
     <p class="sub" id="signIntro"></p>
@@ -404,16 +470,18 @@
     <label data-i18n="signNameLbl"></label>
     <input id="signName" autocomplete="off">
     <div class="demoNote" data-i18n="signDemoNote"></div>
-    <span class="backLink" data-i18n="wizBack" onclick="show('step-result')"></span>
+    <span class="backLink" data-i18n="wizBack" onclick="show('step-quote')"></span>
     <button class="primary" id="btnSign" disabled></button>
   </div>
 
-  <!-- COWBOY promo popup (before payment) -->
+  <!-- COWBOY promo popup (result page + before payment) -->
   <div class="modalWrap hidden" id="cowboyModal">
     <div class="modal">
+      <span class="modalX" id="cowboyX">✕</span>
       <div class="cowboy">COWBOY<span style="font-size:.55em;vertical-align:super">✳</span></div>
       <p id="cowboyTxt"></p>
       <button class="primary" id="cowboyGo" style="width:100%"></button>
+      <div><a id="cowboyTerms" class="modalLink" href="https://steveminerva.github.io/belinus-solar-test/cowboy-voorwaarden.html" download target="_blank"></a></div>
     </div>
   </div>
 
@@ -485,6 +553,7 @@ const I18N = {
     wizWelcomeTitle: "Welcome to your Energyscan — let's get started!",
     wizWelcomeSub: "Answer a few quick questions and receive your personal design, price and savings.",
     wizStart: "Start →", wizNext: "Next →", wizBack: "← Back",
+    scanNew: "— New energy scan —",
     wiz1Lbl: "YOUR CURRENT SITUATION — ENERGY CONSUMPTION",
     wiz2Lbl: "SOLAR PANELS", wiz3Lbl: "ELECTRIC VEHICLE", wiz4Lbl: "PERSONAL DETAILS",
     lHeatPump: "Do you have a heat pump?", lPool: "Do you have a heated swimming pool?",
@@ -525,10 +594,11 @@ const I18N = {
     kBattery: "Battery (auto-sized)", kPrice: "Total price incl. VAT", kSave: "Savings over 30 years",
     kCo2: "CO₂ avoided over 30 years",
     co2Trees: (n) => `≈ ${n} trees planted`,
+    co2Seedlings: (n) => `≈ ${n} tree seedlings grown for 10 years`,
     existing: " (existing)", none: "None",
     offerteLbl: "Quote", pdfLink: "⬇ Download quote (PDF)",
     exclVat: "Excl. VAT", vatOn: (r, b) => `VAT ${r}% on ${b}`,
-    depositLine: (d) => `Deposit on order (30%): € ${d}`,
+    depositLine: (d) => `Deposit on order (50%): € ${d}`,
     plansLbl: "Choose how you want to go solar",
     planBuy: "Buy", planRent: "Rent", planFinance: "Finance",
     buySub: "one-time", oneTime: "one-time",
@@ -545,6 +615,8 @@ const I18N = {
     badge: "BEST VALUE",
     chartLbl: "Your savings over 30 years",
     chartBuy: "Buy — cumulative position (€)", chartRent: "Rent", chartFinance: "Finance",
+    energyLbl: "Energy analysis (kWh/year)",
+    energyBars: ["Production", "Consumption", "EV charging", "Battery"],
     assumptions: (a, ev, evCompany) =>
       `Assumptions (${a.horizon_years}-year horizon): electricity ${a.electricity_price_eur_kwh.toFixed(2)} €/kWh (+${(a.electricity_inflation * 100).toFixed(0)}%/yr), ` +
       `injection ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, panel degradation ${(a.panel_degradation * 100).toFixed(1)}%/yr, VAT ${(a.vat_rate * 100).toFixed(0)}%. ` +
@@ -552,7 +624,11 @@ const I18N = {
       (ev ? `EV: home charging vs public €${a.ev_public_price.toFixed(2)}/kWh` + (evCompany ? `; employer reimburses €${a.ev_company_reimbursement.toFixed(2)}/kWh. ` : `. `) : ``) +
       `For homes with existing panels, only the added value of battery and charger is counted. Estimates are indicative and not a binding offer.`,
     hwLbl: "Your hardware",
-    togStock: "In stock — fast delivery", togNew: "New 2027 — Made in Belgium",
+    kitStockTitle: "belinus stock — fast delivery", kitNewTitle: "new belinus products — Q2 2027",
+    kitStockName: "belinus Residential Standard", kitNewName: "belinus Residential Pro",
+    eProd: "Solar production", eCons: "Consumption", eEv: "EV charging", eBat: "Battery charging",
+    promoLbl15: "ONLINE PROMO −15%",
+    kitUsps: ["Longer warranty life", "Safe and ethical", "Higher long-term savings"],
     sheet: "Datasheet (PDF)",
     promoLbl: "O N L I N E  P R O M O T I O N",
     promoTxt: "Order & pay online today and have a chance to win a Made in Belgium COWBOY electric bike!",
@@ -570,20 +646,27 @@ const I18N = {
     reserveNote: "Reserve the first all-in-one kit of the best energy solution in Europe, made in Belgium, for €100 — fully refunded if cancelled.",
     depositReservation: (d) => `Reservation: € ${d} (fully refunded if cancelled)`,
     btnOrderReserve: "Reserve now for €100 →",
-    checkoutNoteReserve: "You verify your identity and sign digitally (Sumsub), then pay the €100 reservation online via Bancontact, iDEAL or card (Mollie) — fully refunded if you cancel. Estimated delivery: March 2027.",
+    checkoutNoteReserve: "You verify your identity and sign digitally (Sumsub), then pay the €100 reservation online via Bancontact, iDEAL or card (Mollie) — fully refunded if you cancel. Estimated delivery: Q2 2027.",
     btnContinue: "Continue with selected plan →",
     btnContinueReserve: "Reserve — no obligation, €100 fully refundable →",
+    btnQuote: "I want a quote →", btnCall: "Call me",
+    promoPopup: "30,000 customers have chosen belinus — order now and get 15% off!",
+    callLbl: "Call me", callSub: "Pick a day and time slot — we will call you.",
+    lCallDay: "Day", lCallSlot: "Time slot", btnCallSend: "Send →",
+    callDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    callConfirm: (d, s) => `We will call you on ${d}, ${s}h.`,
+    cowboyTerms: "Terms & conditions (download)",
     signTitleQuote: "Sign your quote",
     signTitleReserve: "Sign your reservation form",
-    signIntroQuote: (q) => `Review and digitally sign quote ${q} and the general terms and conditions. After signing you proceed to the payment of the 30% deposit.`,
+    signIntroQuote: (q) => `Review and digitally sign quote ${q} and the general terms and conditions. After signing you proceed to the payment of the 50% deposit.`,
     signIntroReserve: "You are reserving the new belinus product line — no obligation, the €100 reservation fee is fully refundable at any time. Review and sign the reservation form below, then proceed to the €100 payment.",
     signTermsTitle: "GENERAL TERMS AND CONDITIONS — belinus energy B.V.",
     generalTerms: [
       "Applicability: these terms apply to all quotes, reservations, orders and invoices of belinus energy B.V.",
       "Quotes are valid for 30 days and indicative until technical inspection of the home.",
       "Prices include installation and VAT unless stated otherwise; BEBAT contributions are VAT-exempt (0%).",
-      "Orders: 30% deposit, balance after installation and approval. Reservations of the new product line cost €100 and are fully refundable at any time, without any obligation.",
-      "Delivery times are indicative; the new product line is expected in March 2027.",
+      "Orders: 50% deposit, balance after installation and approval. Reservations of the new product line cost €100 and are fully refundable at any time, without any obligation.",
+      "Delivery times are indicative; the new product line is expected in Q2 2027.",
       "Delivered goods remain the property of belinus until full payment.",
       "Warranty periods per product as stated on the quote; new belinus panels carry a 35-year triple warranty.",
       "Consumers have a 14-day right of withdrawal under the Belgian Code of Economic Law.",
@@ -593,6 +676,7 @@ const I18N = {
     agreeQuote: "I have read and accept the quote and the general terms and conditions.",
     agreeReserve: "I have read and accept the reservation form and the general terms and conditions.",
     cowboyPromo: "Order now and have a chance to WIN a Made in Belgium COWBOY e-bike valued at €3.000!",
+    cowboyTermsLbl: "Terms & conditions (download)",
     cowboyGo: "Continue to payment →",
     signNameLbl: "Full name (digital signature)",
     signDemoNote: "DEMO SIGNATURE — in the real application you will verify your identity and sign via Sumsub.",
@@ -601,11 +685,11 @@ const I18N = {
     detailsLbl: "Your details",
     lFirst: "First name", lLast: "Last name", lEmail: "Email", lPhone: "Phone",
     btnOrder: "Sign & pay securely →",
-    checkoutNote: "Next you will verify your identity and sign digitally (Sumsub), then pay the 30% deposit via Bancontact, iDEAL or card (Mollie).",
+    checkoutNote: "Next you will verify your identity and sign digitally (Sumsub), then pay the 50% deposit via Bancontact, iDEAL or card (Mollie).",
     errContact: "Please fill in your name and email.",
     demoBar: "⚠ DEMO APPLICATION — test environment, no real payments, no real orders ⚠",
     payLbl: "Payment",
-    payForDeposit: "DEPOSIT (30%)", payForReservation: "RESERVATION (REFUNDABLE)",
+    payForDeposit: "DEPOSIT (50%)", payForReservation: "RESERVATION (REFUNDABLE)",
     lCardName: "Cardholder name", lCard: "Card number", lExpiry: "Expiry", lCvc: "CVC",
     demoCardNote: "DEMO PAYMENT — this is NOT a real payment. Use the pre-filled test card 4242 4242 4242 4242 · 12/28 · CVC 123. No money will be charged.",
     payBtn: (v) => `Pay ${v} (demo) →`,
@@ -613,7 +697,7 @@ const I18N = {
     doneTitle: "Payment received!",
     doneMsg: "Thank you! Your order has been registered and your payment confirmed.",
     paidBadge: "PAID",
-    invPaid: (v, res) => res ? `Reservation paid: ${v} — fully refunded if cancelled.` : `Deposit paid: ${v} (30% of the total).`,
+    invPaid: (v, res) => res ? `Reservation paid: ${v} — fully refunded if cancelled.` : `Deposit paid: ${v} (50% of the total).`,
     invMailed: (e) => `The documents have been e-mailed to ${e}.`,
     rcptLine: (n) => `Payment receipt ${n}`,
     dlInvoice: "⬇ Download invoice (PDF)",
@@ -644,6 +728,7 @@ const I18N = {
     wizWelcomeTitle: "Welkom bij jouw Energiescan — laten we starten!",
     wizWelcomeSub: "Beantwoord enkele korte vragen en ontvang jouw persoonlijk ontwerp, prijs en besparing.",
     wizStart: "Start →", wizNext: "Volgende →", wizBack: "← Terug",
+    scanNew: "— Nieuwe energiescan —",
     wiz1Lbl: "JOUW HUIDIGE SITUATIE — ENERGIEVERBRUIK",
     wiz2Lbl: "ZONNEPANELEN", wiz3Lbl: "ELEKTRISCH VOERTUIG", wiz4Lbl: "PERSOONLIJKE GEGEVENS",
     lHeatPump: "Heb je een warmtepomp?", lPool: "Heb je een verwarmd zwembad?",
@@ -684,10 +769,11 @@ const I18N = {
     kBattery: "Batterij (auto)", kPrice: "Totaalprijs incl. btw", kSave: "Besparing over 30 jaar",
     kCo2: "CO₂ vermeden over 30 jaar",
     co2Trees: (n) => `≈ ${n} bomen geplant`,
+    co2Seedlings: (n) => `≈ ${n} boomzaailingen, 10 jaar gekweekt`,
     existing: " (bestaand)", none: "Geen",
     offerteLbl: "Offerte", pdfLink: "⬇ Download offerte (PDF)",
     exclVat: "Excl. btw", vatOn: (r, b) => `BTW ${r}% op ${b}`,
-    depositLine: (d) => `Voorschot bij bestelling (30%): € ${d}`,
+    depositLine: (d) => `Voorschot bij bestelling (50%): € ${d}`,
     plansLbl: "Kies hoe je zonne-energie wil",
     planBuy: "Kopen", planRent: "Huren", planFinance: "Financieren",
     buySub: "eenmalig", oneTime: "eenmalig",
@@ -704,6 +790,8 @@ const I18N = {
     badge: "BESTE KEUZE",
     chartLbl: "Jouw besparing over 30 jaar",
     chartBuy: "Kopen — cumulatieve positie (€)", chartRent: "Huren", chartFinance: "Financieren",
+    energyLbl: "Energie-analyse (kWh/jaar)",
+    energyBars: ["Productie", "Verbruik", "EV laden", "Batterij"],
     assumptions: (a, ev, evCompany) =>
       `Aannames (horizon ${a.horizon_years} jaar): elektriciteit ${a.electricity_price_eur_kwh.toFixed(2)} €/kWh (+${(a.electricity_inflation * 100).toFixed(0)}%/jaar), ` +
       `injectie ${a.injection_price_eur_kwh.toFixed(2)} €/kWh, paneeldegradatie ${(a.panel_degradation * 100).toFixed(1)}%/jaar, btw ${(a.vat_rate * 100).toFixed(0)}%. ` +
@@ -711,7 +799,11 @@ const I18N = {
       (ev ? `EV: thuisladen vs publiek €${a.ev_public_price.toFixed(2)}/kWh` + (evCompany ? `; werkgever vergoedt €${a.ev_company_reimbursement.toFixed(2)}/kWh. ` : `. `) : ``) +
       `Bij bestaande zonnepanelen telt enkel de meerwaarde van batterij en laadpaal. Bedragen zijn indicatief en vormen geen bindend aanbod.`,
     hwLbl: "Jouw hardware",
-    togStock: "Op voorraad — snelle levering", togNew: "Nieuw 2027 — Made in Belgium",
+    kitStockTitle: "belinus voorraad — snelle levering", kitNewTitle: "nieuwe belinus producten — Q2 2027",
+    kitStockName: "belinus Residential Standard", kitNewName: "belinus Residential Pro",
+    eProd: "Zonneproductie", eCons: "Verbruik", eEv: "EV laden", eBat: "Batterij laden",
+    promoLbl15: "ONLINE PROMO −15%",
+    kitUsps: ["Langere garantieduur", "Veilig en ethisch", "Hogere besparing op lange termijn"],
     sheet: "Datasheet (PDF)",
     promoLbl: "O N L I N E  P R O M O T I E",
     promoTxt: "Bestel en betaal vandaag online en maak kans op een Made in Belgium COWBOY elektrische fiets!",
@@ -729,20 +821,27 @@ const I18N = {
     reserveNote: "Reserveer de eerste all-in-one kit van de beste energieoplossing van Europa, made in Belgium, voor €100 — volledig terugbetaald bij annulatie.",
     depositReservation: (d) => `Reservatie: € ${d} (volledig terugbetaald bij annulatie)`,
     btnOrderReserve: "Reserveer nu voor €100 →",
-    checkoutNoteReserve: "Je verifieert je identiteit en ondertekent digitaal (Sumsub), waarna je de reservatie van €100 online betaalt via Bancontact, iDEAL of kaart (Mollie) — volledig terugbetaald bij annulatie. Geschatte levering: maart 2027.",
+    checkoutNoteReserve: "Je verifieert je identiteit en ondertekent digitaal (Sumsub), waarna je de reservatie van €100 online betaalt via Bancontact, iDEAL of kaart (Mollie) — volledig terugbetaald bij annulatie. Geschatte levering: Q2 2027.",
     btnContinue: "Ga verder met gekozen formule →",
     btnContinueReserve: "Reserveer — vrijblijvend, €100 volledig terugbetaalbaar →",
+    btnQuote: "Ik wens een offerte →", btnCall: "Bel mij",
+    promoPopup: "30.000 klanten kozen al voor belinus — bestel nu en krijg 15% korting!",
+    callLbl: "Bel mij", callSub: "Kies een dag en tijdslot — wij bellen jou.",
+    lCallDay: "Dag", lCallSlot: "Tijdslot", btnCallSend: "Verstuur →",
+    callDays: ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag"],
+    callConfirm: (d, s) => `We bellen je op ${d}, ${s}u.`,
+    cowboyTerms: "Actievoorwaarden (download)",
     signTitleQuote: "Onderteken je offerte",
     signTitleReserve: "Onderteken je reservatieformulier",
-    signIntroQuote: (q) => `Bekijk en onderteken offerte ${q} en de algemene voorwaarden digitaal. Na ondertekening ga je door naar de betaling van het voorschot van 30%.`,
+    signIntroQuote: (q) => `Bekijk en onderteken offerte ${q} en de algemene voorwaarden digitaal. Na ondertekening ga je door naar de betaling van het voorschot van 50%.`,
     signIntroReserve: "Je reserveert de nieuwe belinus productlijn — vrijblijvend, de reservatie van €100 is op elk moment volledig terugbetaalbaar. Bekijk en onderteken het reservatieformulier hieronder, daarna volgt de betaling van €100.",
     signTermsTitle: "ALGEMENE VOORWAARDEN — belinus energy B.V.",
     generalTerms: [
       "Toepasselijkheid: deze voorwaarden gelden voor alle offertes, reservaties, bestellingen en facturen van belinus energy B.V.",
       "Offertes zijn 30 dagen geldig en indicatief tot technische inspectie van de woning.",
       "Prijzen zijn inclusief installatie en btw tenzij anders vermeld; BEBAT-bijdragen zijn vrijgesteld van btw (0%).",
-      "Bestelling: 30% voorschot, saldo na installatie en keuring. Reservaties van de nieuwe productlijn bedragen €100 en zijn op elk moment volledig terugbetaalbaar, zonder enige verplichting.",
-      "Leveringstermijnen zijn indicatief; de nieuwe productlijn wordt verwacht in maart 2027.",
+      "Bestelling: 50% voorschot, saldo na installatie en keuring. Reservaties van de nieuwe productlijn bedragen €100 en zijn op elk moment volledig terugbetaalbaar, zonder enige verplichting.",
+      "Leveringstermijnen zijn indicatief; de nieuwe productlijn wordt verwacht in Q2 2027.",
       "Geleverde goederen blijven eigendom van belinus tot volledige betaling.",
       "Garantietermijnen per product zoals vermeld op de offerte; nieuwe belinus panelen genieten 35 jaar triple garantie.",
       "Consumenten beschikken over 14 dagen herroepingsrecht conform het Wetboek Economisch Recht.",
@@ -752,6 +851,7 @@ const I18N = {
     agreeQuote: "Ik heb de offerte en de algemene voorwaarden gelezen en aanvaard ze.",
     agreeReserve: "Ik heb het reservatieformulier en de algemene voorwaarden gelezen en aanvaard ze.",
     cowboyPromo: "Bestel nu en maak kans op een Made in Belgium COWBOY e-bike ter waarde van €3.000!",
+    cowboyTermsLbl: "Actievoorwaarden (download)",
     cowboyGo: "Ga verder naar betaling →",
     signNameLbl: "Volledige naam (digitale handtekening)",
     signDemoNote: "DEMO HANDTEKENING — in de echte applicatie verifieer je je identiteit en onderteken je via Sumsub.",
@@ -760,11 +860,11 @@ const I18N = {
     detailsLbl: "Jouw gegevens",
     lFirst: "Voornaam", lLast: "Naam", lEmail: "E-mail", lPhone: "Telefoon",
     btnOrder: "Onderteken & betaal veilig →",
-    checkoutNote: "Hierna verifieer je je identiteit en onderteken je digitaal (Sumsub), waarna je het voorschot van 30% betaalt via Bancontact, iDEAL of kaart (Mollie).",
+    checkoutNote: "Hierna verifieer je je identiteit en onderteken je digitaal (Sumsub), waarna je het voorschot van 50% betaalt via Bancontact, iDEAL of kaart (Mollie).",
     errContact: "Vul je naam en e-mailadres in.",
     demoBar: "⚠ DEMO APPLICATIE — testomgeving, geen echte betalingen, geen echte bestellingen ⚠",
     payLbl: "Betaling",
-    payForDeposit: "VOORSCHOT (30%)", payForReservation: "RESERVATIE (TERUGBETAALBAAR)",
+    payForDeposit: "VOORSCHOT (50%)", payForReservation: "RESERVATIE (TERUGBETAALBAAR)",
     lCardName: "Naam kaarthouder", lCard: "Kaartnummer", lExpiry: "Vervaldatum", lCvc: "CVC",
     demoCardNote: "DEMO BETALING — dit is GEEN echte betaling. Gebruik de vooraf ingevulde testkaart 4242 4242 4242 4242 · 12/28 · CVC 123. Er wordt geen geld afgehouden.",
     payBtn: (v) => `Betaal ${v} (demo) →`,
@@ -772,7 +872,7 @@ const I18N = {
     doneTitle: "Betaling ontvangen!",
     doneMsg: "Bedankt! Je bestelling is geregistreerd en je betaling is bevestigd.",
     paidBadge: "BETAALD",
-    invPaid: (v, res) => res ? `Reservatie betaald: ${v} — volledig terugbetaald bij annulatie.` : `Voorschot betaald: ${v} (30% van het totaal).`,
+    invPaid: (v, res) => res ? `Reservatie betaald: ${v} — volledig terugbetaald bij annulatie.` : `Voorschot betaald: ${v} (50% van het totaal).`,
     invMailed: (e) => `De documenten werden gemaild naar ${e}.`,
     rcptLine: (n) => `Betaalbewijs ${n}`,
     dlInvoice: "⬇ Download factuur (PDF)",
@@ -802,9 +902,9 @@ function setLang(l) { LANG = l; applyLang(); }
 const S = { projectId: null, designId: null, leadId: null, quote: null, quoteId: null, plan: null, capWp: null, catalog: "stock", lastBody: null };
 
 async function setCatalog(c) {
-  if (!S.lastBody || c === S.catalog) return;
+  if (!S.lastBody || c === S.catalog || S.catBusy) return;
+  S.catBusy = true;
   S.catalog = c;
-  $("togStock").disabled = true; $("togNew").disabled = true;
   try {
     const quote = await api("POST", "quote", { ...S.lastBody, catalog: c });
     S.quote = quote; S.quoteId = quote.quote_id;
@@ -812,7 +912,7 @@ async function setCatalog(c) {
   } catch (e) {
     showError("progressError", e.message);
   }
-  $("togStock").disabled = false; $("togNew").disabled = false;
+  S.catBusy = false;
 }
 const fmt = new Intl.NumberFormat("nl-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
 const fmt2 = new Intl.NumberFormat("nl-BE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -839,13 +939,20 @@ async function poll(route, isDone, { interval = 3000, timeout = 300000 } = {}) {
   throw new Error(t("timeout"));
 }
 
-const STEPS = ["step-input", "step-progress", "step-result", "step-sign", "step-checkout", "step-done"];
+const STEPS = ["step-input", "step-progress", "step-result", "step-quote", "step-call", "step-sign", "step-checkout", "step-done"];
 function show(stepId) {
   STEPS.forEach((s, i) => {
     $(s).classList.toggle("hidden", s !== stepId);
     $("s" + Math.min(i + 1, 4))?.classList.toggle("done", STEPS.indexOf(stepId) >= i);
   });
   $("step-input").parentElement.classList.toggle("hidden", stepId !== "step-input");
+  // COWBOY promo: auto-open once per scan, 10 s after the result page first shows
+  if (stepId === "step-result" && !S.cowboyShown) {
+    S.cowboyShown = true;
+    setTimeout(() => {
+      if (!$("step-result").classList.contains("hidden")) openCowboy(false);
+    }, 10000);
+  }
 }
 
 // Stage labels: "A" = Aurora roof design flow, "B" = existing-panels energy scan
@@ -930,9 +1037,64 @@ $("chkPrivacy").onchange = syncConsent;
 $("chkMail").onchange = syncConsent;
 syncConsent();
 
+// -------- admin: load a previous energy scan (unique id = quote number) --------
+async function loadScans() {
+  try {
+    const r = await api("GET", "scans");
+    const sel = $("scanSel");
+    (r.scans || []).forEach((s) => {
+      const o = document.createElement("option");
+      o.value = s.quote_id;
+      const d = new Date(s.created_at).toLocaleDateString("nl-BE");
+      o.textContent = `${s.quote_number} · ${d}` + (s.address ? ` · ${s.address.slice(0, 26)}` : "");
+      sel.appendChild(o);
+    });
+  } catch (e) { /* admin list only — ignore */ }
+}
+loadScans();
+
+$("scanSel").onchange = async () => {
+  const id = $("scanSel").value;
+  if (!id) { S.loadedScan = false; return; }
+  try {
+    const r = await api("GET", `scan?quote_id=${id}`);
+    const qt = { quote_id: r.quote_id, quote_number: r.quote_number, ...r.quote };
+    S.quote = qt; S.quoteId = r.quote_id; S.designId = r.design_id;
+    S.leadId = r.lead?.id ?? null; S.projectId = null; S.loadedScan = true;
+    // prefill the wizard with the stored inputs
+    const addr = (r.lead?.address ?? "").split(", ");
+    $("street").value = addr[0] ?? ""; $("city").value = addr[1] ?? ""; $("postal").value = addr[2] ?? "";
+    if (r.annual_consumption_kwh) $("annualKwh").value = r.annual_consumption_kwh;
+    const sys = r.quote?.system ?? {};
+    $("phase").value = sys.phase ?? (JSON.stringify(r.quote?.components ?? "").includes("1-fase") ? "single" : "three");
+    $("hasPanels").value = sys.existing_panels ? "1" : "0";
+    $("existingWpWrap").classList.toggle("hidden", !sys.existing_panels);
+    if (sys.existing_panels) $("existingWp").value = Math.round((sys.kwp ?? 4) * 1000);
+    $("evHave").value = sys.ev_present ? "1" : "0";
+    $("evWant").value = sys.ev_charger ? "1" : "0";
+    if (sys.ev_annual_kwh) $("evKwh").value = sys.ev_annual_kwh;
+    $("evCompany").value = sys.ev_company ? "1" : "0";
+    syncEvFields(); updateEvKm();
+    $("fname").value = r.lead?.first_name ?? ""; $("lname").value = r.lead?.last_name ?? "";
+    $("email").value = r.lead?.email ?? ""; $("phone").value = r.lead?.phone ?? "";
+    S.catalog = sys.catalog ?? "stock";
+    S.lastBody = {
+      ...(sys.existing_panels
+        ? { existing_panels: true, existing_wp: Math.round((sys.kwp ?? 0) * 1000) }
+        : { design_id: S.designId }),
+      lead_id: S.leadId, annual_consumption_kwh: r.annual_consumption_kwh,
+      phase: $("phase").value, ev_present: !!sys.ev_present, ev_add_charger: !!sys.ev_charger,
+      ev_annual_kwh: sys.ev_annual_kwh, ev_company: !!sys.ev_company,
+    };
+    show("step-input");
+    showWiz(0);
+  } catch (e) { showError("inputError", e.message); }
+};
+
 // -------- main flow --------
 $("btnStart").onclick = async () => {
   storeProfile();
+  S.cowboyShown = false; S.promoShown = false; S.quoteByCat = {};
   const street = $("street").value.trim(), city = $("city").value.trim(), postal = $("postal").value.trim();
   const annualKwh = +$("annualKwh").value;
   S.contact = {
@@ -948,6 +1110,16 @@ $("btnStart").onclick = async () => {
   if (!street || !city || !postal) { showWiz(0); return showError("inputError", t("errAddress")); }
   if (!annualKwh || annualKwh < 500) { showWiz(1); return showError("inputError", t("errKwh")); }
   $("inputError").classList.add("hidden");
+
+  // admin: previously calculated scan → straight to the stored result (no Aurora consumption)
+  if (S.loadedScan && S.quote) {
+    renderQuote(S.quote);
+    if (!S.quote.system.existing_panels && S.designId) {
+      api("POST", "cad-url", { design_id: S.designId }).then((r) => { $("cadFrame").src = r.url; }).catch(() => {});
+    }
+    show("step-result");
+    return;
+  }
 
   const evHave = $("evHave").value === "1";
   const evWant = !evHave && $("evWant").value === "1";
@@ -1084,8 +1256,61 @@ $("btnStart").onclick = async () => {
 };
 
 let chartInstance = null;
+let energyChartInstance = null;
+
+// Datasheets hosted on GitHub Pages — absolute URLs + download attribute.
+const SHEETS_BASE = "https://steveminerva.github.io/belinus-solar-test/datasheets/";
+
+function compRows(q) {
+  return (q.components || []).map((c) => `
+    <div class="hwRow">
+      <div><div class="n">${c.name}</div>${c.detail ? `<div class="d">${c.detail}</div>` : ""}</div>
+      <div style="display:flex;gap:10px;align-items:center">
+        ${c.warranty ? `<span class="wty">${c.warranty}${/warranty|garantie/i.test(c.warranty) ? "" : (LANG === "nl" ? " garantie" : " warranty")}</span>` : ""}
+        ${c.sheet ? `<a class="sheetLink" href="${SHEETS_BASE}${encodeURIComponent(c.sheet)}" download target="_blank">${t("sheet")}</a>` : ""}
+      </div>
+    </div>`).join("");
+}
+
+// Two selectable kit cards: only the selected card shows the full component
+// list + pricing; the unselected card shows only the kit name + its teaser.
+function renderKits(qt) {
+  const isNew = qt.system.catalog === "new";
+  $("kitStockTitle").textContent = t("kitStockTitle");
+  $("kitNewTitle").textContent = t("kitNewTitle");
+  $("kitStockName").textContent = (S.quoteByCat.stock && S.quoteByCat.stock.system.kit_name) || t("kitStockName");
+  $("kitNewName").textContent = (S.quoteByCat.new && S.quoteByCat.new.system.kit_name) || t("kitNewName");
+  $("kitStock").classList.toggle("selected", !isNew);
+  $("kitNew").classList.toggle("selected", isNew);
+
+  // Standard card: −15% online promo teaser (always) + components when selected
+  const sq = S.quoteByCat.stock;
+  let sb = "";
+  if (!isNew) sb += `<div class="hw kitHw">${compRows(qt)}</div>`;
+  sb += `<div class="kitPromo"><div class="kitPromoLbl mono">${t("promoLbl15")}</div>`;
+  if (sq) {
+    const listT = sq.price.list_total_incl_vat ?? sq.price.total_incl_vat;
+    const promoT = sq.price.promo_total_incl_vat ?? Math.round(listT * 0.85 * 100) / 100;
+    sb += `<div class="kitPrices"><span class="strike mono">€ ${fmt2.format(listT)}</span><span class="promoPrice mono">€ ${fmt2.format(promoT)}</span></div>`;
+  }
+  sb += `</div>`;
+  $("kitStockBody").innerHTML = sb;
+
+  // Pro card: USPs + delivery + €100 reservation (always) + components when selected
+  const nq = S.quoteByCat.new;
+  let nb = "";
+  if (isNew) {
+    nb += `<div class="hw kitHw">${compRows(qt)}</div>`;
+    nb += `<div class="kitPrices"><span class="promoPrice mono">€ ${fmt2.format(qt.price.total_incl_vat)}</span></div>`;
+  }
+  nb += `<ul class="kitUsps">${I18N[LANG].kitUsps.map((u) => `<li>${u}</li>`).join("")}</ul>`;
+  nb += `<div class="kitDelivery mono">${I18N[LANG].delivery((nq && nq.system.delivery) || "Q2 2027")}</div>`;
+  nb += `<div class="note">${t("reserveNote")}</div>`;
+  $("kitNewBody").innerHTML = nb;
+}
 
 function renderQuote(qt) {
+  S.quoteByCat[qt.system.catalog] = qt;
   const noDesign = qt.system.existing_panels;
   $("designLbl").classList.toggle("hidden", noDesign);
   $("cadFrame").classList.toggle("hidden", noDesign);
@@ -1101,7 +1326,11 @@ function renderQuote(qt) {
   $("kPanels").textContent = qt.system.panel_count ?? "—";
   $("kProd").textContent = qt.system.annual_production_kwh.toLocaleString("nl-BE");
   $("kBattery").textContent = qt.system.battery.kwh ? qt.system.battery.kwh + " kWh" : t("none");
-  $("kPrice").textContent = fmt.format(qt.price.total_incl_vat);
+  // Stock: the price KPI shows the −15% online promo total; the quote page
+  // itself keeps the normal list price (rebate only reflects in the payment).
+  $("kPrice").textContent = fmt.format(qt.system.catalog === "new"
+    ? qt.price.total_incl_vat
+    : (qt.price.promo_total_incl_vat ?? qt.price.total_incl_vat));
   $("kSave").textContent = fmt.format(qt.savings.total_30y);
 
   // CO₂ impact over 30 years: solar production (with degradation) × Belgian
@@ -1113,31 +1342,16 @@ function renderQuote(qt) {
     const evCo2 = qt.system.ev_benefit_counted ? qt.system.ev_annual_kwh * 6 * 0.120 * N : 0; // kg
     const tonnes = (gridCo2 + evCo2) / 1000;
     $("kCo2").textContent = tonnes.toLocaleString("nl-BE", { maximumFractionDigits: 1 }) + " ton";
+    // ≈ 115 seedlings per 7 tonnes CO₂ (EPA equivalence, 10-year growth)
+    $("kCo2Trees").textContent = I18N[LANG].co2Seedlings(Math.round(tonnes * 115 / 7).toLocaleString("nl-BE"));
   }
 
   $("quoteNumber").textContent = qt.quote_number ?? "";
   $("pdfLink").href = `${API_BASE}/quote-pdf?quote_id=${qt.quote_id}`;
 
-  // ---- hardware catalog ----
+  // ---- two selectable kit blocks ----
   const isNew = qt.system.catalog === "new";
-  $("togStock").textContent = t("togStock");
-  $("togNew").textContent = t("togNew");
-  $("togStock").classList.toggle("on", !isNew);
-  $("togNew").classList.toggle("on", isNew);
-  $("hwList").innerHTML = (qt.components || []).map((c) => `
-    <div class="hwRow">
-      <div><div class="n">${c.name}</div>${c.detail ? `<div class="d">${c.detail}</div>` : ""}</div>
-      <div style="display:flex;gap:10px;align-items:center">
-        ${c.warranty ? `<span class="wty">${c.warranty}${/warranty|garantie/i.test(c.warranty) ? "" : (LANG === "nl" ? " garantie" : " warranty")}</span>` : ""}
-        ${c.sheet ? `<a class="sheetLink" href="datasheets/${encodeURIComponent(c.sheet)}" target="_blank">${t("sheet")}</a>` : ""}
-      </div>
-    </div>`).join("");
-  $("promoStock").classList.toggle("hidden", isNew);
-  $("newBlock").classList.toggle("hidden", !isNew);
-  if (isNew) {
-    $("deliveryLine").textContent = I18N[LANG].delivery(qt.system.delivery || "March 2027");
-    $("uspList").innerHTML = I18N[LANG].usps.map((u) => `<li>${u}</li>`).join("");
-  }
+  renderKits(qt);
 
   let html = `<tr><th>#</th><th>OMSCHRIJVING</th><th>AANTAL</th><th>PRIJS</th><th>BTW</th><th>BEDRAG</th></tr>`;
   qt.items.forEach((it, i) => {
@@ -1206,6 +1420,26 @@ function renderQuote(qt) {
     },
   });
 
+  // ---- energy analysis graph (kWh/year) ----
+  const cons = (S.lastBody && S.lastBody.annual_consumption_kwh) || 0;
+  const batThroughput = Math.round(qt.system.battery.kwh * 300); // ≈300 cycles/year
+  if (energyChartInstance) energyChartInstance.destroy();
+  energyChartInstance = new Chart($("energyChart"), {
+    type: "bar",
+    data: {
+      labels: [t("eProd"), t("eCons"), t("eEv"), t("eBat")],
+      datasets: [{
+        data: [qt.system.annual_production_kwh, cons, qt.system.ev_annual_kwh, batThroughput],
+        backgroundColor: ["#05ade5", "#0b0d0f", "#9aa39e", "#46B2E9"],
+      }],
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { ticks: { callback: (v) => v.toLocaleString("nl-BE") + " kWh", font: { family: "'JetBrains Mono'", size: 10 } } },
+                x: { ticks: { font: { family: "'JetBrains Mono'", size: 10 } } } },
+    },
+  });
+
   $("assumptions").textContent = I18N[LANG].assumptions(qt.assumptions, qt.system.ev_benefit_counted, qt.system.ev_company);
 }
 
@@ -1245,15 +1479,61 @@ $("btnSign").onclick = () => {
   $("cardName").value = `${S.contact.first_name} ${S.contact.last_name}`;
   $("btnOrder").textContent = I18N[LANG].payBtn(`€ ${amount}`);
   document.querySelector('[data-i18n="checkoutNote"]').textContent = isNew ? t("checkoutNoteReserve") : t("checkoutNote");
-  // COWBOY promo popup before the payment step
-  $("cowboyTxt").innerHTML = t("cowboyPromo").replace(/€\s?3\.000/, '<span class="prize">€3.000</span>');
-  $("cowboyGo").textContent = t("cowboyGo");
-  $("cowboyModal").classList.remove("hidden");
+  show("step-checkout");
 };
 
-$("cowboyGo").onclick = () => {
-  $("cowboyModal").classList.add("hidden");
-  show("step-checkout");
+// COWBOY promo popup (auto-opens 10 s after the result page shows)
+function openCowboy() {
+  $("cowboyTxt").innerHTML = t("cowboyPromo").replace(/€\s?3\.000/, '<span class="prize">€3.000</span>');
+  $("cowboyGo").textContent = t("cowboyGo");
+  $("cowboyTerms").textContent = t("cowboyTermsLbl");
+  $("cowboyModal").classList.remove("hidden");
+}
+$("cowboyGo").onclick = () => $("cowboyModal").classList.add("hidden");
+$("cowboyX").onclick = () => $("cowboyModal").classList.add("hidden");
+
+// -------- result page → quote or call-me --------
+$("btnQuote").onclick = () => {
+  show("step-quote");
+  // "30.000 customers" promo popup, once per scan
+  if (!S.promoShown) {
+    S.promoShown = true;
+    $("promoModalTxt").textContent = t("promoPopup");
+    $("promoModal").classList.remove("hidden");
+  }
+};
+$("promoX").onclick = () => $("promoModal").classList.add("hidden");
+
+$("btnCall").onclick = () => {
+  // next 5 weekdays
+  const sel = $("callDay");
+  sel.innerHTML = "";
+  const d = new Date();
+  while (sel.options.length < 5) {
+    d.setDate(d.getDate() + 1);
+    if (d.getDay() === 0 || d.getDay() === 6) continue;
+    const o = document.createElement("option");
+    o.value = d.toISOString().slice(0, 10);
+    o.textContent = d.toLocaleDateString(LANG === "nl" ? "nl-BE" : "en-GB", { weekday: "long", day: "numeric", month: "long" });
+    sel.appendChild(o);
+  }
+  $("callPhone").value = (S.contact && S.contact.phone) || "";
+  $("callConfirm").classList.add("hidden");
+  $("callError").classList.add("hidden");
+  show("step-call");
+};
+
+$("btnCallSend").onclick = async () => {
+  $("callError").classList.add("hidden");
+  const phone = $("callPhone").value.trim();
+  if (phone.length < 8) return showError("callError", t("errContact"));
+  try {
+    await api("POST", "contact", { lead_id: S.leadId, ...S.contact, phone });
+    if (S.contact) S.contact.phone = phone;
+    const dayTxt = $("callDay").selectedOptions[0] ? $("callDay").selectedOptions[0].textContent : "";
+    $("callConfirm").textContent = I18N[LANG].callConfirm(dayTxt, $("callSlot").value);
+    $("callConfirm").classList.remove("hidden");
+  } catch (e) { showError("callError", e.message); }
 };
 
 $("btnOrder").onclick = async () => {
