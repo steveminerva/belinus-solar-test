@@ -388,7 +388,16 @@ const I18N = {
       "Company car? Employers reimburse €0,30/kWh for home charge sessions in Belgium.",
       "Our AI analyses LIDAR height data of your roof to place every panel for maximum yield.",
       "More than 30,000 customers already switched to clean energy with Belinus.",
+      "belinus develops unique and innovative technologies for home energy solutions with its research and academic partners IMEC, VITO, KUL and KHLIM.",
+      "belinus integrates LONGi solar cells into its solar panels and offers a unique 35-year triple warranty for residential customers.",
+      "belinus launches lithium-free sodium-ion energy storage, made in Belgium, with superior safety and social and environmental responsibility performance.",
+      "belinus' new back contact solar panels offer superior safety, performance, aesthetics and warranty.",
+      "Unlock the power of nature with belinus! Order online and win a made in Belgium electric bike from Cowboy.",
     ],
+    stageB0: "Analysing your energy solution parameters",
+    stageB1: "Developing optimization scenarios",
+    stageB2: "Integrating belinus hardware within the solution",
+    stageB3: "Finalizing your energy scan",
     designFailed: " — This roof may be too small or complex for an automatic design. Leave your details and we'll design it manually.",
     designLbl: "Your solar design",
     capNote: (kwp, cap) => `Note: the automatic design (${kwp} kWp) exceeds the maximum for your meter type (${cap} kWp). The final design will be adjusted during technical inspection.`,
@@ -498,7 +507,16 @@ const I18N = {
       "Bedrijfswagen? Werkgevers vergoeden €0,30/kWh voor laadsessies thuis in België.",
       "Onze AI analyseert LIDAR-hoogtedata van je dak en plaatst elk paneel voor maximale opbrengst.",
       "Meer dan 30.000 klanten gingen je voor bij Belinus.",
+      "belinus ontwikkelt unieke en innovatieve technologieën voor home energy oplossingen met zijn onderzoeks- en academische partners IMEC, VITO, KUL en KHLIM.",
+      "belinus integreert LONGi zonnecellen in zijn zonnepanelen en biedt een unieke 35 jaar triple garantie voor residentiële klanten.",
+      "belinus lanceert lithiumvrije natrium-ion energieopslag, made in Belgium, met superieure veiligheid en sociale en ecologische verantwoordelijkheid.",
+      "De nieuwe back contact zonnepanelen van belinus bieden superieure veiligheid, prestaties, esthetiek en garantie.",
+      "Unlock the power of nature with belinus! Bestel online en win een made in Belgium elektrische fiets van Cowboy.",
     ],
+    stageB0: "Jouw energieparameters analyseren",
+    stageB1: "Optimalisatiescenario's ontwikkelen",
+    stageB2: "belinus hardware integreren in de oplossing",
+    stageB3: "Jouw energiescan finaliseren",
     designFailed: " — Dit dak is mogelijk te klein of complex voor een automatisch ontwerp. Laat je gegevens achter en wij ontwerpen het handmatig.",
     designLbl: "Jouw zonne-ontwerp",
     capNote: (kwp, cap) => `Let op: het automatische ontwerp (${kwp} kWp) overschrijdt het maximum voor jouw metertype (${cap} kWp). Het definitieve ontwerp wordt aangepast bij de technische inspectie.`,
@@ -644,6 +662,14 @@ function show(stepId) {
   $("step-input").parentElement.classList.toggle("hidden", stepId !== "step-input");
 }
 
+// Stage labels: "A" = Aurora roof design flow, "B" = existing-panels energy scan
+function setStageLabels(set) {
+  document.querySelectorAll(".stage span[data-i18n]").forEach((el, i) => {
+    el.dataset.i18n = (set === "B" ? "stageB" : "stage") + i;
+    el.textContent = t(el.dataset.i18n);
+  });
+}
+
 function setStage(n, state) {
   document.querySelectorAll(".stage").forEach((el) => {
     const i = +el.dataset.stage;
@@ -654,15 +680,16 @@ function setStage(n, state) {
 }
 
 let factTimer = null;
-function startFacts() {
-  let i = Math.floor(Math.random() * I18N[LANG].facts.length);
+function startFacts(interval = 9000) {
+  // start with the 5 belinus brand messages (last block of the array), then rotate through all
+  let i = I18N[LANG].facts.length - 5;
   const el = $("factText");
   const next = () => {
     el.style.opacity = 0;
     setTimeout(() => { el.textContent = I18N[LANG].facts[i % I18N[LANG].facts.length]; el.style.opacity = 1; i++; }, 400);
   };
   next();
-  factTimer = setInterval(next, 9000);
+  factTimer = setInterval(next, interval);
 }
 function stopFacts() { clearInterval(factTimer); }
 
@@ -709,24 +736,39 @@ $("btnStart").onclick = async () => {
     ev_annual_kwh: evKwh, ev_company: evActive && $("evCompany").value === "1",
   };
 
-  // ---- Branch B: customer already has panels → battery/EV quote, no design ----
+  // ---- Branch B: customer already has panels → battery/EV energy scan ----
   if (hasPanels) {
     const existingWp = +$("existingWp").value || 0;
     if (existingWp < 500) return showError("inputError", t("errWp"));
     $("btnStart").disabled = true;
+    setStageLabels("B");
+    setStage(0, "active");
+    show("step-progress");
+    startFacts(5500); // all 5 brand messages fit within the scan
     try {
-      const lead = await api("POST", "lead", { address: `${street}, ${city}, ${postal}` });
-      S.leadId = lead.lead_id; S.designId = null;
-      S.lastBody = {
-        lead_id: S.leadId, existing_panels: true, existing_wp: existingWp,
-        annual_consumption_kwh: annualKwh, ...evBody,
-      };
-      const quote = await api("POST", "quote", { ...S.lastBody, catalog: S.catalog });
+      // real work runs in the background while the scan stages animate
+      const work = (async () => {
+        const lead = await api("POST", "lead", { address: `${street}, ${city}, ${postal}` });
+        S.leadId = lead.lead_id; S.designId = null;
+        S.lastBody = {
+          lead_id: S.leadId, existing_panels: true, existing_wp: existingWp,
+          annual_consumption_kwh: annualKwh, ...evBody,
+        };
+        return await api("POST", "quote", { ...S.lastBody, catalog: S.catalog });
+      })();
+      for (let i = 0; i < 4; i++) {
+        setStage(i, "active");
+        await sleep(7000);
+        setStage(i, "done");
+      }
+      const quote = await work;
       S.quote = quote; S.quoteId = quote.quote_id;
+      stopFacts();
       renderQuote(quote);
       show("step-result");
     } catch (e) {
-      showError("inputError", e.message);
+      stopFacts();
+      showError("progressError", e.message);
       $("btnStart").disabled = false;
     }
     return;
@@ -734,6 +776,7 @@ $("btnStart").onclick = async () => {
 
   // ---- Branch A: new panel design via Aurora ----
   $("btnStart").disabled = true;
+  setStageLabels("A");
   show("step-progress");
   startFacts();
 
