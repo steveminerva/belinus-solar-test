@@ -390,6 +390,7 @@
     <h2 class="lbl" data-i18n="chartLbl"></h2>
     <canvas id="chart" height="120"></canvas>
     <div class="note" id="assumptions"></div>
+    <span class="backLink" data-i18n="wizBack" onclick="show('step-input');syncConsent()"></span>
     <button class="primary" id="btnContinue" disabled data-i18n="btnContinue"></button>
   </div>
 
@@ -403,6 +404,7 @@
     <label data-i18n="signNameLbl"></label>
     <input id="signName" autocomplete="off">
     <div class="demoNote" data-i18n="signDemoNote"></div>
+    <span class="backLink" data-i18n="wizBack" onclick="show('step-result')"></span>
     <button class="primary" id="btnSign" disabled></button>
   </div>
 
@@ -428,6 +430,7 @@
       <div><label data-i18n="lExpiry"></label><input id="cardExp" value="12/28" style="color:#c81e1e"></div>
       <div><label data-i18n="lCvc"></label><input id="cardCvc" value="123" style="color:#c81e1e"></div>
     </div>
+    <span class="backLink" data-i18n="wizBack" onclick="show('step-sign')"></span>
     <button class="primary" id="btnOrder"></button>
     <div class="note" data-i18n="checkoutNote"></div>
     <div id="checkoutError" class="error hidden"></div>
@@ -447,6 +450,7 @@
         <a id="invDownload" href="#" target="_blank"><button class="primary" id="invDownloadBtn" style="margin-top:16px"></button></a>
         <a id="rcptDownload" href="#" target="_blank"><button class="primary" id="rcptDownloadBtn" style="margin-top:8px"></button></a>
         <div class="note demoRed" data-i18n="invDemoNote"></div>
+        <div><span class="backLink" data-i18n="wizBack" onclick="show('step-checkout')"></span></div>
       </div>
     </div>
   </div>
